@@ -1,0 +1,71 @@
+package kr.jm.metric.data;
+
+import kr.jm.metric.config.field.FieldMeta;
+import lombok.Getter;
+import lombok.ToString;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * The type Config id transfer.
+ *
+ * @param <T> the type parameter
+ */
+@Getter
+@ToString(callSuper = true)
+public class ConfigIdTransfer<T> extends Transfer<T> {
+
+    /**
+     * The constant CONFIG_ID.
+     */
+    public static final String CONFIG_ID = "configId";
+    private String configId;
+    private FieldMeta fieldMeta;
+
+    /**
+     * Instantiates a new Config id transfer.
+     *
+     * @param configId  the config id
+     * @param fieldMeta the field meta
+     * @param transfer  the transfer
+     */
+    public ConfigIdTransfer(String configId, FieldMeta fieldMeta,
+            Transfer<T> transfer) {
+        super(transfer.getDataId(), transfer.getData(), transfer
+                .getTimestamp(), transfer.getMeta());
+        this.configId = configId;
+        this.fieldMeta = fieldMeta;
+    }
+
+    /**
+     * New with config id transfer.
+     *
+     * @param <D>      the type parameter
+     * @param transfer the transfer
+     * @return the config id transfer
+     */
+    public <D> ConfigIdTransfer<D> newWith(Transfer<D> transfer) {
+        return new ConfigIdTransfer<>(this.configId, this.fieldMeta,
+                transfer);
+    }
+
+    @Override
+    public <D> List<ConfigIdTransfer<D>> newListWith(List<D> dataList) {
+        return newStreamWith(dataList).collect(Collectors.toList());
+    }
+
+    @Override
+    public <D> Stream<ConfigIdTransfer<D>> newStreamWith(List<D> dataList) {
+        return super.newStreamWith(dataList).map(this::newWith);
+    }
+
+    @Override
+    protected Map<String, Object> buildMetaForFieldMap() {
+        Map<String, Object> meta = super.buildMetaForFieldMap();
+        meta.put(CONFIG_ID, configId);
+        return meta;
+    }
+}

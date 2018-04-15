@@ -1,0 +1,271 @@
+package kr.jm.metric.config;
+
+import kr.jm.utils.datastructure.JMCollections;
+import kr.jm.utils.datastructure.JMMap;
+import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.helper.JMJson;
+import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
+import org.slf4j.Logger;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+/**
+ * The type Metric config manager.
+ */
+public class MetricConfigManager {
+    private static final Logger log =
+            org.slf4j.LoggerFactory.getLogger(MetricConfigManager.class);
+
+    private static final String INPUT_CONFIG_TYPE = "metricConfigType";
+
+    private Map<String, MetricConfig> metricConfigMap;
+    private Map<String, Set<String>> dataIdConfigIdSetMap;
+
+    /**
+     * Instantiates a new Metric config manager.
+     */
+    public MetricConfigManager() {
+        this.dataIdConfigIdSetMap = new HashMap<>();
+    }
+
+    /**
+     * Instantiates a new Metric config manager.
+     *
+     * @param configMaps the config maps
+     */
+    @SafeVarargs
+    public MetricConfigManager(Map<String, Object>... configMaps) {
+        this(Arrays.stream(configMaps)
+                .map(MetricConfigManager::transformToConfig)
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Instantiates a new Metric config manager.
+     *
+     * @param configList the config list
+     */
+    public MetricConfigManager(List<MetricConfig> configList) {
+        this();
+        insertConfigList(configList);
+    }
+
+    /**
+     * Insert config list metric config manager.
+     *
+     * @param metricConfigList the metric config list
+     * @return the metric config manager
+     */
+    public MetricConfigManager insertConfigList(
+            List<MetricConfig> metricConfigList) {
+        JMLog.info(log, "insertConfigList",
+                metricConfigList.stream().map(this::insertConfig)
+                        .map(MetricConfig::getConfigId)
+                        .collect(Collectors.toList()));
+        return this;
+    }
+
+    /**
+     * Insert config map list metric config manager.
+     *
+     * @param metricConfigMapList the metric config map list
+     * @return the metric config manager
+     */
+    public MetricConfigManager insertConfigMapList(
+            List<Map<String, Object>> metricConfigMapList) {
+        insertConfigList(metricConfigMapList.stream()
+                .map(MetricConfigManager::transformToConfig)
+                .collect(Collectors.toList()));
+        return this;
+    }
+
+    /**
+     * Transform to config metric config.
+     *
+     * @param metricConfigMap the metric config map
+     * @return the metric config
+     */
+    public static MetricConfig transformToConfig(
+            Map<String, Object> metricConfigMap) {
+        try {
+            return getConfigType(metricConfigMap)
+                    .transform(metricConfigMap);
+        } catch (Exception e) {
+            return JMExceptionManager.handleExceptionAndReturnNull(log, e,
+                    "transformToConfig", metricConfigMap);
+        }
+    }
+
+    private static MetricConfigType getConfigType(
+            Map<String, Object> metricConfigMap) {
+        return JMOptional.getOptional(metricConfigMap, INPUT_CONFIG_TYPE)
+                .map(Object::toString)
+                .map(MetricConfigType::valueOf)
+                .orElseGet(() -> JMExceptionManager.throwRunTimeException(
+                        "Wrong MetricConfigType !!! : " + INPUT_CONFIG_TYPE +
+                                "=" + metricConfigMap.get(INPUT_CONFIG_TYPE)));
+    }
+
+    /**
+     * Bind data id to config id metric config manager.
+     *
+     * @param dataId   the data id
+     * @param configId the config id
+     * @return the metric config manager
+     */
+    public MetricConfigManager bindDataIdToConfigId(String dataId,
+            String configId) {
+        JMLog.info(log, "bindDataIdToConfigId", dataId, configId);
+        Optional.ofNullable(getOrNewConfigMap().get(configId))
+                .map(metricConfig -> metricConfig.withBindDataIds(dataId))
+                .ifPresentOrElse(metricConfig -> JMMap
+                        .getOrPutGetNew(this.dataIdConfigIdSetMap, dataId,
+                                () -> new HashSet<>()).add(configId), () -> log
+                        .warn("No ConfigId Occur !!! - inputSingle configId = {}",
+                                configId));
+        return this;
+    }
+
+    private Map<String, MetricConfig> getOrNewConfigMap() {
+        return Objects.requireNonNullElseGet(this.metricConfigMap,
+                () -> this.metricConfigMap = new ConcurrentHashMap<>());
+    }
+
+    /**
+     * Gets config list with data id.
+     *
+     * @param dataId the data id
+     * @return the config list with data id
+     */
+    public List<MetricConfig> getConfigListWithDataId(String dataId) {
+        return getConfigIdList(dataId).stream().map(this::getConfig)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets config id list.
+     *
+     * @param dataId the data id
+     * @return the config id list
+     */
+    public List<String> getConfigIdList(String dataId) {
+        return JMOptional.getOptional(this.dataIdConfigIdSetMap, dataId)
+                .map(JMCollections::newList)
+                .map(Collections::unmodifiableList)
+                .orElseGet(() -> warnEmptyList(dataId));
+    }
+
+    private List<String> warnEmptyList(String dataId) {
+        log.warn("No ConfigIdList Occur !!! - dataId = {}", dataId);
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets config id set.
+     *
+     * @return the config id set
+     */
+    public Set<String> getConfigIdSet() {
+        return Collections.unmodifiableSet(this.metricConfigMap.keySet());
+    }
+
+    /**
+     * Gets config.
+     *
+     * @param configId the config id
+     * @return the config
+     */
+    public MetricConfig getConfig(String configId) {
+        return getOrNewConfigMap().get(configId);
+    }
+
+    /**
+     * Remove data id metric config manager.
+     *
+     * @param dataId the data id
+     * @return the metric config manager
+     */
+    public MetricConfigManager removeDataId(String dataId) {
+        Optional.ofNullable(this.dataIdConfigIdSetMap.remove(dataId)).stream()
+                .flatMap(Set::stream).map(getOrNewConfigMap()::get)
+                .forEach(
+                        inputConfig -> inputConfig.removeBindDataId(dataId));
+        return this;
+    }
+
+    /**
+     * Gets config list.
+     *
+     * @return the config list
+     */
+    public List<MetricConfig> getConfigList() {
+        return Collections
+                .unmodifiableList(
+                        new ArrayList<>(getOrNewConfigMap().values()));
+    }
+
+    /**
+     * Insert config metric config.
+     *
+     * @param metricConfig the metric config
+     * @return the metric config
+     */
+    public MetricConfig insertConfig(MetricConfig metricConfig) {
+        JMLog.info(log, "insertConfig", metricConfig);
+        return insertConfigAndBindDataIdConfigId(metricConfig,
+                metricConfig.getConfigId());
+    }
+
+    private MetricConfig insertConfigAndBindDataIdConfigId(
+            MetricConfig metricConfig, String configId) {
+        getOrNewConfigMap().put(configId, metricConfig);
+        metricConfig.getBindDataIds().forEach(
+                dataId -> bindDataIdToConfigId(dataId, configId));
+        return metricConfig;
+    }
+
+    /**
+     * Gets data id config id set map.
+     *
+     * @return the data id config id set map
+     */
+    public Map<String, Set<String>> getDataIdConfigIdSetMap() {
+        return Collections.unmodifiableMap(this.dataIdConfigIdSetMap);
+    }
+
+    /**
+     * Gets config map.
+     *
+     * @return the config map
+     */
+    public Map<String, MetricConfig> getConfigMap() {
+        return Collections.unmodifiableMap(this.metricConfigMap);
+    }
+
+    /**
+     * Load config metric config manager.
+     *
+     * @param jmMetricConfigUrl the jm metric config url
+     * @return the metric config manager
+     */
+    public MetricConfigManager loadConfig(String jmMetricConfigUrl) {
+        return loadConfig(
+                JMJson.withFilePathOrClasspath(jmMetricConfigUrl,
+                        JMJson.LIST_MAP_TYPE_REFERENCE));
+    }
+
+    /**
+     * Load config metric config manager.
+     *
+     * @param metricConfigMapList the metric config map list
+     * @return the metric config manager
+     */
+    public MetricConfigManager loadConfig(
+            List<Map<String, Object>> metricConfigMapList) {
+        JMLog.info(log, "loadConfig", metricConfigMapList.size());
+        return insertConfigMapList(metricConfigMapList);
+    }
+}

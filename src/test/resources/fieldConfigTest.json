@@ -1,0 +1,38 @@
+{
+  "format": {
+    "request": {
+      "fields": ["requestMethod", "requestUrl", "requestProtocol"],
+      "metricConfigType": "DELIMITER"
+    }
+  },
+  "dateFormat": {
+    "timestamp": {
+      "dateFormatType": "CUSTOM",
+      "format": "dd/MMM/yyyy:HH:mm:ss Z",
+      "zoneOffset": "",
+      "changeDateConfig": {
+        "dateFormatType": "CUSTOM",
+        "format": "yyyy-MM-dd'T'HH:mm:ssZ",
+        "zoneOffset": "+1000"
+      }
+    }
+  },
+  "combinedId": ["remoteHost", "requestUrl"],
+  "dataType": {
+    "statusCode": "WORD",
+    "userAgent": "WORD",
+    "sizeByte": "NUMBER",
+    "requestTime": "NUMBER"
+  },
+  "unit": {
+    "requestTime": "MicroSecond"
+  },
+  "ignore": ["remoteUser", "remoteLogName"],
+  "custom": {
+    "customKey": "customValue",
+    "customObject": {
+      "bool": false
+    },
+    "customList": ["hello", "world"]
+  }
+}
