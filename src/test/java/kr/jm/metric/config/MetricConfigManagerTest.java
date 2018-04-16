@@ -17,7 +17,7 @@ public class MetricConfigManagerTest {
     private MetricConfigManager metricConfigManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.metricConfigManager = new MetricConfigManager();
     }
 
@@ -82,7 +82,8 @@ public class MetricConfigManagerTest {
         String apacheCommonLogFormat =
                 "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"";
         MetricConfig config =
-                new ApacheAccessLogMetricConfig(configId, apacheCommonLogFormat);
+                new ApacheAccessLogMetricConfig(configId,
+                        apacheCommonLogFormat);
         insertConfig(config);
 
         System.out.println(metricConfigManager.getConfig(configId));
@@ -114,9 +115,10 @@ public class MetricConfigManagerTest {
 
     @Test
     public void testRemoveDataId() {
-        insertConfig(new KeyValueDelimiterMetricConfig("keyValueDelimiterSample",
-                null, "=", ":",
-                "[{}\", ]").withBindDataIds("data1", "data2"));
+        insertConfig(
+                new KeyValueDelimiterMetricConfig("keyValueDelimiterSample",
+                        null, "=", ":",
+                        "[{}\", ]").withBindDataIds("data1", "data2"));
         insertConfig(new NginxAccessLogMetricConfig("nginxAccessLogSample",
                 "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
                 .withBindDataIds("data1", "data2", "data3"));
@@ -143,6 +145,15 @@ public class MetricConfigManagerTest {
         assertTrue(dataIdList.contains("data1"));
         assertFalse(dataIdList.contains("data2"));
         assertFalse(dataIdList.contains("data3"));
+    }
+
+    @Test
+    public void testLoadConfig() {
+        assertEquals(8,
+                metricConfigManager.loadConfig("testJMMetricConfig.json")
+                        .getConfigList().size());
+        assertEquals("keyValueDelimiterSample2", metricConfigManager.getConfig
+                ("keyValueDelimiterSample2").getConfigId());
     }
 }
 

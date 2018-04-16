@@ -1,13 +1,14 @@
 package kr.jm.metric.config;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.helper.*;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class MetricConfigManager {
 
     private Map<String, MetricConfig> metricConfigMap;
     private Map<String, Set<String>> dataIdConfigIdSetMap;
+    private ObjectMapper configObjectMapper;
 
     /**
      * Instantiates a new Metric config manager.
@@ -252,9 +254,24 @@ public class MetricConfigManager {
      * @return the metric config manager
      */
     public MetricConfigManager loadConfig(String jmMetricConfigUrl) {
-        return loadConfig(
-                JMJson.withFilePathOrClasspath(jmMetricConfigUrl,
-                        JMJson.LIST_MAP_TYPE_REFERENCE));
+        try {
+            List<Map<String, Object>> metricConfigMapList =
+                    getConfigObjectMapper()
+                            .readValue(JMResources
+                                            .getStringWithFilePathOrClasspath(
+                                                    jmMetricConfigUrl),
+                                    JMJson.LIST_MAP_TYPE_REFERENCE);
+            return loadConfig(metricConfigMapList);
+        } catch (IOException e) {
+            return JMExceptionManager.handleExceptionAndReturn(log, e,
+                    "loadConfig", () -> this, jmMetricConfigUrl);
+        }
+    }
+
+    private ObjectMapper getConfigObjectMapper() {
+        return JMLambda.supplierIfNull(this.configObjectMapper,
+                () -> this.configObjectMapper = new ObjectMapper()
+                        .configure(JsonParser.Feature.ALLOW_COMMENTS, true));
     }
 
     /**
