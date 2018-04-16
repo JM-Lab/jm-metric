@@ -1,6 +1,6 @@
 package kr.jm.metric;
 
-import kr.jm.metric.publisher.input.StdInLineBulkTransferSubmissionPublisher;
+import kr.jm.metric.publisher.input.StdInLineInputPublisher;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
@@ -29,19 +29,19 @@ public class JMMetricMain {
     public void main(String... args) {
         ABCObjects<String, Integer, String> argsObjects = buildArgsObject(args);
         String dataId = "StdIn";
-        StdInLineBulkTransferSubmissionPublisher
-                stdInLineBulkTransferSubmissionPublisher =
-                new StdInLineBulkTransferSubmissionPublisher(dataId,
+        StdInLineInputPublisher
+                stdInLineInputPublisher =
+                new StdInLineInputPublisher(dataId,
                         argsObjects.getB());
         JMMetric jmMetric =
-                new JMMetric(stdInLineBulkTransferSubmissionPublisher);
+                new JMMetric(stdInLineInputPublisher);
         JMOptional.getOptional(argsObjects.getC())
                 .ifPresent(jmMetric::loadConfig);
         jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
         jmMetric.subscribeAndReturnSubcriber(
                 JMTransformProcessorBuilder.buildCollectionEach())
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        stdInLineBulkTransferSubmissionPublisher.consumeStdIn();
+        stdInLineInputPublisher.start();
         log.info("==== Config List ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getConfigList()));
         log.info("==== DataId-ConfigIds ====");

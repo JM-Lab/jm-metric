@@ -1,6 +1,5 @@
 package kr.jm.metric.publisher.input;
 
-import kr.jm.metric.publisher.StringBulkTransferSubmissionPublisher;
 import kr.jm.utils.StdInLineConsumer;
 
 import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_BULK_SIZE;
@@ -9,8 +8,8 @@ import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_FLUSH_I
 /**
  * The type Std in line bulk transfer submission publisher.
  */
-public class StdInLineBulkTransferSubmissionPublisher extends
-        StringBulkTransferSubmissionPublisher implements AutoCloseable {
+public class StdInLineInputPublisher extends
+        AbstractInputPublisher {
 
     private StdInLineConsumer stdInLineConsumer;
 
@@ -19,7 +18,7 @@ public class StdInLineBulkTransferSubmissionPublisher extends
      *
      * @param dataId the data id
      */
-    public StdInLineBulkTransferSubmissionPublisher(String dataId) {
+    public StdInLineInputPublisher(String dataId) {
         this(dataId, DEFAULT_BULK_SIZE);
     }
 
@@ -29,7 +28,7 @@ public class StdInLineBulkTransferSubmissionPublisher extends
      * @param dataId   the data id
      * @param bulkSize the bulk size
      */
-    public StdInLineBulkTransferSubmissionPublisher(String dataId,
+    public StdInLineInputPublisher(String dataId,
             int bulkSize) {
         this(dataId, bulkSize, DEFAULT_FLUSH_INTERVAL_SECONDS);
     }
@@ -41,21 +40,16 @@ public class StdInLineBulkTransferSubmissionPublisher extends
      * @param bulkSize             the bulk size
      * @param flushIntervalSeconds the flush interval seconds
      */
-    public StdInLineBulkTransferSubmissionPublisher(String dataId, int bulkSize,
+    public StdInLineInputPublisher(String dataId, int bulkSize,
             int flushIntervalSeconds) {
-        super(bulkSize, flushIntervalSeconds);
-        this.stdInLineConsumer =
-                new StdInLineConsumer(line -> submitSingle(dataId, line));
+        super(dataId, bulkSize, flushIntervalSeconds);
     }
 
-    /**
-     * Consume std in std in line bulk transfer submission publisher.
-     *
-     * @return the std in line bulk transfer submission publisher
-     */
-    public StdInLineBulkTransferSubmissionPublisher consumeStdIn() {
-        stdInLineConsumer.consumeStdIn();
-        return this;
+    @Override
+    protected void startImpl() {
+        this.stdInLineConsumer =
+                new StdInLineConsumer(line -> submitSingle(dataId, line))
+                        .consumeStdIn();
     }
 
     @Override

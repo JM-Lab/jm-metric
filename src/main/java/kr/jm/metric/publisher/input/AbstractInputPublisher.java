@@ -14,6 +14,9 @@ public abstract class AbstractInputPublisher extends
         StringBulkTransferSubmissionPublisher implements
         InputPublisherInterface {
 
+    /**
+     * The Data id.
+     */
     @Getter
     protected String dataId;
 
@@ -56,5 +59,8 @@ public abstract class AbstractInputPublisher extends
         startImpl();
     }
 
+    /**
+     * Start.
+     */
     protected abstract void startImpl();
 }
