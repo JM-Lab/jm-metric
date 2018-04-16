@@ -54,7 +54,8 @@ public class JMMetricSampleTest {
                         .stream().map(fieldMap -> fieldMap.extractRawData())
                         .flatMap(JMWordSplitter::splitAsStream));
         jmMetric.subscribeConfigIdTransferWith(wordStreamProcessor);
-        wordStreamProcessor.subscribeAndReturn(JMTransformProcessorBuilder
+        wordStreamProcessor
+                .subscribeAndReturnProcessor(JMTransformProcessorBuilder
                 .build(WordCountGenerator::buildCountMap))
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.inputSingle("sampleData", "Hello JMMetric !!!");

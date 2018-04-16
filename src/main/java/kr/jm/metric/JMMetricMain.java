@@ -38,7 +38,7 @@ public class JMMetricMain {
         JMOptional.getOptional(argsObjects.getC())
                 .ifPresent(jmMetric::loadConfig);
         jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
-        jmMetric.subscribeAndReturn(
+        jmMetric.subscribeAndReturnSubcriber(
                 JMTransformProcessorBuilder.buildCollectionEach())
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         stdInLineBulkTransferSubmissionPublisher.consumeStdIn();

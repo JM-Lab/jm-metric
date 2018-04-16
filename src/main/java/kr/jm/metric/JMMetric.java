@@ -190,7 +190,7 @@ public class JMMetric implements JMPublisherInterface<List<FieldMap>>,
                 stringListTransferSubmissionPublisher;
         this.fieldMapListConfigIdTransferTransformProcessor =
                 this.stringListTransferSubmissionPublisher
-                        .subscribeAndReturn(
+                        .subscribeAndReturnSubcriber(
                                 new FieldMapListConfigIdTransferTransformProcessor(
                                         executor, maxBufferCapacity,
                                         metricConfigManager));
@@ -317,7 +317,7 @@ public class JMMetric implements JMPublisherInterface<List<FieldMap>>,
         return JMLambda.supplierIfNull(this.fieldMapListTransformerProcessor,
                 () -> this.fieldMapListTransformerProcessor =
                         fieldMapListConfigIdTransferTransformProcessor
-                                .subscribeAndReturn(
+                                .subscribeAndReturnProcessor(
                                         new FieldMapListTransformerProcessor()));
 
     }

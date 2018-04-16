@@ -48,7 +48,7 @@ public class JMMetricTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         this.jmMetric.close();
     }
 
@@ -141,7 +141,7 @@ public class JMMetricTest {
                 new FieldMapListTransformerProcessor();
         FileOutputSubscriber<List<FieldMap>> fileOutputSubscriber2 =
                 fieldMapListTransformerProcessor
-                        .subscribeAndReturn(FileOutputSubscriberBuilder
+                        .subscribeAndReturnSubcriber(FileOutputSubscriberBuilder
                                 .buildJsonStringList(path2.toString(),
                                         list -> list));
 

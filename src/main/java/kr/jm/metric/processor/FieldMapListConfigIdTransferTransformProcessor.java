@@ -77,7 +77,7 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
                         new FieldMapListConfigIdTransferListTransformer(
                                 metricConfigManager));
         this.outputFieldMapListConfigIdTransferProcessor =
-                this.concurrentTransformProcessor.subscribeAndReturn(
+                this.concurrentTransformProcessor.subscribeAndReturnProcessor(
                         buildCollectionEach(this::buildFinalMeta));
     }
 

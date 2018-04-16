@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.jm-lab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data
@@ -35,7 +35,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>9</java.version>
         <junit.version>4.12</junit.version>
-        <jmlab-utils-java9.version>0.1.1</jmlab-utils-java9.version>
+        <jmlab-utils-java9.version>0.1.2-SNAPSHOT</jmlab-utils-java9.version>
         <slf4j.version>1.7.25</slf4j.version>
         <lombok.version>1.16.20</lombok.version>
     </properties>
