@@ -1,4 +1,4 @@
-package kr.jm.metric.input.publisher;
+package kr.jm.metric.publisher;
 
 import kr.jm.utils.accumulator.CountBytesSizeAccumulator;
 import kr.jm.utils.helper.JMConsumer;
@@ -11,20 +11,20 @@ import org.junit.Test;
 public class StringBulkWaitingTransferSubmissionPublisherTest {
 
 
-    private StringBulkWaitingTransferSubmissionPublisher
+    private kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher
             stringBulkTransferWaitingSubmissionPublisher;
 
     private CountBytesSizeAccumulator countBytesSizeAccumulator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.stringBulkTransferWaitingSubmissionPublisher =
-                new StringBulkWaitingTransferSubmissionPublisher();
+                new kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher();
         this.countBytesSizeAccumulator = new CountBytesSizeAccumulator();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test

@@ -1,4 +1,4 @@
-package kr.jm.metric.output.subscriber;
+package kr.jm.metric.subscriber.output;
 
 import kr.jm.utils.helper.JMPath;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +13,7 @@ import java.util.function.Function;
  * @param <T> the type parameter
  */
 @Slf4j
-public class ListFileOutputSubscriber<T> extends
-        FileOutputSubscriber<T> {
+public class ListFileOutputSubscriber<T> extends FileOutputSubscriber<T> {
 
     /**
      * Instantiates a new List file output subscriber.

@@ -1,5 +1,6 @@
-package kr.jm.metric.output.subscriber;
+package kr.jm.metric.subscriber.output;
 
+import kr.jm.metric.subscriber.AbstractOutputSubscriber;
 import kr.jm.utils.JMFileAppender;
 import kr.jm.utils.helper.JMPath;
 import lombok.extern.slf4j.Slf4j;

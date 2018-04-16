@@ -1,11 +1,11 @@
 package kr.jm.metric.processor;
 
-import kr.jm.metric.config.MetricConfigManager;
 import kr.jm.metric.config.ApacheAccessLogMetricConfig;
+import kr.jm.metric.config.MetricConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
-import kr.jm.metric.input.publisher.TransferSubmissionPublisher;
+import kr.jm.metric.publisher.TransferSubmissionPublisher;
 import kr.jm.metric.transformer.FieldMapConfigIdTransferListTransformer;
 import kr.jm.metric.transformer.FieldMapListConfigIdTransferListTransformer;
 import kr.jm.utils.collections.JMListMap;
@@ -37,7 +37,7 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
             transferSubmissionPublisher;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.lineList = JMResources.readLines("webAccessLogSample.txt");
         MetricConfigManager metricConfigManager = new MetricConfigManager(
                 List.of(new ApacheAccessLogMetricConfig(CONFIG_ID,
@@ -102,8 +102,7 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
     }
 
     @Test
-    public void testProcessInParallel() throws ExecutionException,
-            InterruptedException {
+    public void testProcessInParallel() {
         JMListMap<String, Transfer<List<FieldMap>>> resultMap =
                 new JMListMap<>();
         fieldMapListConfigIdTransferListTransformProcessor

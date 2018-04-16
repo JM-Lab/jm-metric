@@ -1,4 +1,4 @@
-package kr.jm.metric.input.publisher;
+package kr.jm.metric.publisher;
 
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
 import kr.jm.utils.flow.publisher.StringBulkSubmissionPublisher;

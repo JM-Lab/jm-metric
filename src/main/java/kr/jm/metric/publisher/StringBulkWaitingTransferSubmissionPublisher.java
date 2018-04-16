@@ -1,4 +1,4 @@
-package kr.jm.metric.input.publisher;
+package kr.jm.metric.publisher;
 
 import java.io.File;
 import java.util.concurrent.Executor;

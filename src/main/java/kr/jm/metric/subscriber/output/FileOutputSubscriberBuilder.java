@@ -1,4 +1,4 @@
-package kr.jm.metric.output.subscriber;
+package kr.jm.metric.subscriber.output;
 
 import kr.jm.utils.helper.JMJson;
 

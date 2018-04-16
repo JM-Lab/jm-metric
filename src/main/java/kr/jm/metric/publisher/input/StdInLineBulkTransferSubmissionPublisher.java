@@ -1,5 +1,6 @@
-package kr.jm.metric.input.publisher;
+package kr.jm.metric.publisher.input;
 
+import kr.jm.metric.publisher.StringBulkTransferSubmissionPublisher;
 import kr.jm.utils.StdInLineConsumer;
 
 import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_BULK_SIZE;
@@ -58,7 +59,7 @@ public class StdInLineBulkTransferSubmissionPublisher extends
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         stdInLineConsumer.close();
     }
 }

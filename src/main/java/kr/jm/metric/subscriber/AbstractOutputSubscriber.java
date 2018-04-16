@@ -1,4 +1,4 @@
-package kr.jm.metric.output.subscriber;
+package kr.jm.metric.subscriber;
 
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import lombok.experimental.Delegate;

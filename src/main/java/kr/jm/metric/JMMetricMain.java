@@ -1,6 +1,6 @@
 package kr.jm.metric;
 
-import kr.jm.metric.input.publisher.StdInLineBulkTransferSubmissionPublisher;
+import kr.jm.metric.publisher.input.StdInLineBulkTransferSubmissionPublisher;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;

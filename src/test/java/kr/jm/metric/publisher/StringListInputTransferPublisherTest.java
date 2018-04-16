@@ -1,4 +1,4 @@
-package kr.jm.metric.input.publisher;
+package kr.jm.metric.publisher;
 
 import kr.jm.utils.accumulator.CountBytesSizeAccumulator;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
@@ -14,7 +14,7 @@ public class StringListInputTransferPublisherTest {
     private CountBytesSizeAccumulator countBytesSizeAccumulator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.stringListInputTransferPublisher =
                 new StringListTransferSubmissionPublisher();
         this.countBytesSizeAccumulator = new CountBytesSizeAccumulator();
