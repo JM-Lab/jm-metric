@@ -27,7 +27,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
     private MetricConfigManager metricConfigManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Map<String, MetricConfig> requestFieldFormat =
                 Map.of("request", new DelimiterMetricConfig(null,
                         JMArrays.buildArray("requestMethod",
@@ -54,11 +54,11 @@ public class FieldMapListConfigIdTransferListTransformerTest {
     }
 
     @Test
-    public void testAccessLogTransformer() throws Exception {
+    public void testAccessLogTransformer() {
         List<String> readLineList = JMResources.readLines(FileName);
         List<ConfigIdTransfer<List<FieldMap>>> listDataTransferList =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .transform(new Transfer<>(FileName, readLineList));
+                        .apply(new Transfer<>(FileName, readLineList));
         System.out.println(listDataTransferList);
         assertEquals(1, listDataTransferList.size());
         Transfer<List<FieldMap>> listTransfer =
@@ -79,7 +79,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
     }
 
     @Test
-    public void testJsonListTransformer() throws Exception {
+    public void testJsonListTransformer() {
         FieldConfig fieldConfig = JMJson.withJsonString(
                 "{\"dateFormat\":{\"time\":{\"dateFormatType\":\"EPOCH\", " +
                         "\"timeUnit\": \"SECONDS\"," +
@@ -97,7 +97,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
                         "\"interval\":5.000,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_packets\",\"type_instance\":\"\"},{\"values\":[0,0],\"dstypes\":[\"derive\",\"derive\"],\"dsnames\":[\"rx\",\"tx\"],\"time\":1523355042.220,\"interval\":5.000,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_errors\",\"type_instance\":\"\"}]";
         List<ConfigIdTransfer<List<FieldMap>>> listDataTransferList =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .transform(new Transfer<>("jsonList",
+                        .apply(new Transfer<>("jsonList",
                                 List.of(targetString)));
         System.out.println(listDataTransferList);
         assertEquals(1, listDataTransferList.size());

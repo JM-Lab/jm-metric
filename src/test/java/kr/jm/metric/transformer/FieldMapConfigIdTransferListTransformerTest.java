@@ -1,8 +1,8 @@
 package kr.jm.metric.transformer;
 
+import kr.jm.metric.config.ApacheAccessLogMetricConfig;
 import kr.jm.metric.config.MetricConfig;
 import kr.jm.metric.config.MetricConfigManager;
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -30,7 +30,7 @@ public class FieldMapConfigIdTransferListTransformerTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.lineList = JMResources.readLines(FileName);
         MetricConfig config = new ApacheAccessLogMetricConfig
                 (ConfigId, "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" " +
@@ -51,7 +51,7 @@ public class FieldMapConfigIdTransferListTransformerTest {
                 configIdFieldMapDataTransferMapStream =
                 lineList.stream().map(log -> new Transfer(FileName, log))
                         .map(dataTransfer -> fieldMapConfigIdDataTransferListTransformer
-                                .transform(dataTransfer));
+                                .apply(dataTransfer));
         List<Transfer<FieldMap>> transferMap =
                 configIdFieldMapDataTransferMapStream
                         .flatMap(Collection::stream)
@@ -60,7 +60,7 @@ public class FieldMapConfigIdTransferListTransformerTest {
 
         List<ConfigIdTransfer<List<FieldMap>>> dataTransferListMap =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .transform(new Transfer<>(FileName, lineList));
+                        .apply(new Transfer<>(FileName, lineList));
         assertEquals(1, dataTransferListMap.size());
         Transfer<List<FieldMap>> listTransfer =
                 dataTransferListMap.get(0);

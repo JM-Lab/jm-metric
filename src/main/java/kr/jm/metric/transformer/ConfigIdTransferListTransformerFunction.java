@@ -4,9 +4,9 @@ import kr.jm.metric.config.MetricConfig;
 import kr.jm.metric.config.field.FieldMeta;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.flow.TransformerInterface;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
  * @param <I> the type parameter
  * @param <O> the type parameter
  */
-public interface ConfigIdTransferListTransformerInterface<I, O> extends
-        TransformerInterface<Transfer<I>, List<ConfigIdTransfer<O>>> {
+public interface ConfigIdTransferListTransformerFunction<I, O> extends
+        Function<Transfer<I>, List<ConfigIdTransfer<O>>> {
 
     /**
      * Transform o.
@@ -36,13 +36,13 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     List<MetricConfig> getInputConfigList(String dataId);
 
     @Override
-    default List<ConfigIdTransfer<O>> transform(Transfer<I> transfer) {
-        return transform(transfer, getInputConfigList(transfer
+    default List<ConfigIdTransfer<O>> apply(Transfer<I> transfer) {
+        return apply(transfer, getInputConfigList(transfer
                 .getDataId()), Optional.ofNullable(transfer.getMeta())
                 .orElseGet(Collections::emptyMap));
     }
 
-    private List<ConfigIdTransfer<O>> transform(Transfer<I> transfer,
+    private List<ConfigIdTransfer<O>> apply(Transfer<I> transfer,
             List<MetricConfig> metricConfigList, Map<String, Object> meta) {
         return metricConfigList.stream()
                 .map(inputConfig -> newListConfigTransfer(transfer, meta,

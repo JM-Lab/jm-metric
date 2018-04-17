@@ -32,7 +32,7 @@ public class WordNumberStatsConfigFieldMapConfigIdTransferListTransformProcessor
             fieldMapListConfigIdDataTransferListTransformer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         Map<String, MetricConfig> requestFieldFormat =
                 Map.of("request", new DelimiterMetricConfig(null,
                         JMArrays.buildArray("requestMethod",
@@ -54,10 +54,10 @@ public class WordNumberStatsConfigFieldMapConfigIdTransferListTransformProcessor
     }
 
     @Test
-    public void testAccessLogProcessor() throws Exception {
+    public void testAccessLogProcessor() {
         List<ConfigIdTransfer<List<FieldMap>>> configIdListDataTransferMap =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .transform(new Transfer<>(FileName,
+                        .apply(new Transfer<>(FileName,
                                 JMResources.readLines(FileName)));
         assertEquals(1, configIdListDataTransferMap.size());
         Transfer<List<FieldMap>> listTransfer =
