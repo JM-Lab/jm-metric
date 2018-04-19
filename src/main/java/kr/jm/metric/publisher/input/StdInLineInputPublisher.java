@@ -53,7 +53,8 @@ public class StdInLineInputPublisher extends
     }
 
     @Override
-    public void close() {
+    protected void closeImpl() {
         stdInLineConsumer.close();
     }
+
 }

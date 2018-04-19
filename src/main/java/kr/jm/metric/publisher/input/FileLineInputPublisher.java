@@ -55,7 +55,7 @@ public class FileLineInputPublisher extends AbstractInputPublisher {
     }
 
     @Override
-    public void close() {
-
+    protected void closeImpl() {
     }
+
 }

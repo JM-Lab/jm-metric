@@ -59,8 +59,16 @@ public abstract class AbstractInputPublisher extends
         startImpl();
     }
 
+    @Override
+    public void close() {
+        JMLog.info(log, "close");
+        closeImpl();
+    }
+
     /**
      * Start.
      */
     protected abstract void startImpl();
+
+    protected abstract void closeImpl();
 }
