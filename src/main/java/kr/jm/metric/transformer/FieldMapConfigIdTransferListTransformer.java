@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Slf4j
 public class FieldMapConfigIdTransferListTransformer implements
-        ConfigIdTransferListTransformerFunction<String, FieldMap> {
+        ConfigIdTransferListTransformerInterface<String, FieldMap> {
 
     private MetricConfigManager metricConfigManager;
 

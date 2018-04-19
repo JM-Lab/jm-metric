@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @param <I> the type parameter
  * @param <O> the type parameter
  */
-public interface ConfigIdTransferListTransformerFunction<I, O> extends
+public interface ConfigIdTransferListTransformerInterface<I, O> extends
         Function<Transfer<I>, List<ConfigIdTransfer<O>>> {
 
     /**

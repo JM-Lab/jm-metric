@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  * The type Field map list config id transfer list transformer.
  */
 public class FieldMapListConfigIdTransferListTransformer implements
-        ConfigIdTransferListTransformerFunction<List<String>, List<FieldMap>> {
+        ConfigIdTransferListTransformerInterface<List<String>, List<FieldMap>> {
 
     private static final Logger log = org.slf4j.LoggerFactory
             .getLogger(FieldMapListConfigIdTransferListTransformer.class);
