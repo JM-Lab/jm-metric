@@ -7,8 +7,8 @@ import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
 import kr.jm.metric.publisher.StringListTransferSubmissionPublisherInterface;
-import kr.jm.metric.subscriber.output.FileOutputSubscriber;
-import kr.jm.metric.subscriber.output.FileOutputSubscriberBuilder;
+import kr.jm.metric.subscriber.OutputSubscriber;
+import kr.jm.metric.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.*;
 import org.junit.After;
@@ -79,9 +79,9 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
-        FileOutputSubscriber<ConfigIdTransfer<List<FieldMap>>>
-                fileOutputSubscriber1 = FileOutputSubscriberBuilder
-                .buildJsonString(path1.toAbsolutePath().toString());
+        OutputSubscriber<ConfigIdTransfer<List<FieldMap>>>
+                fileOutputSubscriber1 = OutputSubscriberBuilder
+                .buildFileToJsonString(path1.toAbsolutePath().toString());
 
 
         metricConfigManager

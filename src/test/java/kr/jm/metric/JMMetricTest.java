@@ -8,8 +8,8 @@ import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.processor.FieldMapListTransformerProcessor;
-import kr.jm.metric.subscriber.output.FileOutputSubscriber;
-import kr.jm.metric.subscriber.output.FileOutputSubscriberBuilder;
+import kr.jm.metric.subscriber.OutputSubscriber;
+import kr.jm.metric.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.*;
 import org.junit.After;
@@ -129,9 +129,9 @@ public class JMMetricTest {
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
-        FileOutputSubscriber<ConfigIdTransfer<List<FieldMap>>>
-                fileOutputSubscriber1 = FileOutputSubscriberBuilder
-                .buildJsonString(path1.toAbsolutePath().toString());
+        OutputSubscriber<ConfigIdTransfer<List<FieldMap>>>
+                fileOutputSubscriber1 = OutputSubscriberBuilder
+                .buildFileToJsonString(path1.toAbsolutePath().toString());
         Optional<Path> pathAsOpt2 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test2.txt"));
         assertTrue(pathAsOpt2.isPresent());
@@ -139,11 +139,10 @@ public class JMMetricTest {
         FieldMapListTransformerProcessor
                 fieldMapListTransformerProcessor =
                 new FieldMapListTransformerProcessor();
-        FileOutputSubscriber<List<FieldMap>> fileOutputSubscriber2 =
+        OutputSubscriber<List<FieldMap>> fileOutputSubscriber2 =
                 fieldMapListTransformerProcessor
-                        .subscribeAndReturnSubcriber(FileOutputSubscriberBuilder
-                                .buildJsonStringList(path2.toString(),
-                                        list -> list));
+                        .subscribeAndReturnSubcriber(OutputSubscriberBuilder
+                                .buildFileToJsonString(path2.toString()));
 
         jmMetric.bindDataIdToConfigId(FileName, "apache")
                 .bindDataIdToConfigId(FileName, "apache2");
