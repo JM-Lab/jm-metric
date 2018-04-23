@@ -16,7 +16,7 @@ compile 'kr.jmlab:jm-metric:0.1.0'
 Maven:
 ```xml
 <dependency>
-    <groupId>com.github.jm-lab</groupId>
+    <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
     <version>0.1.0</version>
 </dependency>
