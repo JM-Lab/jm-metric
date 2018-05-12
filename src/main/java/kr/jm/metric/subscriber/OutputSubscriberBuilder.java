@@ -1,9 +1,9 @@
 package kr.jm.metric.subscriber;
 
-import kr.jm.metric.subscriber.output.AbstractStringSubscriberOutput;
-import kr.jm.metric.subscriber.output.FileSubscriberOutput;
-import kr.jm.metric.subscriber.output.StdSubscriberOutput;
-import kr.jm.metric.subscriber.output.SubscriberOutputInterface;
+import kr.jm.metric.subscriber.output.AbstractStringOutput;
+import kr.jm.metric.subscriber.output.FileOutput;
+import kr.jm.metric.subscriber.output.OutputInterface;
+import kr.jm.metric.subscriber.output.StdOutput;
 
 import java.util.function.Consumer;
 
@@ -19,7 +19,7 @@ public class OutputSubscriberBuilder {
      * @return the output subscriber
      */
     public static OutputSubscriber buildFile(String filePath) {
-        return build(new FileSubscriberOutput(filePath));
+        return build(new FileOutput(filePath));
     }
 
     /**
@@ -29,7 +29,7 @@ public class OutputSubscriberBuilder {
      * @return the output subscriber
      */
     public static OutputSubscriber buildFileToJsonString(String filePath) {
-        return build(new FileSubscriberOutput(filePath, true));
+        return build(new FileOutput(filePath, true));
     }
 
     /**
@@ -38,16 +38,16 @@ public class OutputSubscriberBuilder {
      * @return the output subscriber
      */
     public static OutputSubscriber buildStdOutToJsonString() {
-        return build(new StdSubscriberOutput(true));
+        return build(new StdOutput(true));
     }
 
     /**
-     * Build std out abstract string subscriber output.
+     * Build std out abstract string output.
      *
-     * @return the abstract string subscriber output
+     * @return the abstract string output
      */
-    public static AbstractStringSubscriberOutput buildStdOut() {
-        return new StdSubscriberOutput();
+    public static AbstractStringOutput buildStdOut() {
+        return new StdOutput();
     }
 
     /**
@@ -57,9 +57,8 @@ public class OutputSubscriberBuilder {
      * @param writingConsumer the writing consumer
      * @return the output subscriber
      */
-    public static <T> OutputSubscriber<T> build(
-            Consumer<T> writingConsumer) {
-        return build(new SubscriberOutputInterface<T>() {
+    public static <T> OutputSubscriber<T> build(Consumer<T> writingConsumer) {
+        return build(new OutputInterface<>() {
             @Override
             public void writeData(T data) {
                 writingConsumer.accept(data);
@@ -74,12 +73,12 @@ public class OutputSubscriberBuilder {
     /**
      * Build output subscriber.
      *
-     * @param <T>              the type parameter
-     * @param subscriberOutput the subscriber output
+     * @param <T>             the type parameter
+     * @param outputInterface the output interface
      * @return the output subscriber
      */
     public static <T> OutputSubscriber<T> build(
-            SubscriberOutputInterface<T> subscriberOutput) {
-        return new OutputSubscriber<>(subscriberOutput);
+            OutputInterface<T> outputInterface) {
+        return new OutputSubscriber<>(outputInterface);
     }
 }

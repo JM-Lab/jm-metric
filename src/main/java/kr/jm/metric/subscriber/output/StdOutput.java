@@ -3,24 +3,24 @@ package kr.jm.metric.subscriber.output;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * The type Std subscriber output.
+ * The type Std output.
  */
 @Slf4j
-public class StdSubscriberOutput extends AbstractStringSubscriberOutput {
+public class StdOutput extends AbstractStringOutput {
 
     /**
-     * Instantiates a new Std subscriber output.
+     * Instantiates a new Std output.
      */
-    public StdSubscriberOutput() {
+    public StdOutput() {
         this(false);
     }
 
     /**
-     * Instantiates a new Std subscriber output.
+     * Instantiates a new Std output.
      *
      * @param enableJsonString the enable json string
      */
-    public StdSubscriberOutput(boolean enableJsonString) {
+    public StdOutput(boolean enableJsonString) {
         super(enableJsonString);
     }
 

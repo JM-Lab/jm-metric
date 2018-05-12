@@ -1,11 +1,11 @@
 package kr.jm.metric.subscriber.output;
 
 /**
- * The interface Subscriber output interface.
+ * The interface Output interface.
  *
  * @param <T> the type parameter
  */
-public interface SubscriberOutputInterface<T> extends AutoCloseable {
+public interface OutputInterface<T> extends AutoCloseable {
     /**
      * Write data.
      *

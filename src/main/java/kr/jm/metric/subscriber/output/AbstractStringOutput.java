@@ -7,27 +7,27 @@ import lombok.Getter;
 import java.util.function.Function;
 
 /**
- * The type Abstract string subscriber output.
+ * The type Abstract string output.
  */
-public abstract class AbstractStringSubscriberOutput implements
-        SubscriberOutputInterface<Object> {
+public abstract class AbstractStringOutput implements
+        OutputInterface<Object> {
 
     @Getter
     private boolean enableJsonString;
 
     /**
-     * Instantiates a new Abstract string subscriber output.
+     * Instantiates a new Abstract string output.
      */
-    public AbstractStringSubscriberOutput() {
+    public AbstractStringOutput() {
         this(false);
     }
 
     /**
-     * Instantiates a new Abstract string subscriber output.
+     * Instantiates a new Abstract string output.
      *
      * @param enableJsonString the enable json string
      */
-    public AbstractStringSubscriberOutput(boolean enableJsonString) {
+    public AbstractStringOutput(boolean enableJsonString) {
         this.enableJsonString = enableJsonString;
     }
 

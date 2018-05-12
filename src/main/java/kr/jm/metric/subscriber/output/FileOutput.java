@@ -7,29 +7,29 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 
 /**
- * The type File subscriber output.
+ * The type File output.
  */
 @Slf4j
-public class FileSubscriberOutput extends AbstractStringSubscriberOutput {
+public class FileOutput extends AbstractStringOutput {
 
     private JMFileAppender fileAppender;
 
     /**
-     * Instantiates a new File subscriber output.
+     * Instantiates a new File output.
      *
      * @param filePath the file path
      */
-    public FileSubscriberOutput(String filePath) {
+    public FileOutput(String filePath) {
         this(filePath, false);
     }
 
     /**
-     * Instantiates a new File subscriber output.
+     * Instantiates a new File output.
      *
      * @param filePath         the file path
      * @param enableJsonString the enable json string
      */
-    public FileSubscriberOutput(String filePath, boolean enableJsonString) {
+    public FileOutput(String filePath, boolean enableJsonString) {
         super(enableJsonString);
         changeFile(filePath);
     }

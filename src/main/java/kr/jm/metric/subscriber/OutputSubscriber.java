@@ -1,6 +1,6 @@
 package kr.jm.metric.subscriber;
 
-import kr.jm.metric.subscriber.output.SubscriberOutputInterface;
+import kr.jm.metric.subscriber.output.OutputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.subscriber.JMSubscriber;
 import kr.jm.utils.helper.JMLog;
@@ -15,7 +15,7 @@ import java.util.Objects;
 public class OutputSubscriber<T> extends JMSubscriber<T>
         implements AutoCloseable {
 
-    private SubscriberOutputInterface<T> subscriberOutput;
+    private OutputInterface<T> subscriberOutput;
 
     /**
      * Instantiates a new Output subscriber.
@@ -23,7 +23,7 @@ public class OutputSubscriber<T> extends JMSubscriber<T>
      * @param subscriberOutput the subscriber output
      */
     public OutputSubscriber(
-            SubscriberOutputInterface<T> subscriberOutput) {
+            OutputInterface<T> subscriberOutput) {
         this.subscriberOutput = subscriberOutput;
         setDataConsumer(this::write);
     }
