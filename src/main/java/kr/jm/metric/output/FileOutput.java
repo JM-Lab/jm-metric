@@ -1,5 +1,6 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.output.config.FileOutputConfig;
 import kr.jm.utils.JMFileAppender;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,17 +30,7 @@ public class FileOutput extends AbstractStringOutput {
      * @param filePath the file path
      */
     public FileOutput(String filePath) {
-        this(filePath, filePath);
-    }
-
-    /**
-     * Instantiates a new File output.
-     *
-     * @param configId the config id
-     * @param filePath the file path
-     */
-    public FileOutput(String configId, String filePath) {
-        this(configId, filePath, false);
+        this(filePath, false);
     }
 
     /**
@@ -48,20 +39,9 @@ public class FileOutput extends AbstractStringOutput {
      * @param filePath         the file path
      * @param enableJsonString the enable json string
      */
-    public FileOutput(String filePath, boolean enableJsonString) {
-        this(filePath, filePath, enableJsonString);
-    }
-
-    /**
-     * Instantiates a new File output.
-     *
-     * @param configId         the config id
-     * @param filePath         the file path
-     * @param enableJsonString the enable json string
-     */
-    public FileOutput(String configId, String filePath,
+    public FileOutput(String filePath,
             boolean enableJsonString) {
-        this(new FileOutputConfig(configId, enableJsonString, filePath));
+        this(new FileOutputConfig(enableJsonString, filePath));
     }
 
     /**

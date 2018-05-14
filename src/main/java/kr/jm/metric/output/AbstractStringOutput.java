@@ -1,49 +1,40 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.output.config.StringOutputConfig;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMStream;
-import lombok.Getter;
 
 import java.util.function.Function;
 
 /**
  * The type Abstract string output.
  */
-public abstract class AbstractStringOutput implements
-        OutputInterface<Object> {
-
-    /**
-     * The String output config.
-     */
-    @Getter
-    protected StringOutputConfig stringOutputConfig;
+public abstract class AbstractStringOutput extends
+        AbstractOutput<StringOutputConfig, Object> {
 
     /**
      * Instantiates a new Abstract string output.
      *
-     * @param stringOutputConfig the string output config
+     * @param outputConfig the output config
      */
-    public AbstractStringOutput(StringOutputConfig stringOutputConfig) {
-        this.stringOutputConfig = stringOutputConfig;
+    public AbstractStringOutput(StringOutputConfig outputConfig) {
+        super(outputConfig);
+    }
+
+    /**
+     * Instantiates a new Abstract string output.
+     */
+    public AbstractStringOutput() {
+        this(false);
     }
 
     /**
      * Instantiates a new Abstract string output.
      *
-     * @param configId the config id
-     */
-    public AbstractStringOutput(String configId) {
-        this(configId, false);
-    }
-
-    /**
-     * Instantiates a new Abstract string output.
-     *
-     * @param configId         the config id
      * @param enableJsonString the enable json string
      */
-    public AbstractStringOutput(String configId, boolean enableJsonString) {
-        this(new StringOutputConfig(configId, enableJsonString));
+    public AbstractStringOutput(boolean enableJsonString) {
+        this(new StringOutputConfig(enableJsonString));
     }
 
     /**
@@ -52,15 +43,8 @@ public abstract class AbstractStringOutput implements
      * @return the boolean
      */
     public boolean isEnableJsonString() {
-        return stringOutputConfig.isEnableJsonString();
+        return outputConfig.isEnableJsonString();
     }
-
-    /**
-     * Gets config id.
-     *
-     * @return the config id
-     */
-    public String getConfigId() {return stringOutputConfig.getConfigId();}
 
     @Override
     public void writeData(Object data) {

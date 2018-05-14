@@ -1,4 +1,4 @@
-package kr.jm.metric.output;
+package kr.jm.metric.output.config;
 
 import java.util.Map;
 

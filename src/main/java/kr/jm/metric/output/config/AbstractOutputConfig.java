@@ -1,4 +1,4 @@
-package kr.jm.metric.output;
+package kr.jm.metric.output.config;
 
 import kr.jm.utils.helper.JMLambda;
 import lombok.Getter;
@@ -13,18 +13,21 @@ import java.util.Map;
 @ToString
 public abstract class AbstractOutputConfig implements OutputConfigInterface {
 
+    /**
+     * The Config id.
+     */
     @Getter
-    private String configId;
-    private Map<String, Object> config;
+    protected String configId;
+    /**
+     * The Config.
+     */
+    protected Map<String, Object> config;
     private Map<String, Object> configWithAll;
 
     /**
      * Instantiates a new Abstract output config.
-     *
-     * @param configId the config id
      */
-    public AbstractOutputConfig(String configId) {
-        this.configId = configId;
+    protected AbstractOutputConfig() {
     }
 
     @Override

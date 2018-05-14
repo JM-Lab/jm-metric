@@ -21,7 +21,7 @@ public class StdOutput extends AbstractStringOutput {
      * @param enableJsonString the enable json string
      */
     public StdOutput(boolean enableJsonString) {
-        super("StdOutput", enableJsonString);
+        super(enableJsonString);
     }
 
     @Override
