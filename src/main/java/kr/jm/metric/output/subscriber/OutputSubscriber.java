@@ -1,6 +1,6 @@
-package kr.jm.metric.subscriber;
+package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.subscriber.output.OutputInterface;
+import kr.jm.metric.output.OutputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.subscriber.JMSubscriber;
 import kr.jm.utils.helper.JMLog;

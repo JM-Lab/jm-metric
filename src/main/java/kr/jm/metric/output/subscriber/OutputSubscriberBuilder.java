@@ -1,9 +1,9 @@
-package kr.jm.metric.subscriber;
+package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.subscriber.output.AbstractStringOutput;
-import kr.jm.metric.subscriber.output.FileOutput;
-import kr.jm.metric.subscriber.output.OutputInterface;
-import kr.jm.metric.subscriber.output.StdOutput;
+import kr.jm.metric.output.AbstractStringOutput;
+import kr.jm.metric.output.FileOutput;
+import kr.jm.metric.output.OutputInterface;
+import kr.jm.metric.output.StdOutput;
 
 import java.util.function.Consumer;
 

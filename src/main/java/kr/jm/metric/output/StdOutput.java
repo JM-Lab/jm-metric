@@ -1,4 +1,4 @@
-package kr.jm.metric.subscriber.output;
+package kr.jm.metric.output;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ public class StdOutput extends AbstractStringOutput {
      * @param enableJsonString the enable json string
      */
     public StdOutput(boolean enableJsonString) {
-        super(enableJsonString);
+        super("StdOutput", enableJsonString);
     }
 
     @Override

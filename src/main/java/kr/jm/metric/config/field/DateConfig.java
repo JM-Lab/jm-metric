@@ -44,7 +44,7 @@ public class DateConfig {
                                 dateFormatType.convertToEpoch(this, value),
                                 format, Optional.ofNullable(
                                         changeDateConfig.getZoneOffset())
-                                        .orElse(JMTimeUtil.DEFAULT_ZONE_ID_STRING)))
+                                        .orElse(JMTimeUtil.DEFAULT_ZONE_ID)))
                         .map(s -> (Object) s).orElse(value);
             default:
                 return value;

@@ -36,6 +36,8 @@
         <java.version>9</java.version>
         <junit.version>4.12</junit.version>
         <jmlab-utils-java9.version>0.1.2-SNAPSHOT</jmlab-utils-java9.version>
+        <jmlab-utils-elasticsearch.version>0.6.2.4-SNAPSHOT
+        </jmlab-utils-elasticsearch.version>
         <slf4j.version>1.7.25</slf4j.version>
         <lombok.version>1.16.20</lombok.version>
     </properties>
@@ -140,9 +142,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.jm-lab</groupId>
+            <groupId>kr.jmlab</groupId>
             <artifactId>jmlab-utils-java9</artifactId>
             <version>${jmlab-utils-java9.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>kr.jmlab</groupId>
+            <artifactId>jmlab-utils-elasticsearch</artifactId>
+            <version>${jmlab-utils-elasticsearch.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

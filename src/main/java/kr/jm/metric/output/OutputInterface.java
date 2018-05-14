@@ -1,4 +1,4 @@
-package kr.jm.metric.subscriber.output;
+package kr.jm.metric.output;
 
 /**
  * The interface Output interface.
