@@ -1,6 +1,6 @@
 package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.output.AbstractStringOutput;
+import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.metric.output.StdOutput;
@@ -18,8 +18,8 @@ public class OutputSubscriberBuilder {
      * @param filePath the file path
      * @return the output subscriber
      */
-    public static OutputSubscriber buildFile(String filePath) {
-        return build(new FileOutput(filePath));
+    public static <T> OutputSubscriber<T> buildFile(String filePath) {
+        return build(new FileOutput<>(filePath));
     }
 
     /**
@@ -28,8 +28,9 @@ public class OutputSubscriberBuilder {
      * @param filePath the file path
      * @return the output subscriber
      */
-    public static OutputSubscriber buildFileToJsonString(String filePath) {
-        return build(new FileOutput(filePath, true));
+    public static <T> OutputSubscriber<T> buildJsonStringFile(
+            String filePath) {
+        return build(new FileOutput<>(filePath, true));
     }
 
     /**
@@ -37,8 +38,8 @@ public class OutputSubscriberBuilder {
      *
      * @return the output subscriber
      */
-    public static OutputSubscriber buildStdOutToJsonString() {
-        return build(new StdOutput(true));
+    public static <T> OutputSubscriber<T> buildJsonStringStdOut() {
+        return build(new StdOutput<>(true));
     }
 
     /**
@@ -46,8 +47,8 @@ public class OutputSubscriberBuilder {
      *
      * @return the abstract string output
      */
-    public static AbstractStringOutput buildStdOut() {
-        return new StdOutput();
+    public static <T> OutputSubscriber<T> buildStdOut() {
+        return build(new StdOutput<>());
     }
 
     /**
@@ -57,10 +58,11 @@ public class OutputSubscriberBuilder {
      * @param writingConsumer the writing consumer
      * @return the output subscriber
      */
-    public static <T> OutputSubscriber<T> build(Consumer<T> writingConsumer) {
+    public static <T> OutputSubscriber<T> build(
+            Consumer<ConfigIdTransfer<T>> writingConsumer) {
         return build(new OutputInterface<>() {
             @Override
-            public void writeData(T data) {
+            public void writeData(ConfigIdTransfer<T> data) {
                 writingConsumer.accept(data);
             }
 

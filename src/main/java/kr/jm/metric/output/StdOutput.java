@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
  * The type Std output.
  */
 @Slf4j
-public class StdOutput extends AbstractStringOutput {
+public class StdOutput<T> extends AbstractStringOutput<T> {
 
     /**
      * Instantiates a new Std output.

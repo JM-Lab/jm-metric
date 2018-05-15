@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Flow;
+import java.util.stream.Collectors;
 
 import static kr.jm.utils.flow.processor.JMTransformProcessorBuilder.buildCollectionEach;
 
@@ -78,16 +79,24 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
                                 metricConfigManager));
         this.outputFieldMapListConfigIdTransferProcessor =
                 this.concurrentTransformProcessor.subscribeAndReturnProcessor(
-                        buildCollectionEach(this::buildFinalMeta));
+                        buildCollectionEach(this::buildFieldMapWithMeta));
     }
 
-    private ConfigIdTransfer<List<FieldMap>> buildFinalMeta(
+    private ConfigIdTransfer<List<FieldMap>> buildFieldMapWithMeta(
+            ConfigIdTransfer<List<FieldMap>> configIdTransfer) {
+        putFinalMeta(configIdTransfer);
+        return configIdTransfer.newWith(
+                configIdTransfer.newStreamWith(configIdTransfer.getData())
+                        .map(ConfigIdTransfer::buildFieldMapWithMeta)
+                        .collect(Collectors.toList()));
+    }
+
+    private void putFinalMeta(
             ConfigIdTransfer<List<FieldMap>> fieldMapListConfigIdTransfer) {
         Optional.ofNullable(fieldMapListConfigIdTransfer.getFieldMeta())
                 .map(FieldMeta::extractFieldMetaMap)
                 .ifPresent(extractFlatMap -> fieldMapListConfigIdTransfer
                         .putMeta("field", extractFlatMap));
-        return fieldMapListConfigIdTransfer;
     }
 
     @Override

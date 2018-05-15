@@ -40,6 +40,11 @@ public class ConfigIdTransfer<T> extends Transfer<T> {
         this.fieldMeta = fieldMeta;
     }
 
+    @Override
+    public <D> ConfigIdTransfer<D> newWith(D data) {
+        return newWith(super.newWith(data));
+    }
+
     /**
      * New with config id transfer.
      *

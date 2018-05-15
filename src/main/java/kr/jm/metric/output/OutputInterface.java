@@ -1,5 +1,7 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.data.ConfigIdTransfer;
+
 /**
  * The interface Output interface.
  *
@@ -11,5 +13,5 @@ public interface OutputInterface<T> extends AutoCloseable {
      *
      * @param data the data
      */
-    void writeData(T data);
+    void writeData(ConfigIdTransfer<T> data);
 }

@@ -1,5 +1,6 @@
 package kr.jm.metric;
 
+import kr.jm.metric.data.Transfer;
 import kr.jm.metric.publisher.input.StdInLineInputPublisher;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
@@ -39,7 +40,9 @@ public class JMMetricMain {
                 .ifPresent(jmMetric::loadConfig);
         jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
         jmMetric.subscribeAndReturnSubcriber(
-                JMTransformProcessorBuilder.buildCollectionEach())
+                JMTransformProcessorBuilder.build(Transfer::getData))
+                .subscribeAndReturnSubcriber(
+                        JMTransformProcessorBuilder.buildCollectionEach())
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         stdInLineInputPublisher.start();
         log.info("==== Config List ====");

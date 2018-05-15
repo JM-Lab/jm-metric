@@ -2,6 +2,7 @@ package kr.jm.metric.output;
 
 import kr.jm.metric.output.config.OutputConfigInterface;
 import lombok.Getter;
+import org.slf4j.Logger;
 
 /**
  * The type Abstract output.
@@ -12,6 +13,7 @@ import lombok.Getter;
 public abstract class AbstractOutput<C extends OutputConfigInterface, T> implements
         OutputInterface<T> {
 
+    protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     /**
      * The Output config.
      */

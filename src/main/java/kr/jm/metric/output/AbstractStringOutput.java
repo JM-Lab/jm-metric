@@ -1,5 +1,6 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.config.StringOutputConfig;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMStream;
@@ -9,8 +10,10 @@ import java.util.function.Function;
 /**
  * The type Abstract string output.
  */
-public abstract class AbstractStringOutput extends
-        AbstractOutput<StringOutputConfig, Object> {
+public abstract class AbstractStringOutput<T> extends
+        AbstractOutput<StringOutputConfig, T> {
+
+    private Function<Object, String> toStringFunction;
 
     /**
      * Instantiates a new Abstract string output.
@@ -19,6 +22,8 @@ public abstract class AbstractStringOutput extends
      */
     public AbstractStringOutput(StringOutputConfig outputConfig) {
         super(outputConfig);
+        this.toStringFunction = outputConfig
+                .isEnableJsonString() ? JMJson::toJsonString : Object::toString;
     }
 
     /**
@@ -47,16 +52,8 @@ public abstract class AbstractStringOutput extends
     }
 
     @Override
-    public void writeData(Object data) {
-        if (isEnableJsonString())
-            writeToString(data, JMJson::toJsonString);
-        else
-            writeToString(data, Object::toString);
-    }
-
-    private void writeToString(Object data, Function<Object, String>
-            toStringFunction) {
-        JMStream.buildStream(data).map(toStringFunction::apply)
+    public void writeData(ConfigIdTransfer<T> data) {
+        JMStream.buildStream(data.getData()).map(toStringFunction::apply)
                 .forEach(this::writeString);
     }
 

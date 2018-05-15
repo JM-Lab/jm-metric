@@ -5,11 +5,9 @@ import kr.jm.metric.config.DelimiterMetricConfig;
 import kr.jm.metric.config.MetricConfig;
 import kr.jm.metric.config.field.DateFormatType;
 import kr.jm.metric.config.field.FieldConfig;
-import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
-import kr.jm.metric.processor.FieldMapListTransformerProcessor;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.*;
 import org.junit.After;
@@ -129,34 +127,23 @@ public class JMMetricTest {
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
-        OutputSubscriber<ConfigIdTransfer<List<FieldMap>>>
-                fileOutputSubscriber1 = OutputSubscriberBuilder
-                .buildFileToJsonString(path1.toAbsolutePath().toString());
+        OutputSubscriber<List<FieldMap>> fileOutputSubscriber1 =
+                OutputSubscriberBuilder
+                        .buildJsonStringFile(path1.toAbsolutePath().toString());
         Optional<Path> pathAsOpt2 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test2.txt"));
         assertTrue(pathAsOpt2.isPresent());
-        Path path2 = pathAsOpt2.get();
-        FieldMapListTransformerProcessor
-                fieldMapListTransformerProcessor =
-                new FieldMapListTransformerProcessor();
-        OutputSubscriber<List<FieldMap>> fileOutputSubscriber2 =
-                fieldMapListTransformerProcessor
-                        .subscribeAndReturnSubcriber(OutputSubscriberBuilder
-                                .buildFileToJsonString(path2.toString()));
 
         jmMetric.bindDataIdToConfigId(FileName, "apache")
                 .bindDataIdToConfigId(FileName, "apache2");
         jmMetric.subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
+                .subscribeWith(fileOutputSubscriber1)
                 .consumeWith(fieldMapList -> count.increment())
-                .consumeWith(fieldMapList -> lineCount.add(fieldMapList.stream()
-                        .count()));
-        jmMetric.subscribeConfigIdTransferWith(fileOutputSubscriber1)
-                .subscribeConfigIdTransferWith(
-                        fieldMapListTransformerProcessor);
+                .consumeWith(fieldMapList -> lineCount
+                        .add(fieldMapList.getData().stream().count()));
         jmMetric.inputClasspath(FileName);
         JMThread.sleep(3000);
         fileOutputSubscriber1.close();
-        fileOutputSubscriber2.close();
         jmMetric.close();
         System.out.println(count);
         assertEquals(22, count.longValue());
@@ -166,12 +153,7 @@ public class JMMetricTest {
         System.out.println(JMFiles.readString(path1));
         List<String> readLineList = JMFiles.readLines(path1);
         System.out.println(readLineList.size());
-        assertEquals(22, readLineList.size());
-
-        System.out.println(JMFiles.readString(path2));
-        List<String> readLineList2 = JMFiles.readLines(path2);
-        System.out.println(readLineList2.size());
-        assertEquals(2048, readLineList2.size());
+        assertEquals(2048, readLineList.size());
 
     }
 

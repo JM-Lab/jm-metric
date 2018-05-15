@@ -53,7 +53,7 @@ public class JMMetricSampleTest {
                 JMTransformProcessorBuilder.build(t -> t.getData()
                         .stream().map(fieldMap -> fieldMap.extractRawData())
                         .flatMap(JMWordSplitter::splitAsStream));
-        jmMetric.subscribeConfigIdTransferWith(wordStreamProcessor);
+        jmMetric.subscribeWith(wordStreamProcessor);
         wordStreamProcessor
                 .subscribeAndReturnProcessor(JMTransformProcessorBuilder
                 .build(WordCountGenerator::buildCountMap))

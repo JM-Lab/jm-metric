@@ -10,7 +10,7 @@ import java.nio.file.Path;
  * The type File output.
  */
 @Slf4j
-public class FileOutput extends AbstractStringOutput {
+public class FileOutput<T> extends AbstractStringOutput<T> {
 
     private JMFileAppender fileAppender;
 

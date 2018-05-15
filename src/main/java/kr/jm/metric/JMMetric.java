@@ -4,7 +4,6 @@ import kr.jm.metric.config.MetricConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.processor.FieldMapListConfigIdTransferTransformProcessor;
-import kr.jm.metric.processor.FieldMapListTransformerProcessor;
 import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
 import kr.jm.metric.publisher.StringListTransferSubmissionPublisher;
 import kr.jm.metric.publisher.StringListTransferSubmissionPublisherInterface;
@@ -23,8 +22,8 @@ import java.util.concurrent.Flow;
 /**
  * The type Jm metric.
  */
-public class JMMetric implements JMPublisherInterface<List<FieldMap>>,
-        AutoCloseable {
+public class JMMetric implements
+        JMPublisherInterface<ConfigIdTransfer<List<FieldMap>>>, AutoCloseable {
     private static final Logger log =
             org.slf4j.LoggerFactory.getLogger(JMMetric.class);
     private static final String METRIC_CONFIG_URL =
@@ -38,7 +37,7 @@ public class JMMetric implements JMPublisherInterface<List<FieldMap>>,
             stringListTransferSubmissionPublisher;
     private FieldMapListConfigIdTransferTransformProcessor
             fieldMapListConfigIdTransferTransformProcessor;
-    private FieldMapListTransformerProcessor fieldMapListTransformerProcessor;
+//    private FieldMapListTransformerProcessor fieldMapListTransformerProcessor;
 
     /**
      * The entry point of application.
@@ -308,35 +307,41 @@ public class JMMetric implements JMPublisherInterface<List<FieldMap>>,
         stringListTransferSubmissionPublisher.submit(dataId, List.of(data));
     }
 
-    @Override
-    public void subscribe(Flow.Subscriber<? super List<FieldMap>> subscriber) {
-        getFieldMapListTransformerProcessor().subscribe(subscriber);
-    }
-
-    private FieldMapListTransformerProcessor getFieldMapListTransformerProcessor() {
-        return JMLambda.supplierIfNull(this.fieldMapListTransformerProcessor,
-                () -> this.fieldMapListTransformerProcessor =
-                        fieldMapListConfigIdTransferTransformProcessor
-                                .subscribeAndReturnProcessor(
-                                        new FieldMapListTransformerProcessor()));
-
-    }
-
-    /**
-     * Subscribe config id transfer with jm metric.
-     *
-     * @param subscriber the subscriber
-     * @return the jm metric
-     */
-    public JMMetric subscribeConfigIdTransferWith(
-            Flow.Subscriber<? super ConfigIdTransfer<List<FieldMap>>> subscriber) {
-        fieldMapListConfigIdTransferTransformProcessor.subscribe(subscriber);
-        return this;
-    }
+//    @Override
+//    public void subscribe(Flow.Subscriber<? super List<FieldMap>> subscriber) {
+//        getFieldMapListTransformerProcessor().subscribe(subscriber);
+//    }
+//
+//    private FieldMapListTransformerProcessor getFieldMapListTransformerProcessor() {
+//        return JMLambda.supplierIfNull(this.fieldMapListTransformerProcessor,
+//                () -> this.fieldMapListTransformerProcessor =
+//                        fieldMapListConfigIdTransferTransformProcessor
+//                                .subscribeAndReturnProcessor(
+//                                        new FieldMapListTransformerProcessor()));
+//
+//    }
+//
+//    /**
+//     * Subscribe config id transfer with jm metric.
+//     *
+//     * @param subscriber the subscriber
+//     * @return the jm metric
+//     */
+//    public JMMetric subscribeConfigIdTransferWith(
+//            Flow.Subscriber<? super ConfigIdTransfer<List<FieldMap>>> subscriber) {
+//        subscribe(subscriber);
+//        return this;
+//    }
 
     @Override
     public void close() throws RuntimeException {
         JMLog.info(log, "close");
         fieldMapListConfigIdTransferTransformProcessor.close();
+    }
+
+    @Override
+    public void subscribe(
+            Flow.Subscriber<? super ConfigIdTransfer<List<FieldMap>>> subscriber) {
+        fieldMapListConfigIdTransferTransformProcessor.subscribe(subscriber);
     }
 }

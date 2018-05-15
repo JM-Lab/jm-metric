@@ -1,5 +1,6 @@
 package kr.jm.metric.output.subscriber;
 
+import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.subscriber.JMSubscriber;
@@ -12,7 +13,7 @@ import java.util.Objects;
  *
  * @param <T> the type parameter
  */
-public class OutputSubscriber<T> extends JMSubscriber<T>
+public class OutputSubscriber<T> extends JMSubscriber<ConfigIdTransfer<T>>
         implements AutoCloseable {
 
     private OutputInterface<T> subscriberOutput;
@@ -22,8 +23,7 @@ public class OutputSubscriber<T> extends JMSubscriber<T>
      *
      * @param subscriberOutput the subscriber output
      */
-    public OutputSubscriber(
-            OutputInterface<T> subscriberOutput) {
+    public OutputSubscriber(OutputInterface<T> subscriberOutput) {
         this.subscriberOutput = subscriberOutput;
         setDataConsumer(this::write);
     }
@@ -38,7 +38,7 @@ public class OutputSubscriber<T> extends JMSubscriber<T>
         }
     }
 
-    private void write(T data) {
+    private void write(ConfigIdTransfer<T> data) {
         if (Objects.isNull(data)) {
             JMLog.debug(log, "write", data);
             return;
