@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static kr.jm.utils.helper.JMString.PIPE;
 
 /**
- * The type Field config.
+ * The type Field properties.
  */
 @Getter
 @ToString(callSuper = true)
@@ -54,7 +54,7 @@ public class FieldConfig extends FieldMeta {
     protected Map<String, DateConfig> dateFormat;
 
     /**
-     * Instantiates a new Field config.
+     * Instantiates a new Field properties.
      *
      * @param format     the format
      * @param rawData    the raw data
@@ -80,7 +80,7 @@ public class FieldConfig extends FieldMeta {
     }
 
     /**
-     * Apply config map.
+     * Apply properties map.
      *
      * @param fieldObjectMap the field object map
      * @return the map

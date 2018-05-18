@@ -1,6 +1,8 @@
 package kr.jm.metric.data;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
  */
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transfer<T> {
     /**
      * The constant META.
@@ -50,12 +53,6 @@ public class Transfer<T> {
      * The Meta.
      */
     protected Map<String, Object> meta;
-
-    /**
-     * Instantiates a new Transfer.
-     */
-    protected Transfer() {
-    }
 
     /**
      * Instantiates a new Transfer.

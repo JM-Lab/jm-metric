@@ -1,7 +1,7 @@
 package kr.jm.metric.config;
 
-import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.metric.builder.FormattedFieldMapBuilder;
+import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.utils.datastructure.JMArrays;
 import lombok.ToString;
 
@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * The type Formatted metric config.
+ * The type Formatted metric properties.
  */
 @ToString(callSuper = true)
 public class FormattedMetricConfig extends MetricConfig {
@@ -17,15 +17,15 @@ public class FormattedMetricConfig extends MetricConfig {
     private Map<String, String> fieldNameMap;
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      */
     protected FormattedMetricConfig() {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId the config id
+     * @param configId the properties id
      * @param format   the format
      */
     public FormattedMetricConfig(String configId, String format) {
@@ -33,11 +33,11 @@ public class FormattedMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId    the config id
+     * @param configId    the properties id
      * @param format      the format
-     * @param fieldConfig the field config
+     * @param fieldConfig the field properties
      */
     public FormattedMetricConfig(String configId, String format,
             FieldConfig fieldConfig) {
@@ -45,9 +45,9 @@ public class FormattedMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId     the config id
+     * @param configId     the properties id
      * @param format       the format
      * @param fieldNameMap the field name map
      */
@@ -57,12 +57,12 @@ public class FormattedMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId     the config id
+     * @param configId     the properties id
      * @param format       the format
      * @param fieldNameMap the field name map
-     * @param fieldConfig  the field config
+     * @param fieldConfig  the field properties
      */
     public FormattedMetricConfig(String configId, String format,
             Map<String, String> fieldNameMap, FieldConfig fieldConfig) {
@@ -71,12 +71,12 @@ public class FormattedMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId         the config id
-     * @param metricConfigType the metric config type
+     * @param configId         the properties id
+     * @param metricConfigType the metric properties type
      * @param format           the format
-     * @param fieldConfig      the field config
+     * @param fieldConfig      the field properties
      */
     public FormattedMetricConfig(String configId,
             MetricConfigType metricConfigType, String format,
@@ -86,13 +86,13 @@ public class FormattedMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Formatted metric config.
+     * Instantiates a new Formatted metric properties.
      *
-     * @param configId         the config id
-     * @param metricConfigType the metric config type
+     * @param configId         the properties id
+     * @param metricConfigType the metric properties type
      * @param format           the format
      * @param fieldNameMap     the field name map
-     * @param fieldConfig      the field config
+     * @param fieldConfig      the field properties
      */
     public FormattedMetricConfig(String configId,
             MetricConfigType metricConfigType, String format,

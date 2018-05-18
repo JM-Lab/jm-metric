@@ -1,16 +1,19 @@
 package kr.jm.metric.output.config;
 
 import kr.jm.utils.helper.JMLambda;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The type Abstract output config.
+ * The type Abstract output properties.
  */
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractOutputConfig implements OutputConfigInterface {
 
     /**
@@ -21,34 +24,28 @@ public abstract class AbstractOutputConfig implements OutputConfigInterface {
     /**
      * The Config.
      */
-    protected Map<String, Object> config;
-    private Map<String, Object> configWithAll;
-
-    /**
-     * Instantiates a new Abstract output config.
-     */
-    protected AbstractOutputConfig() {
-    }
+    protected Map<String, Object> properties;
+    private Map<String, Object> configMap;
 
     @Override
-    public Map<String, Object> getConfigWithAll() {
+    public Map<String, Object> extractConfigMap() {
         return JMLambda
-                .supplierIfNull(this.configWithAll,
-                        () -> this.configWithAll = new HashMap<>() {{
-                            putAll(getConfig());
+                .supplierIfNull(this.configMap,
+                        () -> this.configMap = new HashMap<>() {{
+                            putAll(getProperties());
                             putAll(buildChildConfig());
                             put("configId", configId);
                         }});
     }
 
     @Override
-    public Map<String, Object> getConfig() {
-        return JMLambda.supplierIfNull(this.config,
-                () -> this.config = new HashMap<>());
+    public Map<String, Object> getProperties() {
+        return JMLambda.supplierIfNull(this.properties,
+                () -> this.properties = new HashMap<>());
     }
 
     /**
-     * Build child config map.
+     * Build child properties map.
      *
      * @return the map
      */

@@ -5,7 +5,7 @@ import kr.jm.metric.builder.FieldMapBuilderInterface;
 import kr.jm.utils.helper.JMJson;
 
 /**
- * The interface Metric config type interface.
+ * The interface Metric properties type interface.
  */
 public interface MetricConfigTypeInterface {
     /**
@@ -28,7 +28,7 @@ public interface MetricConfigTypeInterface {
      * Transform t.
      *
      * @param <T>          the type parameter
-     * @param metricConfig the metric config
+     * @param metricConfig the metric properties
      * @return the t
      */
     default <T extends MetricConfig> T transform(Object metricConfig) {

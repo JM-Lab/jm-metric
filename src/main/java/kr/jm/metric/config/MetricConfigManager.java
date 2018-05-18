@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * The type Metric config manager.
+ * The type Metric properties manager.
  */
 public class MetricConfigManager {
     private static final Logger log =
@@ -27,16 +27,16 @@ public class MetricConfigManager {
     private ObjectMapper configObjectMapper;
 
     /**
-     * Instantiates a new Metric config manager.
+     * Instantiates a new Metric properties manager.
      */
     public MetricConfigManager() {
         this.dataIdConfigIdSetMap = new HashMap<>();
     }
 
     /**
-     * Instantiates a new Metric config manager.
+     * Instantiates a new Metric properties manager.
      *
-     * @param configMaps the config maps
+     * @param configMaps the properties maps
      */
     @SafeVarargs
     public MetricConfigManager(Map<String, Object>... configMaps) {
@@ -46,9 +46,9 @@ public class MetricConfigManager {
     }
 
     /**
-     * Instantiates a new Metric config manager.
+     * Instantiates a new Metric properties manager.
      *
-     * @param configList the config list
+     * @param configList the properties list
      */
     public MetricConfigManager(List<MetricConfig> configList) {
         this();
@@ -56,10 +56,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Insert config list metric config manager.
+     * Insert properties list metric properties manager.
      *
-     * @param metricConfigList the metric config list
-     * @return the metric config manager
+     * @param metricConfigList the metric properties list
+     * @return the metric properties manager
      */
     public MetricConfigManager insertConfigList(
             List<MetricConfig> metricConfigList) {
@@ -71,10 +71,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Insert config map list metric config manager.
+     * Insert properties map list metric properties manager.
      *
-     * @param metricConfigMapList the metric config map list
-     * @return the metric config manager
+     * @param metricConfigMapList the metric properties map list
+     * @return the metric properties manager
      */
     public MetricConfigManager insertConfigMapList(
             List<Map<String, Object>> metricConfigMapList) {
@@ -85,10 +85,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Transform to config metric config.
+     * Transform to properties metric properties.
      *
-     * @param metricConfigMap the metric config map
-     * @return the metric config
+     * @param metricConfigMap the metric properties map
+     * @return the metric properties
      */
     public static MetricConfig transformToConfig(
             Map<String, Object> metricConfigMap) {
@@ -112,11 +112,11 @@ public class MetricConfigManager {
     }
 
     /**
-     * Bind data id to config id metric config manager.
+     * Bind data id to properties id metric properties manager.
      *
      * @param dataId   the data id
-     * @param configId the config id
-     * @return the metric config manager
+     * @param configId the properties id
+     * @return the metric properties manager
      */
     public MetricConfigManager bindDataIdToConfigId(String dataId,
             String configId) {
@@ -137,10 +137,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Gets config list with data id.
+     * Gets properties list with data id.
      *
      * @param dataId the data id
-     * @return the config list with data id
+     * @return the properties list with data id
      */
     public List<MetricConfig> getConfigListWithDataId(String dataId) {
         return getConfigIdList(dataId).stream().map(this::getConfig)
@@ -148,10 +148,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Gets config id list.
+     * Gets properties id list.
      *
      * @param dataId the data id
-     * @return the config id list
+     * @return the properties id list
      */
     public List<String> getConfigIdList(String dataId) {
         return JMOptional.getOptional(this.dataIdConfigIdSetMap, dataId)
@@ -166,29 +166,29 @@ public class MetricConfigManager {
     }
 
     /**
-     * Gets config id set.
+     * Gets properties id set.
      *
-     * @return the config id set
+     * @return the properties id set
      */
     public Set<String> getConfigIdSet() {
         return Collections.unmodifiableSet(this.metricConfigMap.keySet());
     }
 
     /**
-     * Gets config.
+     * Gets properties.
      *
-     * @param configId the config id
-     * @return the config
+     * @param configId the properties id
+     * @return the properties
      */
     public MetricConfig getConfig(String configId) {
         return getOrNewConfigMap().get(configId);
     }
 
     /**
-     * Remove data id metric config manager.
+     * Remove data id metric properties manager.
      *
      * @param dataId the data id
-     * @return the metric config manager
+     * @return the metric properties manager
      */
     public MetricConfigManager removeDataId(String dataId) {
         Optional.ofNullable(this.dataIdConfigIdSetMap.remove(dataId)).stream()
@@ -199,9 +199,9 @@ public class MetricConfigManager {
     }
 
     /**
-     * Gets config list.
+     * Gets properties list.
      *
-     * @return the config list
+     * @return the properties list
      */
     public List<MetricConfig> getConfigList() {
         return Collections
@@ -210,10 +210,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Insert config metric config.
+     * Insert properties metric properties.
      *
-     * @param metricConfig the metric config
-     * @return the metric config
+     * @param metricConfig the metric properties
+     * @return the metric properties
      */
     public MetricConfig insertConfig(MetricConfig metricConfig) {
         JMLog.info(log, "insertConfig", metricConfig);
@@ -230,28 +230,28 @@ public class MetricConfigManager {
     }
 
     /**
-     * Gets data id config id set map.
+     * Gets data id properties id set map.
      *
-     * @return the data id config id set map
+     * @return the data id properties id set map
      */
     public Map<String, Set<String>> getDataIdConfigIdSetMap() {
         return Collections.unmodifiableMap(this.dataIdConfigIdSetMap);
     }
 
     /**
-     * Gets config map.
+     * Gets properties map.
      *
-     * @return the config map
+     * @return the properties map
      */
     public Map<String, MetricConfig> getConfigMap() {
         return Collections.unmodifiableMap(this.metricConfigMap);
     }
 
     /**
-     * Load config metric config manager.
+     * Load properties metric properties manager.
      *
-     * @param jmMetricConfigUrl the jm metric config url
-     * @return the metric config manager
+     * @param jmMetricConfigUrl the jm metric properties url
+     * @return the metric properties manager
      */
     public MetricConfigManager loadConfig(String jmMetricConfigUrl) {
         try {
@@ -275,10 +275,10 @@ public class MetricConfigManager {
     }
 
     /**
-     * Load config metric config manager.
+     * Load properties metric properties manager.
      *
-     * @param metricConfigMapList the metric config map list
-     * @return the metric config manager
+     * @param metricConfigMapList the metric properties map list
+     * @return the metric properties manager
      */
     public MetricConfigManager loadConfig(
             List<Map<String, Object>> metricConfigMapList) {

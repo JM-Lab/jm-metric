@@ -4,6 +4,7 @@ import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.metric.output.StdOutput;
+import kr.jm.metric.output.config.OutputConfigInterface;
 
 import java.util.function.Consumer;
 
@@ -64,6 +65,11 @@ public class OutputSubscriberBuilder {
             @Override
             public void writeData(ConfigIdTransfer<T> data) {
                 writingConsumer.accept(data);
+            }
+
+            @Override
+            public <C extends OutputConfigInterface> C getOutputConfig() {
+                return null;
             }
 
             @Override

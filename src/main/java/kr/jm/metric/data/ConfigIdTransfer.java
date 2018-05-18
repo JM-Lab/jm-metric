@@ -1,7 +1,9 @@
 package kr.jm.metric.data;
 
 import kr.jm.metric.config.field.FieldMeta;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.stream.Stream;
  */
 @Getter
 @ToString(callSuper = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConfigIdTransfer<T> extends Transfer<T> {
 
     /**
@@ -28,7 +31,7 @@ public class ConfigIdTransfer<T> extends Transfer<T> {
     /**
      * Instantiates a new Config id transfer.
      *
-     * @param configId  the config id
+     * @param configId  the properties id
      * @param fieldMeta the field meta
      * @param transfer  the transfer
      */
@@ -46,11 +49,11 @@ public class ConfigIdTransfer<T> extends Transfer<T> {
     }
 
     /**
-     * New with config id transfer.
+     * New with properties id transfer.
      *
      * @param <D>      the type parameter
      * @param transfer the transfer
-     * @return the config id transfer
+     * @return the properties id transfer
      */
     public <D> ConfigIdTransfer<D> newWith(Transfer<D> transfer) {
         return new ConfigIdTransfer<>(this.configId, this.fieldMeta,

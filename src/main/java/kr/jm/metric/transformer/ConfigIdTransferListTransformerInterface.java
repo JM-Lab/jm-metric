@@ -21,17 +21,17 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     /**
      * Transform o.
      *
-     * @param metricConfig the metric config
+     * @param metricConfig the metric properties
      * @param data         the data
      * @return the o
      */
     O transform(MetricConfig metricConfig, I data);
 
     /**
-     * Gets input config list.
+     * Gets input properties list.
      *
      * @param dataId the data id
-     * @return the input config list
+     * @return the input properties list
      */
     List<MetricConfig> getInputConfigList(String dataId);
 

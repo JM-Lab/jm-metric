@@ -7,7 +7,7 @@ public interface DateFormatTypeInterface {
     /**
      * Convert to iso string.
      *
-     * @param dateConfig the date config
+     * @param dateConfig the date properties
      * @param data       the data
      * @return the string
      */
@@ -16,7 +16,7 @@ public interface DateFormatTypeInterface {
     /**
      * Convert to epoch long.
      *
-     * @param dateConfig the date config
+     * @param dateConfig the date properties
      * @param data       the data
      * @return the long
      */

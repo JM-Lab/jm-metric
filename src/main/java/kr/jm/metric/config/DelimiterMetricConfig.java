@@ -4,7 +4,7 @@ import kr.jm.metric.config.field.FieldConfig;
 import lombok.ToString;
 
 /**
- * The type Delimiter metric config.
+ * The type Delimiter metric properties.
  */
 @ToString(callSuper = true)
 public class DelimiterMetricConfig extends MetricConfig {
@@ -12,24 +12,24 @@ public class DelimiterMetricConfig extends MetricConfig {
     private String discardRegex;
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      */
     protected DelimiterMetricConfig() {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId the config id
+     * @param configId the properties id
      */
     public DelimiterMetricConfig(String configId) {
         this(configId, "");
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
      */
     public DelimiterMetricConfig(String configId,
@@ -38,9 +38,9 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId the config id
+     * @param configId the properties id
      * @param fields   the fields
      */
     public DelimiterMetricConfig(String configId, String[] fields) {
@@ -48,10 +48,10 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId    the config id
-     * @param fieldConfig the field config
+     * @param configId    the properties id
+     * @param fieldConfig the field properties
      * @param fields      the fields
      */
     public DelimiterMetricConfig(String configId, FieldConfig fieldConfig,
@@ -60,9 +60,9 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
      * @param fields         the fields
      */
@@ -72,11 +72,11 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
-     * @param fieldConfig    the field config
+     * @param fieldConfig    the field properties
      * @param fields         the fields
      */
     public DelimiterMetricConfig(String configId, String delimiterRegex,
@@ -85,9 +85,9 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
      * @param discardRegex   the discard regex
      */
@@ -97,9 +97,9 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
      * @param discardRegex   the discard regex
      * @param fields         the fields
@@ -110,12 +110,12 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param delimiterRegex the delimiter regex
      * @param discardRegex   the discard regex
-     * @param fieldConfig    the field config
+     * @param fieldConfig    the field properties
      * @param fields         the fields
      */
     public DelimiterMetricConfig(String configId, String delimiterRegex,
@@ -126,13 +126,13 @@ public class DelimiterMetricConfig extends MetricConfig {
     }
 
     /**
-     * Instantiates a new Delimiter metric config.
+     * Instantiates a new Delimiter metric properties.
      *
-     * @param configId         the config id
-     * @param metricConfigType the metric config type
+     * @param configId         the properties id
+     * @param metricConfigType the metric properties type
      * @param delimiterRegex   the delimiter regex
      * @param discardRegex     the discard regex
-     * @param fieldConfig      the field config
+     * @param fieldConfig      the field properties
      * @param fields           the fields
      */
     protected DelimiterMetricConfig(String configId,

@@ -6,36 +6,36 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * The type Json metric config.
+ * The type Json metric properties.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @ToString(callSuper = true)
 public class JsonMetricConfig extends MetricConfig {
 
     /**
-     * Instantiates a new Json metric config.
+     * Instantiates a new Json metric properties.
      *
-     * @param configId the config id
+     * @param configId the properties id
      */
     public JsonMetricConfig(String configId) {
         this(configId, null);
     }
 
     /**
-     * Instantiates a new Json metric config.
+     * Instantiates a new Json metric properties.
      *
-     * @param configId    the config id
-     * @param fieldConfig the field config
+     * @param configId    the properties id
+     * @param fieldConfig the field properties
      */
     public JsonMetricConfig(String configId, FieldConfig fieldConfig) {
         this(configId, fieldConfig, false);
     }
 
     /**
-     * Instantiates a new Json metric config.
+     * Instantiates a new Json metric properties.
      *
-     * @param configId    the config id
-     * @param fieldConfig the field config
+     * @param configId    the properties id
+     * @param fieldConfig the field properties
      * @param isJsonList  the is json list
      */
     public JsonMetricConfig(String configId, FieldConfig fieldConfig,

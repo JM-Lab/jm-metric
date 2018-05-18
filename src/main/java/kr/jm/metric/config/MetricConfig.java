@@ -1,7 +1,7 @@
 package kr.jm.metric.config;
 
-import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.metric.builder.FieldMapBuilderInterface;
+import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMOptional;
@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The type Metric config.
+ * The type Metric properties.
  */
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,12 +27,12 @@ public class MetricConfig {
     @Getter
     protected String configId;
     /**
-     * The Metric config type.
+     * The Metric properties type.
      */
     @Getter
     protected MetricConfigType metricConfigType;
     /**
-     * The Field config.
+     * The Field properties.
      */
     @Getter
     protected FieldConfig fieldConfig;
@@ -52,21 +52,21 @@ public class MetricConfig {
     protected ChunkType chunkType;
 
     /**
-     * Instantiates a new Metric config.
+     * Instantiates a new Metric properties.
      *
-     * @param configId         the config id
-     * @param metricConfigType the metric config type
+     * @param configId         the properties id
+     * @param metricConfigType the metric properties type
      */
     public MetricConfig(String configId, MetricConfigType metricConfigType) {
         this(configId, metricConfigType, null);
     }
 
     /**
-     * Instantiates a new Metric config.
+     * Instantiates a new Metric properties.
      *
-     * @param configId         the config id
-     * @param metricConfigType the metric config type
-     * @param fieldConfig      the field config
+     * @param configId         the properties id
+     * @param metricConfigType the metric properties type
+     * @param fieldConfig      the field properties
      * @param fields           the fields
      */
     public MetricConfig(String configId, MetricConfigType metricConfigType,
@@ -108,10 +108,10 @@ public class MetricConfig {
     }
 
     /**
-     * With bind data ids metric config.
+     * With bind data ids metric properties.
      *
      * @param dataIds the data ids
-     * @return the metric config
+     * @return the metric properties
      */
     public MetricConfig withBindDataIds(String... dataIds) {
         JMOptional.getOptional(dataIds).map(Arrays::asList)

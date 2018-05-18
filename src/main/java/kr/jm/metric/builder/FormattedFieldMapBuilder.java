@@ -66,7 +66,7 @@ public class FormattedFieldMapBuilder extends
     /**
      * Gets field list.
      *
-     * @param configId the config id
+     * @param configId the properties id
      * @return the field list
      */
     public List<String> getFieldList(String configId) {
@@ -108,7 +108,7 @@ public class FormattedFieldMapBuilder extends
     /**
      * Build group regex string string.
      *
-     * @param configId     the config id
+     * @param configId     the properties id
      * @param formatString the format string
      * @param fieldNameMap the field name map
      * @return the string

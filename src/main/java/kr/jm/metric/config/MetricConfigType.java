@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.builder.*;
 
 /**
- * The enum Metric config type.
+ * The enum Metric properties type.
  */
 @SuppressWarnings("ALL")
 public enum MetricConfigType implements MetricConfigTypeInterface {

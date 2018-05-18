@@ -6,21 +6,21 @@ import lombok.ToString;
 import java.util.Map;
 
 /**
- * The type Apache access log metric config.
+ * The type Apache access log metric properties.
  */
 @ToString(callSuper = true)
 public class ApacheAccessLogMetricConfig extends FormattedMetricConfig {
 
     /**
-     * Instantiates a new Apache access log metric config.
+     * Instantiates a new Apache access log metric properties.
      */
     protected ApacheAccessLogMetricConfig() {
     }
 
     /**
-     * Instantiates a new Apache access log metric config.
+     * Instantiates a new Apache access log metric properties.
      *
-     * @param configId              the config id
+     * @param configId              the properties id
      * @param apacheCommonLogFormat the apache common log format
      */
     public ApacheAccessLogMetricConfig(String configId,
@@ -29,10 +29,10 @@ public class ApacheAccessLogMetricConfig extends FormattedMetricConfig {
     }
 
     /**
-     * Instantiates a new Apache access log metric config.
+     * Instantiates a new Apache access log metric properties.
      *
-     * @param configId              the config id
-     * @param fieldConfig           the field config
+     * @param configId              the properties id
+     * @param fieldConfig           the field properties
      * @param apacheCommonLogFormat the apache common log format
      */
     public ApacheAccessLogMetricConfig(String configId, FieldConfig fieldConfig,
@@ -41,10 +41,10 @@ public class ApacheAccessLogMetricConfig extends FormattedMetricConfig {
     }
 
     /**
-     * Instantiates a new Apache access log metric config.
+     * Instantiates a new Apache access log metric properties.
      *
-     * @param configId              the config id
-     * @param fieldConfig           the field config
+     * @param configId              the properties id
+     * @param fieldConfig           the field properties
      * @param apacheCommonLogFormat the apache common log format
      * @param fieldNameMap          the field name map
      */

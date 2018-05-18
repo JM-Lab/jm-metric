@@ -15,7 +15,7 @@ public abstract class AbstractOutput<C extends OutputConfigInterface, T> impleme
 
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     /**
-     * The Output config.
+     * The Output properties.
      */
     @Getter
     protected C outputConfig;
@@ -23,16 +23,25 @@ public abstract class AbstractOutput<C extends OutputConfigInterface, T> impleme
     /**
      * Instantiates a new Abstract output.
      *
-     * @param outputConfig the output config
+     * @param outputConfig the output properties
      */
     public AbstractOutput(C outputConfig) {
         this.outputConfig = outputConfig;
     }
 
     /**
-     * Gets config id.
+     * Gets properties id.
      *
-     * @return the config id
+     * @return the properties id
      */
     public String getConfigId() {return outputConfig.getConfigId();}
+
+    @Override
+    public void close() {
+        log.info("Start Closing - {}", toString());
+        closeImpl();
+        log.info("Finish Closing - {}", toString());
+    }
+
+    protected abstract void closeImpl();
 }

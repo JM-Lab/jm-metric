@@ -10,14 +10,14 @@ import java.nio.file.Path;
  * The type File output.
  */
 @Slf4j
-public class FileOutput<T> extends AbstractStringOutput<T> {
+public class FileOutput<T> extends StdOutput<T> {
 
     private JMFileAppender fileAppender;
 
     /**
      * Instantiates a new File output.
      *
-     * @param fileOutputConfig the file output config
+     * @param fileOutputConfig the file output properties
      */
     public FileOutput(FileOutputConfig fileOutputConfig) {
         super(fileOutputConfig);
@@ -59,7 +59,8 @@ public class FileOutput<T> extends AbstractStringOutput<T> {
     }
 
     @Override
-    public void close() {
+    protected void closeImpl() {
         this.fileAppender.close();
     }
+
 }

@@ -28,7 +28,7 @@ public class JMMetric implements
             org.slf4j.LoggerFactory.getLogger(JMMetric.class);
     private static final String METRIC_CONFIG_URL =
             Optional.ofNullable(
-                    JMResources.getSystemProperty("jm.metric.config"))
+                    JMResources.getSystemProperty("jm.metric.properties"))
                     .orElse("config/JMMetricConfig.json");
 
     @Delegate
@@ -68,7 +68,7 @@ public class JMMetric implements
      * Instantiates a new Jm metric.
      *
      * @param isWaiting           the is waiting
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public JMMetric(boolean isWaiting,
             MetricConfigManager metricConfigManager) {
@@ -79,7 +79,7 @@ public class JMMetric implements
     /**
      * Instantiates a new Jm metric.
      *
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public JMMetric(MetricConfigManager metricConfigManager) {
         this(JMThread.newThreadPoolWithAvailableProcessors(),
@@ -114,7 +114,7 @@ public class JMMetric implements
      * Instantiates a new Jm metric.
      *
      * @param executor            the executor
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public JMMetric(ExecutorService executor,
             MetricConfigManager metricConfigManager) {
@@ -136,7 +136,7 @@ public class JMMetric implements
      *
      * @param isWaiting           the is waiting
      * @param executor            the executor
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public JMMetric(boolean isWaiting, ExecutorService executor,
             MetricConfigManager metricConfigManager) {
@@ -148,7 +148,7 @@ public class JMMetric implements
     /**
      * Instantiates a new Jm metric.
      *
-     * @param metricConfigManager                   the metric config manager
+     * @param metricConfigManager                   the metric properties manager
      * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
      */
     public JMMetric(MetricConfigManager metricConfigManager,
@@ -162,7 +162,7 @@ public class JMMetric implements
      * Instantiates a new Jm metric.
      *
      * @param executor                              the executor
-     * @param metricConfigManager                   the metric config manager
+     * @param metricConfigManager                   the metric properties manager
      * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
      */
     public JMMetric(ExecutorService executor,
@@ -178,7 +178,7 @@ public class JMMetric implements
      *
      * @param executor                              the executor
      * @param maxBufferCapacity                     the max buffer capacity
-     * @param metricConfigManager                   the metric config manager
+     * @param metricConfigManager                   the metric properties manager
      * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
      */
     public JMMetric(ExecutorService executor, int maxBufferCapacity,
@@ -322,7 +322,7 @@ public class JMMetric implements
 //    }
 //
 //    /**
-//     * Subscribe config id transfer with jm metric.
+//     * Subscribe properties id transfer with jm metric.
 //     *
 //     * @param subscriber the subscriber
 //     * @return the jm metric

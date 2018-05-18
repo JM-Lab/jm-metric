@@ -1,29 +1,36 @@
 package kr.jm.metric.output.config;
 
+import kr.jm.metric.output.OutputInterface;
+import kr.jm.metric.output.config.type.OutputConfigType;
+
 import java.util.Map;
 
 /**
- * The interface Output config interface.
+ * The interface Output properties interface.
  */
 public interface OutputConfigInterface {
     /**
-     * Gets config with all.
+     * Gets properties with all.
      *
-     * @return the config with all
+     * @return the properties with all
      */
-    Map<String, Object> getConfigWithAll();
+    Map<String, Object> extractConfigMap();
 
     /**
-     * Gets config.
+     * Gets properties.
      *
-     * @return the config
+     * @return the properties
      */
-    Map<String, Object> getConfig();
+    Map<String, Object> getProperties();
 
     /**
-     * Gets config id.
+     * Gets properties id.
      *
-     * @return the config id
+     * @return the properties id
      */
     String getConfigId();
+
+    OutputConfigType getOutputConfigType();
+
+    <O extends OutputInterface> O buildOutput();
 }

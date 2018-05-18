@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static kr.jm.utils.flow.processor.JMTransformProcessorBuilder.buildCollectionEach;
 
 /**
- * The type Field map list config id transfer transform processor.
+ * The type Field map list properties id transfer transform processor.
  */
 @Slf4j
 public class FieldMapListConfigIdTransferTransformProcessor implements
@@ -36,16 +36,16 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
             outputFieldMapListConfigIdTransferProcessor;
 
     /**
-     * Instantiates a new Field map list config id transfer transform processor.
+     * Instantiates a new Field map list properties id transfer transform processor.
      */
     public FieldMapListConfigIdTransferTransformProcessor() {
         this(new MetricConfigManager());
     }
 
     /**
-     * Instantiates a new Field map list config id transfer transform processor.
+     * Instantiates a new Field map list properties id transfer transform processor.
      *
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(
             MetricConfigManager metricConfigManager) {
@@ -54,10 +54,10 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
     }
 
     /**
-     * Instantiates a new Field map list config id transfer transform processor.
+     * Instantiates a new Field map list properties id transfer transform processor.
      *
      * @param executor            the executor
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(Executor executor,
             MetricConfigManager metricConfigManager) {
@@ -65,11 +65,11 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
     }
 
     /**
-     * Instantiates a new Field map list config id transfer transform processor.
+     * Instantiates a new Field map list properties id transfer transform processor.
      *
      * @param executor            the executor
      * @param maxBufferCapacity   the max buffer capacity
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(Executor executor,
             int maxBufferCapacity, MetricConfigManager metricConfigManager) {

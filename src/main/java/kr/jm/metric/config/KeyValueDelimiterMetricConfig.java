@@ -5,7 +5,7 @@ import kr.jm.utils.helper.JMOptional;
 import lombok.ToString;
 
 /**
- * The type Key value delimiter metric config.
+ * The type Key value delimiter metric properties.
  */
 @ToString(callSuper = true)
 public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
@@ -16,25 +16,25 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     private String keyValueDelimiterRegex;
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      */
     protected KeyValueDelimiterMetricConfig() {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId the config id
+     * @param configId the properties id
      */
     public KeyValueDelimiterMetricConfig(String configId) {
         this(configId, DefaultKeyValueDelimiterRegex);
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId    the config id
-     * @param fieldConfig the field config
+     * @param configId    the properties id
+     * @param fieldConfig the field properties
      */
     public KeyValueDelimiterMetricConfig(String configId,
             FieldConfig fieldConfig) {
@@ -42,9 +42,9 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId               the config id
+     * @param configId               the properties id
      * @param keyValueDelimiterRegex the key value delimiter regex
      */
     public KeyValueDelimiterMetricConfig(String configId,
@@ -53,10 +53,10 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId               the config id
-     * @param fieldConfig            the field config
+     * @param configId               the properties id
+     * @param fieldConfig            the field properties
      * @param keyValueDelimiterRegex the key value delimiter regex
      */
     public KeyValueDelimiterMetricConfig(String configId,
@@ -65,9 +65,9 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId               the config id
+     * @param configId               the properties id
      * @param keyValueDelimiterRegex the key value delimiter regex
      * @param delimiter              the delimiter
      */
@@ -77,10 +77,10 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId               the config id
-     * @param fieldConfig            the field config
+     * @param configId               the properties id
+     * @param fieldConfig            the field properties
      * @param keyValueDelimiterRegex the key value delimiter regex
      * @param delimiter              the delimiter
      */
@@ -91,10 +91,10 @@ public class KeyValueDelimiterMetricConfig extends DelimiterMetricConfig {
     }
 
     /**
-     * Instantiates a new Key value delimiter metric config.
+     * Instantiates a new Key value delimiter metric properties.
      *
-     * @param configId               the config id
-     * @param fieldConfig            the field config
+     * @param configId               the properties id
+     * @param fieldConfig            the field properties
      * @param keyValueDelimiterRegex the key value delimiter regex
      * @param delimiter              the delimiter
      * @param discardRegex           the discard regex

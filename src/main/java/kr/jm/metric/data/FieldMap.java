@@ -4,6 +4,8 @@ import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMOptional;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
@@ -11,6 +13,7 @@ import java.util.*;
  * The type Field map.
  */
 @SuppressWarnings("ALL")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FieldMap implements Map<String, Object> {
     /**
      * The constant EMPTY_FIELD_MAP.

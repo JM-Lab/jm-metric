@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * The type Field map config id transfer list transformer.
+ * The type Field map properties id transfer list transformer.
  */
 @Slf4j
 public class FieldMapConfigIdTransferListTransformer implements
@@ -19,9 +19,9 @@ public class FieldMapConfigIdTransferListTransformer implements
     private MetricConfigManager metricConfigManager;
 
     /**
-     * Instantiates a new Field map config id transfer list transformer.
+     * Instantiates a new Field map properties id transfer list transformer.
      *
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public FieldMapConfigIdTransferListTransformer(
             MetricConfigManager metricConfigManager) {

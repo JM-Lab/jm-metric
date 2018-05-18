@@ -6,21 +6,21 @@ import lombok.ToString;
 import java.util.Map;
 
 /**
- * The type Nginx access log metric config.
+ * The type Nginx access log metric properties.
  */
 @ToString(callSuper = true)
 public class NginxAccessLogMetricConfig extends FormattedMetricConfig {
 
     /**
-     * Instantiates a new Nginx access log metric config.
+     * Instantiates a new Nginx access log metric properties.
      */
     protected NginxAccessLogMetricConfig() {
     }
 
     /**
-     * Instantiates a new Nginx access log metric config.
+     * Instantiates a new Nginx access log metric properties.
      *
-     * @param configId       the config id
+     * @param configId       the properties id
      * @param nginxLogFormat the nginx log format
      */
     public NginxAccessLogMetricConfig(String configId, String nginxLogFormat) {
@@ -28,10 +28,10 @@ public class NginxAccessLogMetricConfig extends FormattedMetricConfig {
     }
 
     /**
-     * Instantiates a new Nginx access log metric config.
+     * Instantiates a new Nginx access log metric properties.
      *
-     * @param configId       the config id
-     * @param fieldConfig    the field config
+     * @param configId       the properties id
+     * @param fieldConfig    the field properties
      * @param nginxLogFormat the nginx log format
      */
     public NginxAccessLogMetricConfig(String configId, FieldConfig fieldConfig,
@@ -40,10 +40,10 @@ public class NginxAccessLogMetricConfig extends FormattedMetricConfig {
     }
 
     /**
-     * Instantiates a new Nginx access log metric config.
+     * Instantiates a new Nginx access log metric properties.
      *
-     * @param configId       the config id
-     * @param fieldConfig    the field config
+     * @param configId       the properties id
+     * @param fieldConfig    the field properties
      * @param nginxLogFormat the nginx log format
      * @param fieldNameMap   the field name map
      */

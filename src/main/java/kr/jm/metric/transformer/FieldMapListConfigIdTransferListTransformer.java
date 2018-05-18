@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * The type Field map list config id transfer list transformer.
+ * The type Field map list properties id transfer list transformer.
  */
 public class FieldMapListConfigIdTransferListTransformer implements
         ConfigIdTransferListTransformerInterface<List<String>, List<FieldMap>> {
@@ -23,9 +23,9 @@ public class FieldMapListConfigIdTransferListTransformer implements
     private FieldMapConfigIdTransferListTransformer inputTransformer;
 
     /**
-     * Instantiates a new Field map list config id transfer list transformer.
+     * Instantiates a new Field map list properties id transfer list transformer.
      *
-     * @param metricConfigManager the metric config manager
+     * @param metricConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferListTransformer(
             MetricConfigManager metricConfigManager) {

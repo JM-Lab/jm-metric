@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The type Date config.
+ * The type Date properties.
  */
 @Getter
 @ToString

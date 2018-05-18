@@ -15,7 +15,7 @@ public interface FieldMapBuilderInterface<C extends MetricConfig> {
     /**
      * Build field object map map.
      *
-     * @param inputConfig  the input config
+     * @param inputConfig  the input properties
      * @param targetString the target string
      * @return the map
      */
@@ -25,7 +25,7 @@ public interface FieldMapBuilderInterface<C extends MetricConfig> {
     /**
      * Build field map field map.
      *
-     * @param inputConfig  the input config
+     * @param inputConfig  the input properties
      * @param targetString the target string
      * @return the field map
      */
