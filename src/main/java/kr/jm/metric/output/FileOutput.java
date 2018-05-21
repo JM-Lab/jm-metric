@@ -1,6 +1,6 @@
 package kr.jm.metric.output;
 
-import kr.jm.metric.output.config.FileOutputConfig;
+import kr.jm.metric.config.output.FileOutputConfig;
 import kr.jm.utils.JMFileAppender;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,7 +1,6 @@
-package kr.jm.metric.output.config;
+package kr.jm.metric.config.output;
 
 import kr.jm.metric.output.OutputInterface;
-import kr.jm.metric.output.config.type.OutputConfigType;
 
 import java.util.Map;
 

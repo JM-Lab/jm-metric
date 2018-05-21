@@ -1,7 +1,6 @@
-package kr.jm.metric.output.config;
+package kr.jm.metric.config.output;
 
 import kr.jm.metric.output.ElasticsearchOutput;
-import kr.jm.metric.output.config.type.OutputConfigType;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.time.JMTimeUtil;

@@ -1,10 +1,10 @@
 package kr.jm.metric.output.subscriber;
 
+import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.metric.output.StdOutput;
-import kr.jm.metric.output.config.OutputConfigInterface;
 
 import java.util.function.Consumer;
 

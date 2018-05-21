@@ -1,9 +1,6 @@
-package kr.jm.metric.output.config.type;
+package kr.jm.metric.config.output;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kr.jm.metric.output.config.ElasticsearchOutputConfig;
-import kr.jm.metric.output.config.FileOutputConfig;
-import kr.jm.metric.output.config.StdOutputConfig;
 
 public enum OutputConfigType implements OutputConfigTypeInterface {
     STDOUT {

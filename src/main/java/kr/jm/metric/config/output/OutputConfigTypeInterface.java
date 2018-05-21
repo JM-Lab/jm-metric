@@ -1,7 +1,6 @@
-package kr.jm.metric.output.config.type;
+package kr.jm.metric.config.output;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kr.jm.metric.output.config.OutputConfigInterface;
 
 public interface OutputConfigTypeInterface {
     <C extends OutputConfigInterface> TypeReference<C> getTypeReference();

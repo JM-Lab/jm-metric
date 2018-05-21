@@ -1,8 +1,8 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
-import kr.jm.metric.output.config.ElasticsearchOutputConfig;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;

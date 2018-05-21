@@ -1,4 +1,4 @@
-package kr.jm.metric.output.config;
+package kr.jm.metric.config.output;
 
 import kr.jm.utils.helper.JMJson;
 import lombok.AccessLevel;

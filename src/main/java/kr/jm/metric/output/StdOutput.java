@@ -1,7 +1,7 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.config.output.StdOutputConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
-import kr.jm.metric.output.config.StdOutputConfig;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMStream;
 

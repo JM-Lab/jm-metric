@@ -1,7 +1,7 @@
 package kr.jm.metric.output;
 
+import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.data.ConfigIdTransfer;
-import kr.jm.metric.output.config.OutputConfigInterface;
 
 /**
  * The interface Output interface.

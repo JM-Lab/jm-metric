@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMJson;
+import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.helper.JMResources;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -19,12 +22,12 @@ import java.util.stream.Collectors;
 public class MetricConfigManager {
     private static final Logger log =
             org.slf4j.LoggerFactory.getLogger(MetricConfigManager.class);
-
     private static final String INPUT_CONFIG_TYPE = "metricConfigType";
+    public static ObjectMapper ConfigObjectMapper = new ObjectMapper()
+            .configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 
     private Map<String, MetricConfig> metricConfigMap;
     private Map<String, Set<String>> dataIdConfigIdSetMap;
-    private ObjectMapper configObjectMapper;
 
     /**
      * Instantiates a new Metric properties manager.
@@ -255,23 +258,15 @@ public class MetricConfigManager {
      */
     public MetricConfigManager loadConfig(String jmMetricConfigUrl) {
         try {
-            List<Map<String, Object>> metricConfigMapList =
-                    getConfigObjectMapper()
-                            .readValue(JMResources
-                                            .getStringWithFilePathOrClasspath(
-                                                    jmMetricConfigUrl),
-                                    JMJson.LIST_MAP_TYPE_REFERENCE);
+            List<Map<String, Object>> metricConfigMapList = ConfigObjectMapper
+                    .readValue(JMResources.getStringWithFilePathOrClasspath(
+                            jmMetricConfigUrl),
+                            JMJson.LIST_MAP_TYPE_REFERENCE);
             return loadConfig(metricConfigMapList);
         } catch (IOException e) {
             return JMExceptionManager.handleExceptionAndReturn(log, e,
                     "loadConfig", () -> this, jmMetricConfigUrl);
         }
-    }
-
-    private ObjectMapper getConfigObjectMapper() {
-        return JMLambda.supplierIfNull(this.configObjectMapper,
-                () -> this.configObjectMapper = new ObjectMapper()
-                        .configure(JsonParser.Feature.ALLOW_COMMENTS, true));
     }
 
     /**

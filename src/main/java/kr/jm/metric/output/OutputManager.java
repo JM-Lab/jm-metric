@@ -1,7 +1,7 @@
 package kr.jm.metric.output;
 
-import kr.jm.metric.output.config.OutputConfigInterface;
-import kr.jm.metric.output.config.type.OutputConfigType;
+import kr.jm.metric.config.output.OutputConfigInterface;
+import kr.jm.metric.config.output.OutputConfigType;
 import kr.jm.utils.RestfulResourceUpdater;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.exception.JMExceptionManager;

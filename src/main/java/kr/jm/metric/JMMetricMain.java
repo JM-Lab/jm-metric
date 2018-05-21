@@ -30,10 +30,8 @@ public class JMMetricMain {
     public void main(String... args) {
         ABCObjects<String, Integer, String> argsObjects = buildArgsObject(args);
         String dataId = "StdIn";
-        StdInLineInputPublisher
-                stdInLineInputPublisher =
-                new StdInLineInputPublisher(dataId,
-                        argsObjects.getB());
+        StdInLineInputPublisher stdInLineInputPublisher =
+                new StdInLineInputPublisher(dataId, argsObjects.getB());
         JMMetric jmMetric =
                 new JMMetric(stdInLineInputPublisher);
         JMOptional.getOptional(argsObjects.getC())

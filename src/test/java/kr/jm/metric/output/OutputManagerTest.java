@@ -1,6 +1,6 @@
 package kr.jm.metric.output;
 
-import kr.jm.metric.output.config.OutputConfigInterface;
+import kr.jm.metric.config.output.OutputConfigInterface;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
