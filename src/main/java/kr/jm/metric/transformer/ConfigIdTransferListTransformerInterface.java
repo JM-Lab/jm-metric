@@ -4,6 +4,7 @@ import kr.jm.metric.config.MetricConfig;
 import kr.jm.metric.config.field.FieldMeta;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.Transfer;
+import kr.jm.utils.helper.JMPredicate;
 
 import java.util.*;
 import java.util.function.Function;
@@ -55,9 +56,19 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
             Transfer<I> transfer, Map<String, Object> meta,
             MetricConfig metricConfig, FieldMeta fieldMeta) {
         return Optional.ofNullable(transform(metricConfig, transfer.getData()))
-                .map(o -> transfer.newWith(o, meta))
-                .map(t -> new ConfigIdTransfer<>(metricConfig.getConfigId(),
-                        fieldMeta, t)).orElse(null);
+                .map(o -> transfer.newWith(o,
+                        buildConfigTransferMeta(new HashMap<>(meta),
+                                fieldMeta)))
+                .map(t -> new ConfigIdTransfer<>(metricConfig.getConfigId(), t))
+                .orElse(null);
+    }
+
+    private Map<String, Object> buildConfigTransferMeta(
+            Map<String, Object> meta, FieldMeta fieldMeta) {
+        Optional.ofNullable(fieldMeta).map(FieldMeta::extractFieldMetaMap)
+                .filter(JMPredicate.getGreaterMapSize(0))
+                .ifPresent(extractFlatMap -> meta.put("field", extractFlatMap));
+        return meta;
     }
 
 }

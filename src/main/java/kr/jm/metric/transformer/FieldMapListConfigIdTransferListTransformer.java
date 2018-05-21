@@ -7,7 +7,9 @@ import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.exception.JMExceptionManager;
 import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,12 +48,12 @@ public class FieldMapListConfigIdTransferListTransformer implements
             return dataList.stream().flatMap(
                     data -> buildDataStream(data, metricConfig.getChunkType()))
                     .map(data -> inputTransformer.transform(metricConfig, data))
-                    .map(Optional::of).map(Optional::get)
-                    .collect(Collectors.toList());
+                    .filter(Objects::nonNull).collect(Collectors.toList());
         } catch (Exception e) {
             return JMExceptionManager
-                    .handleExceptionAndReturnNull(log, e, "transform",
-                            metricConfig, dataList.size());
+                    .handleExceptionAndReturn(log, e, "transform",
+                            Collections::emptyList, metricConfig,
+                            dataList.size());
         }
     }
 

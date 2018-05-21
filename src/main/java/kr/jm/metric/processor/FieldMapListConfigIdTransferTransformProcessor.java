@@ -1,7 +1,6 @@
 package kr.jm.metric.processor;
 
 import kr.jm.metric.config.MetricConfigManager;
-import kr.jm.metric.config.field.FieldMeta;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -14,7 +13,6 @@ import kr.jm.utils.helper.JMThread;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Flow;
 import java.util.stream.Collectors;
@@ -84,19 +82,10 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
 
     private ConfigIdTransfer<List<FieldMap>> buildFieldMapWithMeta(
             ConfigIdTransfer<List<FieldMap>> configIdTransfer) {
-        putFinalMeta(configIdTransfer);
         return configIdTransfer.newWith(
                 configIdTransfer.newStreamWith(configIdTransfer.getData())
                         .map(ConfigIdTransfer::buildFieldMapWithMeta)
                         .collect(Collectors.toList()));
-    }
-
-    private void putFinalMeta(
-            ConfigIdTransfer<List<FieldMap>> fieldMapListConfigIdTransfer) {
-        Optional.ofNullable(fieldMapListConfigIdTransfer.getFieldMeta())
-                .map(FieldMeta::extractFieldMetaMap)
-                .ifPresent(extractFlatMap -> fieldMapListConfigIdTransfer
-                        .putMeta("field", extractFlatMap));
     }
 
     @Override
