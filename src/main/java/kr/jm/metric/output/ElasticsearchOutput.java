@@ -4,7 +4,6 @@ import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
-import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import org.elasticsearch.common.settings.Settings;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 public class ElasticsearchOutput extends
@@ -175,9 +175,8 @@ public class ElasticsearchOutput extends
         if (!indexSuffixDate.equals(this.indexSuffixDate))
             synchronized (this.index) {
                 this.indexSuffixDate = indexSuffixDate;
-                return this.index = JMOptional.getOptional(this.indexPrefix)
-                        .map(s -> s + JMString.HYPHEN).orElse(JMString.EMPTY) +
-                        indexSuffixDate;
+                return this.index =
+                        getIndexPrefix() + JMString.HYPHEN + indexSuffixDate;
             }
         return this.index;
     }
@@ -190,6 +189,11 @@ public class ElasticsearchOutput extends
     @Override
     public void writeData(ConfigIdTransfer<List<FieldMap>> data) {
         this.elasticsearchClient.sendWithBulkProcessor(data.getData(),
-                buildIndex(data.getTimestamp()), data.getDataId());
+                buildIndex(data.getTimestamp()), getIndexPrefix());
+    }
+
+    private String getIndexPrefix() {
+        return Objects.requireNonNull(this.indexPrefix, () -> this.indexPrefix
+                = "jm-metric");
     }
 }

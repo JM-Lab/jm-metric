@@ -4,14 +4,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.datastructure.JMMap;
+import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMResources;
-import org.slf4j.Logger;
+import kr.jm.utils.helper.*;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -19,22 +16,18 @@ import java.util.stream.Collectors;
 /**
  * The type Metric properties manager.
  */
+@Slf4j
 public class MetricConfigManager {
-    private static final Logger log =
-            org.slf4j.LoggerFactory.getLogger(MetricConfigManager.class);
     private static final String INPUT_CONFIG_TYPE = "metricConfigType";
-    public static ObjectMapper ConfigObjectMapper = new ObjectMapper()
+    private static ObjectMapper ConfigObjectMapper = new ObjectMapper()
             .configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+    public static final String CONFIG_DIR = Optional.ofNullable(
+            JMResources.getSystemProperty("jm.metric.configDir"))
+            .orElse("config");
+    private static final String METRIC_CONFIG_FILENAME = "JMMetricConfig.json";
 
     private Map<String, MetricConfig> metricConfigMap;
     private Map<String, Set<String>> dataIdConfigIdSetMap;
-
-    /**
-     * Instantiates a new Metric properties manager.
-     */
-    public MetricConfigManager() {
-        this.dataIdConfigIdSetMap = new HashMap<>();
-    }
 
     /**
      * Instantiates a new Metric properties manager.
@@ -43,9 +36,11 @@ public class MetricConfigManager {
      */
     @SafeVarargs
     public MetricConfigManager(Map<String, Object>... configMaps) {
-        this(Arrays.stream(configMaps)
-                .map(MetricConfigManager::transformToConfig)
-                .collect(Collectors.toList()));
+        this(Optional.ofNullable(configMaps).map(Arrays::stream)
+                .map(stream -> stream
+                        .map(MetricConfigManager::transformToConfig)
+                        .collect(Collectors.toList()))
+                .orElseGet(Collections::emptyList));
     }
 
     /**
@@ -54,8 +49,19 @@ public class MetricConfigManager {
      * @param configList the properties list
      */
     public MetricConfigManager(List<MetricConfig> configList) {
-        this();
+        this.dataIdConfigIdSetMap = new HashMap<>();
+        loadConfig(buildAllConfigMapList(METRIC_CONFIG_FILENAME));
         insertConfigList(configList);
+    }
+
+    public static List<Map<String, Object>> buildAllConfigMapList(
+            String configFilename) {
+        return JMCollections.buildMergedList(buildConfigMapList(configFilename),
+                buildConfigMapList(buildDefaultConfigPath(configFilename)));
+    }
+
+    private static String buildDefaultConfigPath(String configFilename) {
+        return CONFIG_DIR + OS.getFileSeparator() + configFilename;
     }
 
     /**
@@ -257,15 +263,21 @@ public class MetricConfigManager {
      * @return the metric properties manager
      */
     public MetricConfigManager loadConfig(String jmMetricConfigUrl) {
+        return loadConfig(buildConfigMapList(jmMetricConfigUrl));
+    }
+
+    public static List<Map<String, Object>> buildConfigMapList(
+            String jmMetricConfigUrl) {
         try {
-            List<Map<String, Object>> metricConfigMapList = ConfigObjectMapper
-                    .readValue(JMResources.getStringWithFilePathOrClasspath(
-                            jmMetricConfigUrl),
-                            JMJson.LIST_MAP_TYPE_REFERENCE);
-            return loadConfig(metricConfigMapList);
-        } catch (IOException e) {
+            return ConfigObjectMapper.readValue(JMOptional.getOptional(
+                    JMRestfulResource.getStringWithRestOrFilePathOrClasspath(
+                            jmMetricConfigUrl))
+                            .orElseThrow(NullPointerException::new),
+                    JMJson.LIST_MAP_TYPE_REFERENCE);
+        } catch (Exception e) {
             return JMExceptionManager.handleExceptionAndReturn(log, e,
-                    "loadConfig", () -> this, jmMetricConfigUrl);
+                    "buildConfigMapList", Collections::emptyList,
+                    jmMetricConfigUrl);
         }
     }
 

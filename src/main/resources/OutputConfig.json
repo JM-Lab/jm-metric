@@ -1,0 +1,45 @@
+[
+  {
+    "configId": "StdOut",
+    "outputConfigType": "STDOUT",
+    "enableJsonString": true
+  },
+  {
+    "configId": "LocalElasticsearch",
+    "outputConfigType": "ELASTICSEARCH",
+    "elasticsearchConnect": "127.0.0.1:9300",
+    "clientTransportSniff": false,
+    "indexSuffixDateFormat": "yyyy.MM.dd",
+    "zoneId": "UTC",
+    "bulkActions": 18,
+    "bulkSizeKB": 512,
+    "flushIntervalSeconds": 1,
+    "properties": {}
+  },
+  {
+    "configId": "AccessLog-LocalES",
+    "outputConfigType": "ELASTICSEARCH",
+    "elasticsearchConnect": "127.0.0.1:9300",
+    "clientTransportSniff": false,
+    "indexPrefix": "access-log",
+    "indexSuffixDateFormat": "yyyy.MM.dd",
+    "zoneId": "UTC",
+    "bulkActions": 18,
+    "bulkSizeKB": 512,
+    "flushIntervalSeconds": 1,
+    "properties": {}
+  },
+  {
+    "configId": "System-LocalES",
+    "outputConfigType": "ELASTICSEARCH",
+    "elasticsearchConnect": "127.0.0.1:9300",
+    "clientTransportSniff": false,
+    "indexPrefix": "system",
+    "indexSuffixDateFormat": "yyyy.MM.dd",
+    "zoneId": "UTC",
+    "bulkActions": 18,
+    "bulkSizeKB": 512,
+    "flushIntervalSeconds": 1,
+    "properties": {}
+  }
+]

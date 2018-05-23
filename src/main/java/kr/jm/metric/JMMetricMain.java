@@ -1,15 +1,13 @@
 package kr.jm.metric;
 
-import kr.jm.metric.data.Transfer;
+import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.metric.publisher.input.StdInLineInputPublisher;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
-import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.helper.object.ABCObjects;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -21,6 +19,10 @@ import java.util.Arrays;
 public class JMMetricMain {
 
     private static final int DEFAULT_BULK_SIZE = 10;
+    @Getter
+    private JMMetric jmMetric;
+    @Getter
+    private StdInLineInputPublisher stdInLineInputPublisher;
 
     /**
      * Main.
@@ -28,46 +30,46 @@ public class JMMetricMain {
      * @param args the args
      */
     public void main(String... args) {
-        ABCObjects<String, Integer, String> argsObjects = buildArgsObject(args);
+        ABCObjects<String, String, Integer> argsObjects = buildArgsObject(args);
         String dataId = "StdIn";
-        StdInLineInputPublisher stdInLineInputPublisher =
-                new StdInLineInputPublisher(dataId, argsObjects.getB());
-        JMMetric jmMetric =
-                new JMMetric(stdInLineInputPublisher);
-        JMOptional.getOptional(argsObjects.getC())
-                .ifPresent(jmMetric::loadConfig);
+        this.stdInLineInputPublisher =
+                new StdInLineInputPublisher(dataId, argsObjects.getC());
+        this.jmMetric = new JMMetric(stdInLineInputPublisher);
         jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
-        jmMetric.subscribeAndReturnSubcriber(
-                JMTransformProcessorBuilder.build(Transfer::getData))
-                .subscribeAndReturnSubcriber(
-                        JMTransformProcessorBuilder.buildCollectionEach())
-                .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
+        jmMetric.subscribe(OutputSubscriberBuilder
+                .build(jmMetric.getOutput(argsObjects.getB())));
         stdInLineInputPublisher.start();
         log.info("==== Config List ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getConfigList()));
         log.info("==== DataId-ConfigIds ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getDataIdConfigIdSetMap()));
+        log.info("==== OutputConfigMap ====");
+        log.info(JMJson.toPrettyJsonString(jmMetric.getOutputConfigMap()));
         OS.addShutdownHook(jmMetric::close);
     }
 
-    private ABCObjects<String, Integer, String> buildArgsObject(String[] args) {
+    private ABCObjects<String, String, Integer> buildArgsObject(String[] args) {
         if (args.length < 1) {
             String message =
-                    "Wrong Args !!! - Args: <configId> [bulkSize] [configPath]";
+                    "Wrong Args !!! - Args: <configId> [outputConfigId:default=StdOut] [bulkSize]";
             System.err.println(message);
             JMExceptionManager.handleExceptionAndThrowRuntimeEx(log,
                     JMExceptionManager.newRunTimeException(message),
                     Arrays.toString(args));
         }
         String configId = args[0];
-        boolean isNumber = false;
-        String arg1 = null;
-        if (args.length >= 2) {
-            arg1 = args[1];
-            isNumber = JMString.isNumber(arg1);
+        String outputConfigId = "StdOut";
+        int bulkSize = DEFAULT_BULK_SIZE;
+        if (args.length == 2) {
+            if (JMString.isNumber(args[1]))
+                bulkSize = Integer.valueOf(args[1]);
+            else
+                outputConfigId = args[1];
+        } else if (args.length >= 3) {
+            outputConfigId = args[1];
+            bulkSize = JMString.isNumber(args[2]) ? Integer
+                    .valueOf(args[2]) : bulkSize;
         }
-        return new ABCObjects<>(configId,
-                isNumber ? Integer.valueOf(arg1) : DEFAULT_BULK_SIZE,
-                !isNumber && args.length >= 3 ? args[2] : arg1);
+        return new ABCObjects<>(configId, outputConfigId, bulkSize);
     }
 }

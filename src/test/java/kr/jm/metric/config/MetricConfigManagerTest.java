@@ -23,7 +23,7 @@ public class MetricConfigManagerTest {
 
     @Test
     public void insertConfigDelimiter() {
-        String configId = "delimiterSample";
+        String configId = "delimiterSample2";
         MetricConfig config = null;
         try {
             config = new DelimiterMetricConfig(configId,
@@ -41,15 +41,14 @@ public class MetricConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(metricConfigManager.getConfigList()));
         assertNotNull(metricConfigManager.getConfig(configId));
-        assertEquals(1, metricConfigManager.getConfigList().size());
+        assertEquals(9, metricConfigManager.getConfigList().size());
     }
 
     @Test
     public void insertConfigKeyValueDelimiter() {
-        String configId = "keyValueDelimiterSample";
+        String configId = "keyValueDelimiterSample2";
         MetricConfig config =
-                new KeyValueDelimiterMetricConfig("keyValueDelimiterSample",
-                        null, "=", ":",
+                new KeyValueDelimiterMetricConfig(configId, null, "=", ":",
                         "[{}\", ]");
         insertConfig(config);
 
@@ -57,12 +56,12 @@ public class MetricConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(metricConfigManager.getConfigList()));
         assertNotNull(metricConfigManager.getConfig(configId));
-        assertEquals(1, metricConfigManager.getConfigList().size());
+        assertEquals(9, metricConfigManager.getConfigList().size());
     }
 
     @Test
     public void insertConfigFormatted() {
-        String configId = "formattedSample";
+        String configId = "formattedSample2";
         MetricConfig config =
                 new FormattedMetricConfig(configId, "$ip - - $url",
                         Map.of("$ip", "ip", "$url",
@@ -73,12 +72,12 @@ public class MetricConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(metricConfigManager.getConfigList()));
         assertNotNull(metricConfigManager.getConfig(configId));
-        assertEquals(1, metricConfigManager.getConfigList().size());
+        assertEquals(9, metricConfigManager.getConfigList().size());
     }
 
     @Test
     public void insertConfigApacheAccessLog() {
-        String configId = "apacheAccessLogSample";
+        String configId = "apacheAccessLogSample2";
         String apacheCommonLogFormat =
                 "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"";
         MetricConfig config =
@@ -90,12 +89,12 @@ public class MetricConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(metricConfigManager.getConfigList()));
         assertNotNull(metricConfigManager.getConfig(configId));
-        assertEquals(1, metricConfigManager.getConfigList().size());
+        assertEquals(9, metricConfigManager.getConfigList().size());
     }
 
     @Test
     public void insertConfigNginxAccessLog() {
-        String configId = "nginxAccessLogSample";
+        String configId = "nginxAccessLogSample2";
         MetricConfig config =
                 new NginxAccessLogMetricConfig(configId,
                         "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"");
@@ -105,7 +104,7 @@ public class MetricConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(metricConfigManager.getConfigList()));
         assertNotNull(metricConfigManager.getConfig(configId));
-        assertEquals(1, metricConfigManager.getConfigList().size());
+        assertEquals(9, metricConfigManager.getConfigList().size());
     }
 
     public void insertConfig(MetricConfig config) {
@@ -149,7 +148,7 @@ public class MetricConfigManagerTest {
 
     @Test
     public void testLoadConfig() {
-        assertEquals(8,
+        assertEquals(9,
                 metricConfigManager.loadConfig("testJMMetricConfig.json")
                         .getConfigList().size());
         assertEquals("keyValueDelimiterSample2", metricConfigManager.getConfig

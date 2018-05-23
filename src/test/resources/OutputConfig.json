@@ -1,5 +1,10 @@
 [
   {
+    "configId": "StdOut",
+    "outputConfigType": "STDOUT",
+    "enableJsonString": true
+  },
+  {
     "configId": "ESClient",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "127.0.0.1:9300",
@@ -13,5 +18,17 @@
     "bulkSizeKB": 1024,
     "flushIntervalSeconds": 1,
     "properties": {}
+  },
+  {
+    "configId": "File",
+    "outputConfigType": "FILE",
+    "filePath": "outTest.txt",
+    "enableJsonString": true
+  },
+  {
+    "configId": "File2",
+    "outputConfigType": "File",
+    "filePath": "outTest.txt",
+    "enableJsonString": true
   }
 ]

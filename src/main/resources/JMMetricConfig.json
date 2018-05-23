@@ -5,12 +5,18 @@
   },
   {
     "configId": "Json",
-    "metricConfigType": "JSON"
+    "metricConfigType": "JSON",
+    "fieldConfig": {
+      "rawData": false
+    }
   },
   {
     "configId": "JsonList",
     "metricConfigType": "JSON",
-    "chunkType": "JSON_LIST"
+    "chunkType": "JSON_LIST",
+    "fieldConfig": {
+      "rawData": false
+    }
   },
   {
     "configId": "CommonLogFormat",
@@ -22,7 +28,20 @@
     "configId": "CombinedLogFormat",
     "metricConfigType": "APACHE_ACCESS_LOG",
     "bindDataIds": [],
-    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""
+    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
+    "fieldConfig": {
+      "rawData": true,
+      "dateFormat": {
+        "timestamp": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "changeDateConfig": {
+            "dateFormatType": "ISO"
+          }
+        }
+      }
+    }
   },
   {
     "configId": "NginxAccessLog",
