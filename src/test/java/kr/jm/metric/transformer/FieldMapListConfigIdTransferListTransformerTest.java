@@ -86,7 +86,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         FieldConfig fieldConfig = JMJson.withJsonString(
                 "{\"dateFormat\":{\"time\":{\"dateFormatType\":\"EPOCH\", " +
                         "\"timeUnit\": \"SECONDS\"," +
-                        "\"changeDateConfig\":{\"dateFormatType\":\"ISO\"}}}}",
+                        "\"changeDateFormat\":{\"dateFormatType\":\"ISO\"}}}}",
                 FieldConfig.class);
         System.out.println(JMJson.toJsonString(fieldConfig));
         this.metricConfigManager

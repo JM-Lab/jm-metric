@@ -12,6 +12,7 @@ import lombok.ToString;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The type Field properties.
@@ -41,6 +42,8 @@ public class FieldConfig extends FieldMeta {
      * The Combined id.
      */
     protected CombinedFieldConfig[] combinedFields;
+
+    protected FormulaFieldConfig[] formulaFields;
 
     /**
      * The Data type.
@@ -96,6 +99,12 @@ public class FieldConfig extends FieldMeta {
                         .put(combinedFieldConfig.getCombinedFieldName(),
                                 combinedFieldConfig
                                         .buildValue(fieldObjectMap)));
+        JMOptional.getOptional(formulaFields).stream().flatMap(Arrays::stream)
+                .forEach(formulaFieldConfig -> Optional.ofNullable(
+                        formulaFieldConfig.buildValue(fieldObjectMap))
+                        .ifPresent(value -> fieldObjectMap
+                                .put(formulaFieldConfig.getCombinedFieldName(),
+                                        value)));
         JMOptional.getOptional(ignore).ifPresent(ignoreList -> ignoreList
                 .forEach(fieldObjectMap::remove));
         return JMMap.newChangedValueWithEntryMap(fieldObjectMap,
@@ -110,17 +119,6 @@ public class FieldConfig extends FieldMeta {
                                 value.toString()))
                         .orElse(value));
     }
-
-    private void addCombinedField(CombinedFieldConfig combinedFieldConfig,
-            Map<String, Object> fieldObjectMap) {
-        fieldObjectMap.put(combinedFieldConfig.getCombinedFieldName(),
-                combinedFieldConfig.buildValue(fieldObjectMap));
-//                .stream()
-//                .map(fieldObjectMap::get)
-//                .filter(Objects::nonNull).map(Object::toString)
-//                .collect(Collectors.joining(PIPE)));
-    }
-
 
     private void buildWithFormat(
             Map<String, MetricConfig> fieldFormatConfigMap,

@@ -74,7 +74,22 @@
           }
         }
       },
-      "combinedField": ["remoteHost", "requestUrl"],
+      "combinedFields": [
+        {
+          "targetFields": ["remoteHost", "requestUrl"],
+          "combinedFieldName": "",
+          "delimiter": "|"
+        }
+      ],
+      "formulaFields": [
+        {
+          "targetFields": ["requestTime"],
+          "combinedFieldName": "requestTimeInMillis",
+          "delimiter": "",
+          "formula": "requestTime * 1000",
+          "defaultResult": null
+        }
+      ],
       "dataType": {
         "statusCode": "WORD",
         "userAgent": "WORD",
@@ -82,7 +97,7 @@
         "requestTime": "NUMBER"
       },
       "unit": {
-        "requestTime": "MicroSecond"
+        "requestTime": "Second"
       },
       "ignore": ["remoteUser", "remoteLogName"],
       "custom": {

@@ -49,6 +49,9 @@ public class FieldConfigTest {
                 ("sizeByte"));
         Assert.assertEquals(167434d, stringObjectMap.get
                 ("requestTime"));
+        Assert.assertEquals(167434d / 1000, stringObjectMap.get
+                ("requestTimeInMicro"));
+        Assert.assertNull(stringObjectMap.get("requestTime_sizeByte"));
 
         Map<String, Object> fieldMetaMap = fieldConfig.extractFieldMetaMap();
         System.out.println(fieldMetaMap);

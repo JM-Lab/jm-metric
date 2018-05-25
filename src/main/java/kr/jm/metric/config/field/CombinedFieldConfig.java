@@ -28,7 +28,7 @@ public class CombinedFieldConfig {
     }
 
     public String getDelimiter() {
-        return Objects.requireNonNull(this.delimiter,
+        return Objects.requireNonNullElseGet(this.delimiter,
                 () -> this.delimiter = DEFAULT_DELIMITER);
     }
 

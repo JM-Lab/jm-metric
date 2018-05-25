@@ -76,7 +76,29 @@
           }
         }
       },
-      "combinedField": ["remoteHost", "requestUrl"],
+      "combinedFields": [
+        {
+          "targetFields": ["remoteHost", "requestUrl"],
+          "combinedFieldName": "",
+          "delimiter": "|"
+        }
+      ],
+      "formulaFields": [
+        {
+          "targetFields": ["requestTime"],
+          "combinedFieldName": "requestTimeInMicro",
+          "delimiter": "",
+          "formula": "requestTime / 1000",
+          "defaultResult": null
+        },
+        {
+          "targetFields": ["requestTime", "sizeByte"],
+          "combinedFieldName": "",
+          "delimiter": null,
+          "formula": "requestTime * sizeByte * requestTime + 1024",
+          "defaultResult": null
+        }
+      ],
       "dataType": {
         "statusCode": "WORD",
         "userAgent": "WORD",

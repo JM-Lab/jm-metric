@@ -2,7 +2,7 @@
   {
     "configId": "MyElasticsearch",
     "outputConfigType": "ELASTICSEARCH",
-    "elasticsearchConnect": "127.0.0.1:9300",
+    "elasticsearchConnect": "localhost:9300",
     "nodeName": null,
     "clientTransportSniff": false,
     "clusterName": null,
