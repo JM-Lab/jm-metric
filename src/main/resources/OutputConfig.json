@@ -7,7 +7,7 @@
   {
     "configId": "LocalElasticsearch",
     "outputConfigType": "ELASTICSEARCH",
-    "elasticsearchConnect": "127.0.0.1:9300",
+    "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,
     "indexSuffixDateFormat": "yyyy.MM.dd",
     "zoneId": "UTC",
@@ -19,7 +19,7 @@
   {
     "configId": "AccessLog-LocalES",
     "outputConfigType": "ELASTICSEARCH",
-    "elasticsearchConnect": "127.0.0.1:9300",
+    "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,
     "indexPrefix": "access-log",
     "indexSuffixDateFormat": "yyyy.MM.dd",
@@ -32,7 +32,7 @@
   {
     "configId": "System-LocalES",
     "outputConfigType": "ELASTICSEARCH",
-    "elasticsearchConnect": "127.0.0.1:9300",
+    "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,
     "indexPrefix": "system",
     "indexSuffixDateFormat": "yyyy.MM.dd",

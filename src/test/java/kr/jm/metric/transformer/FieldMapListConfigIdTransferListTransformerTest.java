@@ -36,10 +36,10 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         Map<String, DataType> fieldDataTypeMap = Map.of
                 ("requestTime", DataType.valueOf("NUMBER"), "sizeByte",
                         DataType.valueOf("NUMBER"));
-        List<String> combinedId = List.of("remoteHost", "requestUrl");
+        List<String> combinedField = List.of("remoteHost", "requestUrl");
         FieldConfig fieldConfig =
                 new FieldConfig(requestFieldFormat, true, ignoreFieldList,
-                        combinedId,
+                        combinedField,
                         fieldDataTypeMap, null, null, null);
         MetricConfig config =
                 new ApacheAccessLogMetricConfig(ConfigId, fieldConfig,
@@ -73,7 +73,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         assertTrue(sampleMap.get("sizeByte") instanceof Number);
         assertTrue(JMString.isWord(sampleMap.get("statusCode").toString()));
         assertEquals("10.10.78.35|/healthcheck.jsp",
-                sampleMap.get("combinedId"));
+                sampleMap.get("combinedField"));
         System.out.println(listTransfer.getMeta());
         assertNotNull(listTransfer.getMeta());
     }

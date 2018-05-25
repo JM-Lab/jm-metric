@@ -76,7 +76,7 @@
           }
         }
       },
-      "combinedId": ["remoteHost", "requestUrl"],
+      "combinedField": ["remoteHost", "requestUrl"],
       "dataType": {
         "statusCode": "WORD",
         "userAgent": "WORD",

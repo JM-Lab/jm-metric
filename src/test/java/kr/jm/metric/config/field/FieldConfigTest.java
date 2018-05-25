@@ -12,7 +12,7 @@ public class FieldConfigTest {
     private FieldConfig fieldConfig;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.fieldConfig =
                 JMJson.withJsonResource("fieldConfigTest.json",
                         FieldConfig.class);
@@ -42,7 +42,7 @@ public class FieldConfigTest {
         System.out.println(stringObjectMap);
         Assert.assertFalse(fieldObjectMap.containsKey("remoteUser"));
         Assert.assertEquals("172.22.206.86|/app/5104", stringObjectMap.get
-                ("combinedId"));
+                ("combinedField"));
         Assert.assertEquals("2015-06-08T18:00:00+1000", stringObjectMap.get
                 ("timestamp"));
         Assert.assertEquals(448d, stringObjectMap.get

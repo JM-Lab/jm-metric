@@ -43,7 +43,7 @@ public class FieldConfig extends FieldMeta {
     /**
      * The Combined id.
      */
-    protected List<String> combinedId;
+    protected List<String> combinedField;
     /**
      * The Data type.
      */
@@ -59,7 +59,7 @@ public class FieldConfig extends FieldMeta {
      * @param format     the format
      * @param rawData    the raw data
      * @param ignore     the ignore
-     * @param combinedId the combined id
+     * @param combinedField the combined id
      * @param dataType   the data type
      * @param dateFormat the date format
      * @param unit       the unit
@@ -67,7 +67,7 @@ public class FieldConfig extends FieldMeta {
      */
     public FieldConfig(Map<String, MetricConfig> format, boolean rawData,
             List<String> ignore,
-            List<String> combinedId, Map<String, DataType> dataType,
+            List<String> combinedField, Map<String, DataType> dataType,
             Map<String, DateConfig> dateFormat,
             Map<String, String> unit, Map<String, Object> custom) {
         super(unit, custom);
@@ -76,7 +76,7 @@ public class FieldConfig extends FieldMeta {
         this.format = format;
         this.ignore = ignore;
         this.dataType = dataType;
-        this.combinedId = combinedId;
+        this.combinedField = combinedField;
     }
 
     /**
@@ -92,8 +92,9 @@ public class FieldConfig extends FieldMeta {
                         fieldObjectMap));
         if (!rawData)
             fieldObjectMap.remove(RAW_DATA);
-        JMOptional.getOptional(combinedId).ifPresent(
-                combinedIdFieldList -> addCombinedId(combinedIdFieldList,
+        JMOptional.getOptional(combinedField).ifPresent(
+                combinedFieldFieldList -> addCombinedField(
+                        combinedFieldFieldList,
                         fieldObjectMap));
         JMOptional.getOptional(ignore).ifPresent(ignoreList -> ignoreList
                 .forEach(fieldObjectMap::remove));
@@ -110,9 +111,9 @@ public class FieldConfig extends FieldMeta {
                         .orElse(value));
     }
 
-    private void addCombinedId(List<String> combinedIdFieldList,
+    private void addCombinedField(List<String> combinedFieldFieldList,
             Map<String, Object> fieldObjectMap) {
-        fieldObjectMap.put("combinedId", combinedIdFieldList.stream()
+        fieldObjectMap.put("combinedField", combinedFieldFieldList.stream()
                 .map(fieldObjectMap::get)
                 .filter(Objects::nonNull).map(Object::toString)
                 .collect(Collectors.joining(PIPE)));
