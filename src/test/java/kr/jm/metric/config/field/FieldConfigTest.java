@@ -42,7 +42,7 @@ public class FieldConfigTest {
         System.out.println(stringObjectMap);
         Assert.assertFalse(fieldObjectMap.containsKey("remoteUser"));
         Assert.assertEquals("172.22.206.86|/app/5104", stringObjectMap.get
-                ("combinedField"));
+                ("remoteHost|requestUrl"));
         Assert.assertEquals("2015-06-08T18:00:00+1000", stringObjectMap.get
                 ("timestamp"));
         Assert.assertEquals(448d, stringObjectMap.get

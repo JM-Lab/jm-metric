@@ -9,12 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import static kr.jm.utils.helper.JMString.PIPE;
 
 /**
  * The type Field properties.
@@ -43,7 +40,8 @@ public class FieldConfig extends FieldMeta {
     /**
      * The Combined id.
      */
-    protected List<String> combinedField;
+    protected CombinedFieldConfig[] combinedFields;
+
     /**
      * The Data type.
      */
@@ -51,24 +49,25 @@ public class FieldConfig extends FieldMeta {
     /**
      * The Date format.
      */
-    protected Map<String, DateConfig> dateFormat;
+    protected Map<String, DateFormatConfig> dateFormat;
 
     /**
      * Instantiates a new Field properties.
      *
-     * @param format     the format
-     * @param rawData    the raw data
-     * @param ignore     the ignore
-     * @param combinedField the combined id
-     * @param dataType   the data type
-     * @param dateFormat the date format
-     * @param unit       the unit
-     * @param custom     the custom
+     * @param format         the format
+     * @param rawData        the raw data
+     * @param ignore         the ignore
+     * @param combinedFields the combined id
+     * @param dataType       the data type
+     * @param dateFormat     the date format
+     * @param unit           the unit
+     * @param custom         the custom
      */
     public FieldConfig(Map<String, MetricConfig> format, boolean rawData,
             List<String> ignore,
-            List<String> combinedField, Map<String, DataType> dataType,
-            Map<String, DateConfig> dateFormat,
+            CombinedFieldConfig[] combinedFields,
+            Map<String, DataType> dataType,
+            Map<String, DateFormatConfig> dateFormat,
             Map<String, String> unit, Map<String, Object> custom) {
         super(unit, custom);
         this.dateFormat = dateFormat;
@@ -76,7 +75,7 @@ public class FieldConfig extends FieldMeta {
         this.format = format;
         this.ignore = ignore;
         this.dataType = dataType;
-        this.combinedField = combinedField;
+        this.combinedFields = combinedFields;
     }
 
     /**
@@ -92,10 +91,11 @@ public class FieldConfig extends FieldMeta {
                         fieldObjectMap));
         if (!rawData)
             fieldObjectMap.remove(RAW_DATA);
-        JMOptional.getOptional(combinedField).ifPresent(
-                combinedFieldFieldList -> addCombinedField(
-                        combinedFieldFieldList,
-                        fieldObjectMap));
+        JMOptional.getOptional(combinedFields).stream().flatMap(Arrays::stream)
+                .forEach(combinedFieldConfig -> fieldObjectMap
+                        .put(combinedFieldConfig.getCombinedFieldName(),
+                                combinedFieldConfig
+                                        .buildValue(fieldObjectMap)));
         JMOptional.getOptional(ignore).ifPresent(ignoreList -> ignoreList
                 .forEach(fieldObjectMap::remove));
         return JMMap.newChangedValueWithEntryMap(fieldObjectMap,
@@ -104,19 +104,21 @@ public class FieldConfig extends FieldMeta {
 
     private Object transformValue(String field, Object value) {
         return JMOptional.getOptional(dateFormat, field)
-                .map(dateConfig -> dateConfig.change(value))
+                .map(dateFormatConfig -> dateFormatConfig.change(value))
                 .orElseGet(() -> JMOptional.getOptional(dataType, field)
                         .map(dataType -> transformWithDataType(dataType,
                                 value.toString()))
                         .orElse(value));
     }
 
-    private void addCombinedField(List<String> combinedFieldFieldList,
+    private void addCombinedField(CombinedFieldConfig combinedFieldConfig,
             Map<String, Object> fieldObjectMap) {
-        fieldObjectMap.put("combinedField", combinedFieldFieldList.stream()
-                .map(fieldObjectMap::get)
-                .filter(Objects::nonNull).map(Object::toString)
-                .collect(Collectors.joining(PIPE)));
+        fieldObjectMap.put(combinedFieldConfig.getCombinedFieldName(),
+                combinedFieldConfig.buildValue(fieldObjectMap));
+//                .stream()
+//                .map(fieldObjectMap::get)
+//                .filter(Objects::nonNull).map(Object::toString)
+//                .collect(Collectors.joining(PIPE)));
     }
 
 

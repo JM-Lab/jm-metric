@@ -13,12 +13,12 @@ import java.util.concurrent.TimeUnit;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DateConfig {
+public class DateFormatConfig {
     private DateFormatType dateFormatType;
     private TimeUnit timeUnit;
     private String format;
     private String zoneOffset;
-    private DateConfig changeDateConfig;
+    private DateFormatConfig changeDateFormat;
 
     /**
      * Change object.
@@ -27,8 +27,8 @@ public class DateConfig {
      * @return the object
      */
     public Object change(Object value) {
-        return Optional.ofNullable(changeDateConfig).map
-                (DateConfig::getDateFormatType).map(changeFormatType ->
+        return Optional.ofNullable(changeDateFormat).map
+                (DateFormatConfig::getDateFormatType).map(changeFormatType ->
                 change(changeFormatType, value)).orElse(value);
     }
 
@@ -39,11 +39,11 @@ public class DateConfig {
             case EPOCH:
                 return dateFormatType.convertToEpoch(this, value);
             case CUSTOM:
-                return Optional.ofNullable(changeDateConfig.getFormat())
+                return Optional.ofNullable(changeDateFormat.getFormat())
                         .map(format -> JMTimeUtil.getTime(
                                 dateFormatType.convertToEpoch(this, value),
                                 format, Optional.ofNullable(
-                                        changeDateConfig.getZoneOffset())
+                                        changeDateFormat.getZoneOffset())
                                         .orElse(JMTimeUtil.DEFAULT_ZONE_ID)))
                         .map(s -> (Object) s).orElse(value);
             default:

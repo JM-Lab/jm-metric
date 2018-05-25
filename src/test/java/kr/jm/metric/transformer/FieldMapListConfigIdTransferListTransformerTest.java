@@ -1,6 +1,7 @@
 package kr.jm.metric.transformer;
 
 import kr.jm.metric.config.*;
+import kr.jm.metric.config.field.CombinedFieldConfig;
 import kr.jm.metric.config.field.DataType;
 import kr.jm.metric.config.field.FieldConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
@@ -36,11 +37,13 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         Map<String, DataType> fieldDataTypeMap = Map.of
                 ("requestTime", DataType.valueOf("NUMBER"), "sizeByte",
                         DataType.valueOf("NUMBER"));
-        List<String> combinedField = List.of("remoteHost", "requestUrl");
+        CombinedFieldConfig[] combinedFieldConfigs = {new CombinedFieldConfig(
+                JMArrays.buildArray("remoteHost", "requestUrl"),
+                "combinedField", null)};
         FieldConfig fieldConfig =
                 new FieldConfig(requestFieldFormat, true, ignoreFieldList,
-                        combinedField,
-                        fieldDataTypeMap, null, null, null);
+                        combinedFieldConfigs, fieldDataTypeMap, null, null,
+                        null);
         MetricConfig config =
                 new ApacheAccessLogMetricConfig(ConfigId, fieldConfig,
                         "%h %l %u %t \"%r\" %>s %b " + "\"%{Referer}i\" " +
@@ -72,7 +75,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         assertTrue(sampleMap.get("requestTime") instanceof Number);
         assertTrue(sampleMap.get("sizeByte") instanceof Number);
         assertTrue(JMString.isWord(sampleMap.get("statusCode").toString()));
-        assertEquals("10.10.78.35|/healthcheck.jsp",
+        assertEquals("10.10.78.35_/healthcheck.jsp",
                 sampleMap.get("combinedField"));
         System.out.println(listTransfer.getMeta());
         assertNotNull(listTransfer.getMeta());

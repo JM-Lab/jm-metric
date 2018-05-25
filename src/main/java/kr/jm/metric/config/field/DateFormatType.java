@@ -14,16 +14,18 @@ public enum DateFormatType implements DateFormatTypeInterface {
      */
     CUSTOM {
         @Override
-        public String convertToIso(DateConfig dateConfig, Object data) {
+        public String convertToIso(DateFormatConfig dateFormatConfig,
+                Object data) {
             return JMTimeUtil.changeFormatAndTimeZoneToDefaultUtcFormat(
-                    dateConfig.getFormat(), data.toString());
+                    dateFormatConfig.getFormat(), data.toString());
         }
 
         @Override
-        public long convertToEpoch(DateConfig dateConfig, Object data) {
+        public long convertToEpoch(DateFormatConfig dateFormatConfig,
+                Object data) {
             return JMTimeUtil
-                    .changeTimestampToLong(dateConfig.getFormat(),
-                            data.toString(), dateConfig.getZoneOffset());
+                    .changeTimestampToLong(dateFormatConfig.getFormat(),
+                            data.toString(), dateFormatConfig.getZoneOffset());
         }
     },
     /**
@@ -31,12 +33,14 @@ public enum DateFormatType implements DateFormatTypeInterface {
      */
     ISO {
         @Override
-        public String convertToIso(DateConfig dateConfig, Object data) {
+        public String convertToIso(DateFormatConfig dateFormatConfig,
+                Object data) {
             return JMTimeUtil.changeIsoTimestampInUTC(data.toString());
         }
 
         @Override
-        public long convertToEpoch(DateConfig dateConfig, Object data) {
+        public long convertToEpoch(DateFormatConfig dateFormatConfig,
+                Object data) {
             return JMTimeUtil.changeIsoTimestampToLong(data.toString());
         }
     },
@@ -45,16 +49,18 @@ public enum DateFormatType implements DateFormatTypeInterface {
      */
     EPOCH {
         @Override
-        public String convertToIso(DateConfig dateConfig, Object data) {
+        public String convertToIso(DateFormatConfig dateFormatConfig,
+                Object data) {
             return JMTimeUtil.getTimeAsDefaultUtcFormat(
-                    Optional.ofNullable(dateConfig.getTimeUnit())
+                    Optional.ofNullable(dateFormatConfig.getTimeUnit())
                             .map(timeUnit -> timeUnit
                                     .toMillis(transformToLong(data)))
                             .orElseGet(() -> transformToLong(data)));
         }
 
         @Override
-        public long convertToEpoch(DateConfig dateConfig, Object data) {
+        public long convertToEpoch(DateFormatConfig dateFormatConfig,
+                Object data) {
             return transformToLong(data);
         }
 
