@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.1</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data
@@ -35,8 +35,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>9</java.version>
         <junit.version>4.12</junit.version>
-        <jmlab-utils-java9.version>0.1.2-SNAPSHOT</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>0.6.2.4-SNAPSHOT
+        <jmlab-utils-java9.version>0.1.2</jmlab-utils-java9.version>
+        <jmlab-utils-elasticsearch.version>0.6.2.4
         </jmlab-utils-elasticsearch.version>
         <slf4j.version>1.7.25</slf4j.version>
         <lombok.version>1.16.20</lombok.version>

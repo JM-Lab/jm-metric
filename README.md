@@ -1,9 +1,9 @@
-JMLab JMMetric Framework
-==============================
-JMMetric is an open source, Java Reactive Stream Data Processing Framework that ingests various format data, transforms it to FieldMap (flat key map), and then use it to build Semi-Structured Data And Metric.
+JMMetric
+========
+JMMetric is an open source to prepare data for analytics, Java Reactive Stream Data Processing Framework that ingests various format data, transforms it to FieldMap (flat key map), and then use it to build Semi-Structured Data And Metric.
 
 ## version
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/kr.jmlab/jm-metric/badge.svg)](http://search.maven.org/#artifactdetails%7Ckr.jmlab%7Cjm-metric%7C0.1.0%7Cjar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/kr.jmlab/jm-metric/badge.svg)](http://search.maven.org/#artifactdetails%7Ckr.jmlab%7Cjm-metric%7C0.1.1%7Cjar)
 
 ## Prerequisites:
 * Java 9 or later
@@ -11,14 +11,14 @@ JMMetric is an open source, Java Reactive Stream Data Processing Framework that 
 ## Usage
 Gradle:
 ```groovy
-compile 'kr.jmlab:jm-metric:0.1.0'
+compile 'kr.jmlab:jm-metric:0.1.1'
 ```
 Maven:
 ```xml
 <dependency>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Checkout the source code:
 
     git clone https://github.com/JM-Lab/jm-metric.git
     cd jm-metric
-    git checkout -b 0.1.0 origin/0.1.0
+    git checkout -b 0.1.1 origin/0.1.1
     mvn install
 
 ## Useful Utilities With New Features Of Java 9  :
@@ -46,7 +46,7 @@ jshell -startup jsh/HelloJMMetric.jsh
 ```
 * **[HelloJMMetric.jsh](https://github.com/JM-Lab/jm-metric/tree/master/jsh/HelloJMMetric.jsh)**
 ```jshell
-/env --class-path ~/.m2/repository/com/github/jm-lab/jm-metric/0.1.0/jm-metric-0.1.0-jar-with-dependencies.jar
+/env --class-path ~/.m2/repository/kr/jmlab/jm-metric/0.1.1/jm-metric-0.1.1-jar-with-dependencies.jar
 
 import kr.jm.metric.JMMetric;
 import kr.jm.metric.config.ApacheAccessLogMetricConfig;
@@ -59,38 +59,52 @@ jmMetric.bindDataIdToConfigId("sampleData", "Raw");
 jmMetric.subscribeWith(JMSubscriberBuilder.getSOPLSubscriber(fieldMapList -> "[Metric Result]" + JMString.LINE_SEPARATOR + JMJson.toPrettyJsonString(fieldMapList)));
 jmMetric.inputSingle("sampleData", "Hello JMMetric !!!");
 ```
-```
-[FieldMap Result]
-[ {
-  "meta.dataId" : "sampleData",
-  "meta.configId" : "Raw",
-  "rawData" : "Hello JMMetric !!!",
-  "meta.timestamp" : 1523608214841
-} ]
+```json
+{  
+   "dataId":"sampleData",
+   "data":[  
+      {  
+         "meta.dataId":"sampleData",
+         "meta.configId":"Raw",
+         "rawData":"Hello JMMetric !!!",
+         "meta.timestamp":1526883794254
+      }
+   ],
+   "timestamp":1526883794254,
+   "meta":{},
+   "configId":"Raw"
+}
 ```
 ```jshell
 jmMetric.insertConfig(new ApacheAccessLogMetricConfig("myAccessLog","%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" %D"));
 jmMetric.bindDataIdToConfigId("sampleAccessLog", "myAccessLog");
 jmMetric.inputSingle("sampleAccessLog", "223.62.219.101 - - [08/Jun/2015:16:59:59 +0900] \"POST /app/5315 HTTP/1.1\" 200 1100 \"-\" \"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)\" 45195");
 ```
-```
-[FieldMap Result]
-[ {
-  "remoteUser" : "-",
-  "request" : "POST /app/5315 HTTP/1.1",
-  "referer" : "-",
-  "remoteHost" : "223.62.219.101",
-  "meta.configId" : "myAccessLog",
-  "userAgent" : "Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)",
-  "rawData" : "223.62.219.101 - - [08/Jun/2015:16:59:59 +0900] \"POST /app/5315 HTTP/1.1\" 200 1100 \"-\" \"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)\" 45195",
-  "meta.timestamp" : 1523608215121,
-  "requestTime" : "45195",
-  "meta.dataId" : "sampleAccessLog",
-  "sizeByte" : "1100",
-  "remoteLogName" : "-",
-  "timestamp" : "08/Jun/2015:16:59:59 +0900",
-  "statusCode" : "200"
-} ]
+```json
+{  
+   "dataId":"sampleAccessLog",
+   "data":[  
+      {  
+         "remoteUser":"-",
+         "request":"POST /app/5315 HTTP/1.1",
+         "referer":"-",
+         "remoteHost":"223.62.219.101",
+         "meta.configId":"myAccessLog",
+         "userAgent":"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)",
+         "rawData":"223.62.219.101 - - [08/Jun/2015:16:59:59 +0900] \"POST /app/5315 HTTP/1.1\" 200 1100 \"-\" \"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)\" 45195",
+         "meta.timestamp":1526883967851,
+         "requestTime":"45195",
+         "meta.dataId":"sampleAccessLog",
+         "sizeByte":"1100",
+         "remoteLogName":"-",
+         "timestamp":"08/Jun/2015:16:59:59 +0900",
+         "statusCode":"200"
+      }
+   ],
+   "timestamp":1526883967851,
+   "meta":{},
+   "configId":"myAccessLog"
+}
 ```
 
 ## LICENSE
