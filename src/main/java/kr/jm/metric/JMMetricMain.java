@@ -1,6 +1,5 @@
 package kr.jm.metric;
 
-import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.metric.publisher.input.StdInLineInputPublisher;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
@@ -34,10 +33,9 @@ public class JMMetricMain {
         String dataId = "StdIn";
         this.stdInLineInputPublisher =
                 new StdInLineInputPublisher(dataId, argsObjects.getC());
-        this.jmMetric = new JMMetric(stdInLineInputPublisher);
+        this.jmMetric =
+                new JMMetric(stdInLineInputPublisher, argsObjects.getB());
         jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
-        jmMetric.subscribe(OutputSubscriberBuilder
-                .build(jmMetric.getOutput(argsObjects.getB())));
         stdInLineInputPublisher.start();
         log.info("==== Config List ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getConfigList()));

@@ -4,6 +4,7 @@ import kr.jm.metric.config.MetricConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.OutputManager;
+import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.metric.processor.FieldMapListConfigIdTransferTransformProcessor;
 import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
 import kr.jm.metric.publisher.StringListTransferSubmissionPublisher;
@@ -11,6 +12,7 @@ import kr.jm.metric.publisher.StringListTransferSubmissionPublisherInterface;
 import kr.jm.utils.flow.publisher.JMPublisherInterface;
 import kr.jm.utils.helper.JMLog;
 import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.helper.JMStream;
 import kr.jm.utils.helper.JMThread;
 import lombok.experimental.Delegate;
 import org.slf4j.Logger;
@@ -49,8 +51,8 @@ public class JMMetric implements
     /**
      * Instantiates a new Jm metric.
      */
-    public JMMetric() {
-        this(false);
+    public JMMetric(String... outputConfigIds) {
+        this(false, outputConfigIds);
     }
 
     /**
@@ -58,8 +60,9 @@ public class JMMetric implements
      *
      * @param isWaiting the is waiting
      */
-    public JMMetric(boolean isWaiting) {
-        this(isWaiting, JMThread.newThreadPoolWithAvailableProcessors());
+    public JMMetric(boolean isWaiting, String... outputConfigIds) {
+        this(isWaiting, JMThread.newThreadPoolWithAvailableProcessors(),
+                outputConfigIds);
     }
 
     /**
@@ -68,9 +71,10 @@ public class JMMetric implements
      * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
      */
     public JMMetric(
-            StringListTransferSubmissionPublisherInterface stringListTransferSubmissionPublisher) {
+            StringListTransferSubmissionPublisherInterface stringListTransferSubmissionPublisher,
+            String... outputConfigIds) {
         this(JMThread.newThreadPoolWithAvailableProcessors(),
-                stringListTransferSubmissionPublisher);
+                stringListTransferSubmissionPublisher, outputConfigIds);
     }
 
     /**
@@ -78,8 +82,8 @@ public class JMMetric implements
      *
      * @param executor the executor
      */
-    public JMMetric(ExecutorService executor) {
-        this(false, executor);
+    public JMMetric(ExecutorService executor, String... outputConfigIds) {
+        this(false, executor, outputConfigIds);
     }
 
     /**
@@ -88,10 +92,11 @@ public class JMMetric implements
      * @param isWaiting the is waiting
      * @param executor  the executor
      */
-    public JMMetric(boolean isWaiting, ExecutorService executor) {
+    public JMMetric(boolean isWaiting, ExecutorService executor,
+            String... outputConfigIds) {
         this(executor,
-                isWaiting ? new StringBulkWaitingTransferSubmissionPublisher()
-                        : new StringListTransferSubmissionPublisher());
+                isWaiting ? new StringBulkWaitingTransferSubmissionPublisher() : new StringListTransferSubmissionPublisher(),
+                outputConfigIds);
     }
 
     /**
@@ -101,10 +106,10 @@ public class JMMetric implements
      * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
      */
     public JMMetric(ExecutorService executor,
-            StringListTransferSubmissionPublisherInterface
-                    stringListTransferSubmissionPublisher) {
+            StringListTransferSubmissionPublisherInterface stringListTransferSubmissionPublisher,
+            String... outputConfigIds) {
         this(executor, Flow.defaultBufferSize(),
-                stringListTransferSubmissionPublisher);
+                stringListTransferSubmissionPublisher, outputConfigIds);
     }
 
     /**
@@ -116,7 +121,8 @@ public class JMMetric implements
      */
     public JMMetric(ExecutorService executor, int maxBufferCapacity,
             StringListTransferSubmissionPublisherInterface
-                    stringListTransferSubmissionPublisher) {
+                    stringListTransferSubmissionPublisher,
+            String... outputConfigIds) {
         this.metricConfigManager = new MetricConfigManager();
         this.outputManager = new OutputManager();
         this.stringListTransferSubmissionPublisher =
@@ -127,6 +133,7 @@ public class JMMetric implements
                                 new FieldMapListConfigIdTransferTransformProcessor(
                                         executor, maxBufferCapacity,
                                         metricConfigManager));
+        JMStream.buildStream(outputConfigIds).forEach(this::addOutput);
     }
 
     /**
@@ -243,5 +250,10 @@ public class JMMetric implements
     public void subscribe(
             Flow.Subscriber<? super ConfigIdTransfer<List<FieldMap>>> subscriber) {
         fieldMapListConfigIdTransferTransformProcessor.subscribe(subscriber);
+    }
+
+    public void addOutput(String outputConfigId) {
+        subscribe(OutputSubscriberBuilder
+                .build(outputManager.getOutput(outputConfigId)));
     }
 }
