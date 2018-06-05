@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.KeyValueDelimiterMetricConfig;
+import kr.jm.metric.config.mutating.KeyValueDelimiterMutatingConfig;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import org.slf4j.Logger;
@@ -17,13 +17,13 @@ import static kr.jm.metric.builder.DelimiterFieldMapBuilder.getSplitPattern;
  * The type Key value delimiter field map builder.
  */
 public class KeyValueDelimiterFieldMapBuilder extends
-        AbstractFieldMapBuilder<KeyValueDelimiterMetricConfig> {
+        AbstractFieldMapBuilder<KeyValueDelimiterMutatingConfig> {
     private static final Logger log = org.slf4j.LoggerFactory
             .getLogger(KeyValueDelimiterFieldMapBuilder.class);
 
     @Override
     public Map<String, Object> buildFieldObjectMap(
-            KeyValueDelimiterMetricConfig inputConfig, String targetString) {
+            KeyValueDelimiterMutatingConfig inputConfig, String targetString) {
         try {
             return Arrays
                     .stream(getSplitPattern(inputConfig.getDelimiterRegex())
@@ -52,7 +52,7 @@ public class KeyValueDelimiterFieldMapBuilder extends
     private Pattern getKeyValuePattern(String keyValueDelimiter) {
         return getSplitPattern(
                 JMOptional.getOptional(keyValueDelimiter).orElse(
-                        KeyValueDelimiterMetricConfig.DefaultKeyValueDelimiterRegex));
+                        KeyValueDelimiterMutatingConfig.DefaultKeyValueDelimiterRegex));
     }
 
 }

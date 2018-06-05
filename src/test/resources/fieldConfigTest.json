@@ -2,7 +2,7 @@
   "format": {
     "request": {
       "fields": ["requestMethod", "requestUrl", "requestProtocol"],
-      "metricConfigType": "DELIMITER"
+      "mutatingConfigType": "DELIMITER"
     }
   },
   "dateFormat": {

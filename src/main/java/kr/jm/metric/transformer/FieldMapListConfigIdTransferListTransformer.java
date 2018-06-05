@@ -1,8 +1,8 @@
 package kr.jm.metric.transformer;
 
-import kr.jm.metric.config.ChunkType;
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.MetricConfigManager;
+import kr.jm.metric.config.mutating.ChunkType;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.exception.JMExceptionManager;
 import org.slf4j.Logger;
@@ -27,32 +27,34 @@ public class FieldMapListConfigIdTransferListTransformer implements
     /**
      * Instantiates a new Field map list properties id transfer list transformer.
      *
-     * @param metricConfigManager the metric properties manager
+     * @param mutatingConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferListTransformer(
-            MetricConfigManager metricConfigManager) {
+            MutatingConfigManager mutatingConfigManager) {
         this.inputTransformer =
                 new FieldMapConfigIdTransferListTransformer(
-                        metricConfigManager);
+                        mutatingConfigManager);
     }
 
     @Override
-    public List<MetricConfig> getInputConfigList(String dataId) {
+    public List<MutatingConfig> getInputConfigList(String dataId) {
         return this.inputTransformer.getInputConfigList(dataId);
     }
 
     @Override
-    public List<FieldMap> transform(MetricConfig metricConfig,
+    public List<FieldMap> transform(MutatingConfig mutatingConfig,
             List<String> dataList) {
         try {
             return dataList.stream().flatMap(
-                    data -> buildDataStream(data, metricConfig.getChunkType()))
-                    .map(data -> inputTransformer.transform(metricConfig, data))
+                    data -> buildDataStream(data,
+                            mutatingConfig.getChunkType()))
+                    .map(data -> inputTransformer
+                            .transform(mutatingConfig, data))
                     .filter(Objects::nonNull).collect(Collectors.toList());
         } catch (Exception e) {
             return JMExceptionManager
                     .handleExceptionAndReturn(log, e, "transform",
-                            Collections::emptyList, metricConfig,
+                            Collections::emptyList, mutatingConfig,
                             dataList.size());
         }
     }

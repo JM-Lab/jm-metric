@@ -1,7 +1,7 @@
 package kr.jm.metric.processor;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
-import kr.jm.metric.config.MetricConfigManager;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -39,8 +39,8 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
     @Before
     public void setUp() {
         this.lineList = JMResources.readLines("webAccessLogSample.txt");
-        MetricConfigManager metricConfigManager = new MetricConfigManager(
-                List.of(new ApacheAccessLogMetricConfig(CONFIG_ID,
+        MutatingConfigManager mutatingConfigManager = new MutatingConfigManager(
+                List.of(new ApacheAccessLogMutatingConfig(CONFIG_ID,
                         "%h %l %u %t \"%r\" %>s %b " +
                                 "\"%{Referer}i\" " +
                                 "\"%{User-agent}i\" %D")
@@ -50,11 +50,11 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
         this.fieldMapConfigIdTransferListTransformProcessor =
                 JMTransformProcessorBuilder.buildWithThreadPool(
                         new FieldMapConfigIdTransferListTransformer(
-                                metricConfigManager));
+                                mutatingConfigManager));
         this.fieldMapListConfigIdTransferListTransformProcessor
                 = JMTransformProcessorBuilder.buildWithThreadPool(
                 new FieldMapListConfigIdTransferListTransformer(
-                        metricConfigManager));
+                        mutatingConfigManager));
         this.transferSubmissionPublisher = new TransferSubmissionPublisher<>();
         this.transferSubmissionPublisher
                 .subscribe(fieldMapListConfigIdTransferListTransformProcessor);

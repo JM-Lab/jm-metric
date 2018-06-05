@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.FormattedMetricConfig;
+import kr.jm.metric.config.mutating.FormattedMutatingConfig;
 import kr.jm.utils.JMRegex;
 import kr.jm.utils.collections.JMNestedMap;
 import kr.jm.utils.datastructure.JMMap;
@@ -15,7 +15,7 @@ import java.util.Map;
  * The type Formatted field map builder.
  */
 public class FormattedFieldMapBuilder extends
-        AbstractFieldMapBuilder<FormattedMetricConfig> {
+        AbstractFieldMapBuilder<FormattedMutatingConfig> {
     private static Map<String, JMRegex> jmRegexCache = new HashMap<>();
     private static Map<String, String> namePartGroupRegexCache =
             new HashMap<>();
@@ -77,7 +77,7 @@ public class FormattedFieldMapBuilder extends
 
     @Override
     public Map<String, Object> buildFieldObjectMap(
-            FormattedMetricConfig inputConfig, String targetString) {
+            FormattedMutatingConfig inputConfig, String targetString) {
         return new HashMap<>(getJMRegex(
                 buildGroupRegexString(inputConfig.getConfigId(),
                         inputConfig.getFormat(), inputConfig.getFieldNameMap()))

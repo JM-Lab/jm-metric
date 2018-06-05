@@ -1,10 +1,10 @@
 package kr.jm.metric.processor;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
-import kr.jm.metric.config.DelimiterMetricConfig;
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.MetricConfigManager;
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
+import kr.jm.metric.config.mutating.DelimiterMutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -33,24 +33,24 @@ public class WordNumberStatsConfigFieldMapConfigIdTransferListTransformProcessor
 
     @Before
     public void setUp() {
-        Map<String, MetricConfig> requestFieldFormat =
-                Map.of("request", new DelimiterMetricConfig(null,
+        Map<String, MutatingConfig> requestFieldFormat =
+                Map.of("request", new DelimiterMutatingConfig(null,
                         JMArrays.buildArray("requestMethod",
                                 "requestedUrl", "requestProtocol")));
         FieldConfig fieldConfig =
                 new FieldConfig(requestFieldFormat, true, null, null, null,
                         null, null, null);
-        MetricConfig config =
-                new ApacheAccessLogMetricConfig(ConfigId, fieldConfig,
+        MutatingConfig config =
+                new ApacheAccessLogMutatingConfig(ConfigId, fieldConfig,
                         "%h %l %u %t \"%r\" %>s %b " + "\"%{Referer}i\" " +
                                 "\"%{User-agent}i\" %D")
                         .withBindDataIds(FileName);
         System.out.println(JMJson.toJsonString(config));
-        MetricConfigManager metricConfigManager =
-                new MetricConfigManager(List.of(config));
+        MutatingConfigManager mutatingConfigManager =
+                new MutatingConfigManager(List.of(config));
         this.fieldMapListConfigIdDataTransferListTransformer =
                 new FieldMapListConfigIdTransferListTransformer(
-                        metricConfigManager);
+                        mutatingConfigManager);
     }
 
     @Test

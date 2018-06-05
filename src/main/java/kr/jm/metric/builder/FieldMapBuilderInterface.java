@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.MetricConfig;
+import kr.jm.metric.config.mutating.MutatingConfig;
 import kr.jm.metric.data.FieldMap;
 
 import java.util.Map;
@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @param <C> the type parameter
  */
-public interface FieldMapBuilderInterface<C extends MetricConfig> {
+public interface FieldMapBuilderInterface<C extends MutatingConfig> {
 
     /**
      * Build field object map map.

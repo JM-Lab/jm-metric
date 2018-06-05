@@ -1,10 +1,10 @@
 package kr.jm.metric;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
-import kr.jm.metric.config.DelimiterMetricConfig;
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.field.DateFormatType;
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
+import kr.jm.metric.config.mutating.DelimiterMutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.field.DateFormatType;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
@@ -38,7 +38,7 @@ public class JMMetricTest {
     @Before
     public void setUp() {
         this.jmMetric = new JMMetric(true);
-        String configFilePathOrClasspath = "JMMetricConfig.json";
+        String configFilePathOrClasspath = "MutatingConfig.json";
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
         System.out.println(stringFromClasspathOrFilePath);
@@ -51,12 +51,12 @@ public class JMMetricTest {
     }
 
     @Test
-    public void loadMetricConfig() {
-        MetricConfig apacheCommonLog =
-                jmMetric.getConfig("apacheAccessLogSample");
+    public void testMutatingConfig() {
+        MutatingConfig apacheCommonLog =
+                jmMetric.getMutatingConfig("apacheAccessLogSample");
         System.out.println(JMJson.toJsonString(apacheCommonLog));
-        MetricConfig nginxAccessLogSample =
-                jmMetric.getConfig("nginxAccessLogSample");
+        MutatingConfig nginxAccessLogSample =
+                jmMetric.getMutatingConfig("nginxAccessLogSample");
         System.out.println(JMJson.toJsonString(nginxAccessLogSample));
         assertEquals(DateFormatType.CUSTOM,
                 nginxAccessLogSample.getFieldConfig().getDateFormat()
@@ -71,25 +71,25 @@ public class JMMetricTest {
         Assert.assertEquals(
                 "{remoteUser=frank, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, sizeByte=2326, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), timestamp=10/Oct/2000:13:55:36 -0700, statusCode=200}",
                 fieldStringMap.toString());
-        Map<String, MetricConfig> nestedFormat =
+        Map<String, MutatingConfig> nestedFormat =
                 nginxAccessLogSample.getFieldConfig().getFormat();
         System.out.println(nestedFormat);
-        MetricConfig requestMetricConfig = nestedFormat.get("request");
-        requestMetricConfig = requestMetricConfig.getMetricConfigType()
-                .transform(requestMetricConfig);
-        assertTrue(requestMetricConfig instanceof DelimiterMetricConfig);
-        System.out.println(requestMetricConfig.getClass());
+        MutatingConfig requestMutatingConfig = nestedFormat.get("request");
+        requestMutatingConfig = requestMutatingConfig.getMutatingConfigType()
+                .transform(requestMutatingConfig);
+        assertTrue(requestMutatingConfig instanceof DelimiterMutatingConfig);
+        System.out.println(requestMutatingConfig.getClass());
     }
 
     @Test
     public void testRemoveDataId() {
-        MetricConfig delimiterSampleMetricConfig =
-                jmMetric.getConfig("delimiterSample");
-        System.out.println(delimiterSampleMetricConfig.getBindDataIds());
+        MutatingConfig delimiterSampleMutatingConfig =
+                jmMetric.getMutatingConfig("delimiterSample");
+        System.out.println(delimiterSampleMutatingConfig.getBindDataIds());
         jmMetric.bindDataIdToConfigId("testData",
                 "apacheAccessLogSample");
         List<String> dataIdList = jmMetric.getConfigList().stream().map
-                (MetricConfig::getBindDataIds).flatMap(Set::stream)
+                (MutatingConfig::getBindDataIds).flatMap(Set::stream)
                 .collect(Collectors.toList());
         System.out.println(dataIdList);
         List<String> inputConfigIdList =
@@ -98,9 +98,9 @@ public class JMMetricTest {
         assertEquals(2, inputConfigIdList.size());
         System.out.println(dataIdList);
         jmMetric.removeDataId("testData");
-        assertEquals(0, delimiterSampleMetricConfig.getBindDataIds().size());
+        assertEquals(0, delimiterSampleMutatingConfig.getBindDataIds().size());
         dataIdList = jmMetric.getConfigList().stream().map
-                (MetricConfig::getBindDataIds).flatMap(Set::stream)
+                (MutatingConfig::getBindDataIds).flatMap(Set::stream)
                 .collect(Collectors.toList());
         System.out.println(dataIdList);
         assertEquals(0, jmMetric.getConfigIdList("testData").size());
@@ -110,17 +110,18 @@ public class JMMetricTest {
     public void testInput() {
         LongAdder count = new LongAdder();
         LongAdder lineCount = new LongAdder();
-        ApacheAccessLogMetricConfig apacheAccessLogSample =
-                (ApacheAccessLogMetricConfig) jmMetric.getConfig
+        ApacheAccessLogMutatingConfig apacheAccessLogSample =
+                (ApacheAccessLogMutatingConfig) jmMetric.getMutatingConfig
                         ("apacheAccessLogSample");
-        FieldConfig fieldConfig = jmMetric.getConfig("nginxAccessLogSample")
-                .getFieldConfig();
-        ApacheAccessLogMetricConfig inputConfig =
-                new ApacheAccessLogMetricConfig("apache", fieldConfig,
+        FieldConfig fieldConfig =
+                jmMetric.getMutatingConfig("nginxAccessLogSample")
+                        .getFieldConfig();
+        ApacheAccessLogMutatingConfig inputConfig =
+                new ApacheAccessLogMutatingConfig("apache", fieldConfig,
                         apacheAccessLogSample.getFormat());
         jmMetric.insertConfig(inputConfig);
-        ApacheAccessLogMetricConfig inputConfig2 =
-                new ApacheAccessLogMetricConfig("apache2", fieldConfig,
+        ApacheAccessLogMutatingConfig inputConfig2 =
+                new ApacheAccessLogMutatingConfig("apache2", fieldConfig,
                         apacheAccessLogSample.getFormat());
         jmMetric.insertConfig(inputConfig2);
         Optional<Path> pathAsOpt1 =

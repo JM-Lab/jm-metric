@@ -7,9 +7,6 @@ import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The type Elasticsearch output properties.
  */
@@ -176,22 +173,6 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
         this.bulkActions = bulkActions;
         this.bulkSizeKB = bulkSizeKB;
         this.flushIntervalSeconds = flushIntervalSeconds;
-    }
-
-    @Override
-    protected Map<String, Object> buildChildConfig() {
-        return new HashMap<>() {{
-            put("elasticsearchConnect", elasticsearchConnect);
-            put("nodeName", nodeName);
-            put("clientTransportSniff", clientTransportSniff);
-            put("clusterName", clusterName);
-            put("indexPrefix", indexPrefix);
-            put("indexSuffixDateFormat", indexSuffixDateFormat);
-            put("zoneId", zoneId);
-            put("bulkActions", bulkActions);
-            put("bulkSizeKB", bulkSizeKB);
-            put("flushIntervalSeconds", flushIntervalSeconds);
-        }};
     }
 
     @Override

@@ -1,9 +1,9 @@
 package kr.jm.metric.transformer;
 
-import kr.jm.metric.config.*;
-import kr.jm.metric.config.field.CombinedFieldConfig;
-import kr.jm.metric.config.field.DataType;
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.*;
+import kr.jm.metric.config.mutating.field.CombinedFieldConfig;
+import kr.jm.metric.config.mutating.field.DataType;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -25,12 +25,12 @@ public class FieldMapListConfigIdTransferListTransformerTest {
     private static final String ConfigId = "webAccessLogTest";
     private FieldMapListConfigIdTransferListTransformer
             fieldMapListConfigIdDataTransferListTransformer;
-    private MetricConfigManager metricConfigManager;
+    private MutatingConfigManager mutatingConfigManager;
 
     @Before
     public void setUp() {
-        Map<String, MetricConfig> requestFieldFormat =
-                Map.of("request", new DelimiterMetricConfig(null,
+        Map<String, MutatingConfig> requestFieldFormat =
+                Map.of("request", new DelimiterMutatingConfig(null,
                         JMArrays.buildArray("requestMethod",
                                 "requestUrl", "requestProtocol")));
         List<String> ignoreFieldList = List.of("remoteLogName", "remoteUser");
@@ -44,16 +44,16 @@ public class FieldMapListConfigIdTransferListTransformerTest {
                 new FieldConfig(requestFieldFormat, true, ignoreFieldList,
                         combinedFieldConfigs, fieldDataTypeMap, null, null,
                         null);
-        MetricConfig config =
-                new ApacheAccessLogMetricConfig(ConfigId, fieldConfig,
+        MutatingConfig config =
+                new ApacheAccessLogMutatingConfig(ConfigId, fieldConfig,
                         "%h %l %u %t \"%r\" %>s %b " + "\"%{Referer}i\" " +
                                 "\"%{User-agent}i\" %D")
                         .withBindDataIds(FileName);
         System.out.println(JMJson.toJsonString(config));
-        this.metricConfigManager = new MetricConfigManager(List.of(config));
+        this.mutatingConfigManager = new MutatingConfigManager(List.of(config));
         this.fieldMapListConfigIdDataTransferListTransformer =
                 new FieldMapListConfigIdTransferListTransformer(
-                        metricConfigManager);
+                        mutatingConfigManager);
     }
 
     @Test
@@ -89,10 +89,10 @@ public class FieldMapListConfigIdTransferListTransformerTest {
                         "\"changeDateFormat\":{\"dateFormatType\":\"ISO\"}}}}",
                 FieldConfig.class);
         System.out.println(JMJson.toJsonString(fieldConfig));
-        this.metricConfigManager
-                .insertConfigList(List.of(new JsonMetricConfig("JSON",
+        this.mutatingConfigManager
+                .insertConfigList(List.of(new JsonMutatingConfig("JSON",
                         fieldConfig, true)));
-        this.metricConfigManager.bindDataIdToConfigId("jsonList", "JSON");
+        this.mutatingConfigManager.bindDataIdToConfigId("jsonList", "JSON");
 
         String targetString =
                 "[{\"values\":[204,206],\"dstypes\":[\"derive\",\"derive\"]," +

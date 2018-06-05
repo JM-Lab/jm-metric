@@ -1,6 +1,6 @@
 package kr.jm.metric.data;
 
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMOptional;

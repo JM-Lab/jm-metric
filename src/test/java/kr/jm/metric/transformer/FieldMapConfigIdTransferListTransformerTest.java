@@ -1,8 +1,8 @@
 package kr.jm.metric.transformer;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.MetricConfigManager;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -32,17 +32,17 @@ public class FieldMapConfigIdTransferListTransformerTest {
     @Before
     public void setUp() {
         this.lineList = JMResources.readLines(FileName);
-        MetricConfig config = new ApacheAccessLogMetricConfig
+        MutatingConfig config = new ApacheAccessLogMutatingConfig
                 (ConfigId, "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" " +
                         "\"%{User-agent}i\" %D").withBindDataIds(FileName);
-        MetricConfigManager metricConfigManager =
-                new MetricConfigManager(List.of(config));
+        MutatingConfigManager mutatingConfigManager =
+                new MutatingConfigManager(List.of(config));
         this.fieldMapConfigIdDataTransferListTransformer =
                 new FieldMapConfigIdTransferListTransformer(
-                        metricConfigManager);
+                        mutatingConfigManager);
         this.fieldMapListConfigIdDataTransferListTransformer = new
                 FieldMapListConfigIdTransferListTransformer(
-                metricConfigManager);
+                mutatingConfigManager);
     }
 
     @Test

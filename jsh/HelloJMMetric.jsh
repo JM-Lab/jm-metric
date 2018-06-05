@@ -1,7 +1,7 @@
     /env--class-path~/.m2/repository/kr/jmlab/jm-metric/0.1.1/jm-metric-0.1.1-jar-with-dependencies.jar
 
 import kr.jm.metric.JMMetric;
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
+        import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMString;

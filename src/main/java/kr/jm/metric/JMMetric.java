@@ -1,9 +1,9 @@
 package kr.jm.metric;
 
-import kr.jm.metric.config.MetricConfigManager;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
+import kr.jm.metric.config.output.OutputConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
-import kr.jm.metric.output.OutputManager;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.metric.processor.FieldMapListConfigIdTransferTransformProcessor;
 import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
@@ -31,9 +31,9 @@ public class JMMetric implements
             org.slf4j.LoggerFactory.getLogger(JMMetric.class);
 
     @Delegate
-    private MetricConfigManager metricConfigManager;
+    private MutatingConfigManager mutatingConfigManager;
     @Delegate
-    private OutputManager outputManager;
+    private OutputConfigManager outputConfigManager;
     private StringListTransferSubmissionPublisherInterface
             stringListTransferSubmissionPublisher;
     private FieldMapListConfigIdTransferTransformProcessor
@@ -123,8 +123,8 @@ public class JMMetric implements
             StringListTransferSubmissionPublisherInterface
                     stringListTransferSubmissionPublisher,
             String... outputConfigIds) {
-        this.metricConfigManager = new MetricConfigManager();
-        this.outputManager = new OutputManager();
+        this.mutatingConfigManager = new MutatingConfigManager();
+        this.outputConfigManager = new OutputConfigManager();
         this.stringListTransferSubmissionPublisher =
                 stringListTransferSubmissionPublisher;
         this.fieldMapListConfigIdTransferTransformProcessor =
@@ -132,7 +132,7 @@ public class JMMetric implements
                         .subscribeAndReturnSubcriber(
                                 new FieldMapListConfigIdTransferTransformProcessor(
                                         executor, maxBufferCapacity,
-                                        metricConfigManager));
+                                        mutatingConfigManager));
         JMStream.buildStream(outputConfigIds).forEach(this::addOutput);
     }
 
@@ -254,6 +254,6 @@ public class JMMetric implements
 
     public void addOutput(String outputConfigId) {
         subscribe(OutputSubscriberBuilder
-                .build(outputManager.getOutput(outputConfigId)));
+                .build(outputConfigManager.getOutput(outputConfigId)));
     }
 }

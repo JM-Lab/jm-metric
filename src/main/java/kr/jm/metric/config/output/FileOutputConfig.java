@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The type File output properties.
  */
@@ -28,13 +25,6 @@ public class FileOutputConfig extends StdOutputConfig {
     public FileOutputConfig(boolean enableJsonString, String filePath) {
         super(enableJsonString);
         this.filePath = filePath;
-    }
-
-    @Override
-    protected Map<String, Object> buildChildConfig() {
-        return new HashMap<>(super.buildChildConfig()) {{
-            put("filePath", filePath);
-        }};
     }
 
     @Override

@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.NginxAccessLogMetricConfig;
+import kr.jm.metric.config.mutating.NginxAccessLogMutatingConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class NginxAccessLogFieldMapBuilderTest {
     private String configId;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.parser =
                 new NginxAccessLogFieldMapBuilder();
         this.configId = "testNginxAccessLog";
@@ -29,7 +29,7 @@ public class NginxAccessLogFieldMapBuilderTest {
         String targetString =
                 "127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326 \"http://www.example.com/start.html\" \"Mozilla/4.08 [en] (Win98; I ;Nav)\"";
         Map<String, Object> fieldObjectMap = parser.buildFieldObjectMap(
-                new NginxAccessLogMetricConfig(configId, nginxLogFormat),
+                new NginxAccessLogMutatingConfig(configId, nginxLogFormat),
                 targetString);
         System.out.println(fieldObjectMap);
         Assert.assertEquals(

@@ -1,6 +1,6 @@
 package kr.jm.metric.stats.collector;
 
-import kr.jm.metric.config.field.DataType;
+import kr.jm.metric.config.mutating.field.DataType;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.stats.collector.WordNumberCollector;
 

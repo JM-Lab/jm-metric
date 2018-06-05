@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.DelimiterMetricConfig;
+import kr.jm.metric.config.mutating.DelimiterMutatingConfig;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.exception.JMExceptionManager;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * The type Delimiter field map builder.
  */
 public class DelimiterFieldMapBuilder extends
-        AbstractFieldMapBuilder<DelimiterMetricConfig> {
+        AbstractFieldMapBuilder<DelimiterMutatingConfig> {
 
     /**
      * The constant DefaultIndexHeader.
@@ -34,7 +34,7 @@ public class DelimiterFieldMapBuilder extends
 
     @Override
     public Map<String, Object> buildFieldObjectMap(
-            DelimiterMetricConfig inputConfig, String targetString) {
+            DelimiterMutatingConfig inputConfig, String targetString) {
         return buildFieldObjectMap(inputConfig, targetString,
                 getSplitPattern(inputConfig.getDelimiterRegex()));
     }
@@ -51,14 +51,14 @@ public class DelimiterFieldMapBuilder extends
     }
 
     private Map<String, Object> buildFieldObjectMap(
-            DelimiterMetricConfig inputConfig, String targetString,
+            DelimiterMutatingConfig inputConfig, String targetString,
             Pattern pattern) {
         return buildFieldObjectMap(inputConfig, targetString, pattern,
                 pattern.split(targetString));
     }
 
     private Map<String, Object> buildFieldObjectMap(
-            DelimiterMetricConfig inputConfig, String targetString,
+            DelimiterMutatingConfig inputConfig, String targetString,
             Pattern pattern, String[] splitValues) {
         setDefaultFieldsIfEmpty(inputConfig, splitValues);
         return buildFieldObjectMap(inputConfig.getFields(),
@@ -66,7 +66,7 @@ public class DelimiterFieldMapBuilder extends
                 pattern, targetString);
     }
 
-    private void setDefaultFieldsIfEmpty(DelimiterMetricConfig inputConfig,
+    private void setDefaultFieldsIfEmpty(DelimiterMutatingConfig inputConfig,
             String[] splitValues) {
         if (!JMOptional.getOptional(inputConfig.getFields()).isPresent())
             inputConfig.setFields(getDefaultFields(splitValues.length));

@@ -1,8 +1,8 @@
 package kr.jm.metric.processor;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
-import kr.jm.metric.config.MetricConfigManager;
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
@@ -31,19 +31,19 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
     private static final String FileName = "webAccessLogSample.txt";
     private FieldMapListConfigIdTransferTransformProcessor
             fieldMapListConfigIdTransferTransformProcessor;
-    private MetricConfigManager metricConfigManager;
+    private MutatingConfigManager mutatingConfigManager;
 
     @Before
     public void setUp() {
-        this.metricConfigManager = new MetricConfigManager();
+        this.mutatingConfigManager = new MutatingConfigManager();
         this.fieldMapListConfigIdTransferTransformProcessor =
                 new FieldMapListConfigIdTransferTransformProcessor(
-                        metricConfigManager);
-        String configFilePathOrClasspath = "JMMetricConfig.json";
+                        mutatingConfigManager);
+        String configFilePathOrClasspath = "MutatingConfig.json";
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
         System.out.println(stringFromClasspathOrFilePath);
-        this.metricConfigManager
+        this.mutatingConfigManager
                 .insertConfigMapList(JMJson.withRestOrFilePathOrClasspath(
                         configFilePathOrClasspath,
                         JMJson.LIST_MAP_TYPE_REFERENCE));
@@ -58,21 +58,21 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
     public void testInput() {
         LongAdder count = new LongAdder();
         LongAdder lineCount = new LongAdder();
-        ApacheAccessLogMetricConfig apacheAccessLogSample =
-                (ApacheAccessLogMetricConfig) metricConfigManager
-                        .getConfig("apacheAccessLogSample");
-        FieldConfig fieldConfig = metricConfigManager
-                .getConfig("nginxAccessLogSample")
+        ApacheAccessLogMutatingConfig apacheAccessLogSample =
+                (ApacheAccessLogMutatingConfig) mutatingConfigManager
+                        .getMutatingConfig("apacheAccessLogSample");
+        FieldConfig fieldConfig = mutatingConfigManager
+                .getMutatingConfig("nginxAccessLogSample")
                 .getFieldConfig();
-        ApacheAccessLogMetricConfig apacheCommonLogMetricConfig =
-                new ApacheAccessLogMetricConfig("apache", fieldConfig,
+        ApacheAccessLogMutatingConfig apacheCommonLogMetricConfig =
+                new ApacheAccessLogMutatingConfig("apache", fieldConfig,
                         apacheAccessLogSample.getFormat());
-        metricConfigManager
+        mutatingConfigManager
                 .insertConfig(apacheCommonLogMetricConfig);
-        ApacheAccessLogMetricConfig apacheCommonLogMetricConfig2 =
-                new ApacheAccessLogMetricConfig("apache2", fieldConfig,
+        ApacheAccessLogMutatingConfig apacheCommonLogMetricConfig2 =
+                new ApacheAccessLogMutatingConfig("apache2", fieldConfig,
                         apacheAccessLogSample.getFormat());
-        metricConfigManager
+        mutatingConfigManager
                 .insertConfig(apacheCommonLogMetricConfig2);
         Optional<Path> pathAsOpt1 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
@@ -84,9 +84,9 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
                         path1.toAbsolutePath().toString());
 
 
-        metricConfigManager
+        mutatingConfigManager
                 .bindDataIdToConfigId(FileName, "apache");
-        metricConfigManager
+        mutatingConfigManager
                 .bindDataIdToConfigId(FileName, "apache2");
         fieldMapListConfigIdTransferTransformProcessor.subscribe(
                 JMSubscriberBuilder.getJsonStringSOPLSubscriber());

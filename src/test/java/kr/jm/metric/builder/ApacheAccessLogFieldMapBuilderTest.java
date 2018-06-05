@@ -1,6 +1,6 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ public class ApacheAccessLogFieldMapBuilderTest {
     private String configId;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.parser =
                 new ApacheAccessLogFieldMapBuilder();
         this.configId = "testApacheAccessLog";
@@ -30,7 +30,7 @@ public class ApacheAccessLogFieldMapBuilderTest {
         String targetString =
                 "127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326 \"http://www.example.com/start.html\" \"Mozilla/4.08 [en] (Win98; I ;Nav)\"";
         Map<String, Object> fieldObjectMap =
-                parser.buildFieldObjectMap(new ApacheAccessLogMetricConfig
+                parser.buildFieldObjectMap(new ApacheAccessLogMutatingConfig
                                 (configId, apacheCommonLogFormat),
                         targetString);
         System.out.println(fieldObjectMap);

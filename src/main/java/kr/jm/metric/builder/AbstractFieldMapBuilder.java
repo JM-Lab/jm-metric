@@ -1,7 +1,7 @@
 package kr.jm.metric.builder;
 
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.field.FieldConfig;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.metric.data.FieldMap;
 import org.slf4j.Logger;
 
@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
-import static kr.jm.metric.config.field.FieldConfig.RAW_DATA;
+import static kr.jm.metric.config.mutating.field.FieldConfig.RAW_DATA;
 
 /**
  * The type Abstract field map builder.
  *
  * @param <C> the type parameter
  */
-public abstract class AbstractFieldMapBuilder<C extends MetricConfig> implements
+public abstract class AbstractFieldMapBuilder<C extends MutatingConfig> implements
         FieldMapBuilderInterface<C> {
 
     /**

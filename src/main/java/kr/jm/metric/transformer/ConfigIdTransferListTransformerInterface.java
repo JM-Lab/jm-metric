@@ -1,7 +1,7 @@
 package kr.jm.metric.transformer;
 
-import kr.jm.metric.config.MetricConfig;
-import kr.jm.metric.config.field.FieldMeta;
+import kr.jm.metric.config.mutating.MutatingConfig;
+import kr.jm.metric.config.mutating.field.FieldMeta;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMPredicate;
@@ -22,11 +22,11 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     /**
      * Transform o.
      *
-     * @param metricConfig the metric properties
+     * @param mutatingConfig the metric properties
      * @param data         the data
      * @return the o
      */
-    O transform(MetricConfig metricConfig, I data);
+    O transform(MutatingConfig mutatingConfig, I data);
 
     /**
      * Gets input properties list.
@@ -34,7 +34,7 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
      * @param dataId the data id
      * @return the input properties list
      */
-    List<MetricConfig> getInputConfigList(String dataId);
+    List<MutatingConfig> getInputConfigList(String dataId);
 
     @Override
     default List<ConfigIdTransfer<O>> apply(Transfer<I> transfer) {
@@ -44,8 +44,8 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     }
 
     private List<ConfigIdTransfer<O>> apply(Transfer<I> transfer,
-            List<MetricConfig> metricConfigList, Map<String, Object> meta) {
-        return metricConfigList.stream()
+            List<MutatingConfig> mutatingConfigList, Map<String, Object> meta) {
+        return mutatingConfigList.stream()
                 .map(inputConfig -> newListConfigTransfer(transfer, meta,
                         inputConfig, inputConfig.getFieldConfig()))
                 .filter(Objects::nonNull).collect(Collectors.toList());
@@ -54,12 +54,14 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     @SuppressWarnings("unchecked")
     private ConfigIdTransfer<O> newListConfigTransfer(
             Transfer<I> transfer, Map<String, Object> meta,
-            MetricConfig metricConfig, FieldMeta fieldMeta) {
-        return Optional.ofNullable(transform(metricConfig, transfer.getData()))
+            MutatingConfig mutatingConfig, FieldMeta fieldMeta) {
+        return Optional
+                .ofNullable(transform(mutatingConfig, transfer.getData()))
                 .map(o -> transfer.newWith(o,
                         buildConfigTransferMeta(new HashMap<>(meta),
                                 fieldMeta)))
-                .map(t -> new ConfigIdTransfer<>(metricConfig.getConfigId(), t))
+                .map(t -> new ConfigIdTransfer<>(mutatingConfig.getConfigId(),
+                        t))
                 .orElse(null);
     }
 

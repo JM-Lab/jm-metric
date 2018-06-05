@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Map;
-
 /**
  * The type String output properties.
  */
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StdOutputConfig extends AbstractMapOutputConfig {
+public class StdOutputConfig extends AbstractOutputConfig {
 
     private boolean enableJsonString;
 
@@ -25,11 +23,6 @@ public class StdOutputConfig extends AbstractMapOutputConfig {
      */
     public StdOutputConfig(boolean enableJsonString) {
         this.enableJsonString = enableJsonString;
-    }
-
-    @Override
-    protected Map<String, Object> buildChildConfig() {
-        return Map.of("enableJsonString", enableJsonString);
     }
 
     @Override

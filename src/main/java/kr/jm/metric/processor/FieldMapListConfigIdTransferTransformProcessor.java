@@ -1,6 +1,6 @@
 package kr.jm.metric.processor;
 
-import kr.jm.metric.config.MetricConfigManager;
+import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
@@ -37,29 +37,29 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
      * Instantiates a new Field map list properties id transfer transform processor.
      */
     public FieldMapListConfigIdTransferTransformProcessor() {
-        this(new MetricConfigManager());
+        this(new MutatingConfigManager());
     }
 
     /**
      * Instantiates a new Field map list properties id transfer transform processor.
      *
-     * @param metricConfigManager the metric properties manager
+     * @param mutatingConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(
-            MetricConfigManager metricConfigManager) {
+            MutatingConfigManager mutatingConfigManager) {
         this(JMThread.newThreadPoolWithAvailableProcessors(),
-                metricConfigManager);
+                mutatingConfigManager);
     }
 
     /**
      * Instantiates a new Field map list properties id transfer transform processor.
      *
      * @param executor            the executor
-     * @param metricConfigManager the metric properties manager
+     * @param mutatingConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(Executor executor,
-            MetricConfigManager metricConfigManager) {
-        this(executor, Flow.defaultBufferSize(), metricConfigManager);
+            MutatingConfigManager mutatingConfigManager) {
+        this(executor, Flow.defaultBufferSize(), mutatingConfigManager);
     }
 
     /**
@@ -67,14 +67,15 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
      *
      * @param executor            the executor
      * @param maxBufferCapacity   the max buffer capacity
-     * @param metricConfigManager the metric properties manager
+     * @param mutatingConfigManager the metric properties manager
      */
     public FieldMapListConfigIdTransferTransformProcessor(Executor executor,
-            int maxBufferCapacity, MetricConfigManager metricConfigManager) {
+            int maxBufferCapacity,
+            MutatingConfigManager mutatingConfigManager) {
         this.concurrentTransformProcessor = JMTransformProcessorBuilder
                 .buildWithThreadPool(executor, maxBufferCapacity,
                         new FieldMapListConfigIdTransferListTransformer(
-                                metricConfigManager));
+                                mutatingConfigManager));
         this.outputFieldMapListConfigIdTransferProcessor =
                 this.concurrentTransformProcessor.subscribeAndReturnProcessor(
                         buildCollectionEach(this::buildFieldMapWithMeta));
