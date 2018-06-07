@@ -38,9 +38,9 @@ public abstract class AbstractOutput<C extends OutputConfigInterface, T> impleme
 
     @Override
     public void close() {
-        log.info("Start Closing - {}", toString());
+        log.info("Start Output Closing - {}", toString());
         closeImpl();
-        log.info("Finish Closing - {}", toString());
+        log.info("Finish Output Closing - {}", toString());
     }
 
     protected abstract void closeImpl();

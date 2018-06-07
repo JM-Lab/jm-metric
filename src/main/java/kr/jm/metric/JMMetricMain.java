@@ -1,6 +1,8 @@
 package kr.jm.metric;
 
-import kr.jm.metric.publisher.input.StdInLineInputPublisher;
+import kr.jm.metric.input.StdLineInput;
+import kr.jm.metric.input.publisher.InputPublisher;
+import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMJson;
@@ -21,7 +23,7 @@ public class JMMetricMain {
     @Getter
     private JMMetric jmMetric;
     @Getter
-    private StdInLineInputPublisher stdInLineInputPublisher;
+    private InputPublisher stdLineInputPublisher;
 
     /**
      * Main.
@@ -31,12 +33,13 @@ public class JMMetricMain {
     public void main(String... args) {
         ABCObjects<String, String, Integer> argsObjects = buildArgsObject(args);
         String dataId = "StdIn";
-        this.stdInLineInputPublisher =
-                new StdInLineInputPublisher(dataId, argsObjects.getC());
+        this.stdLineInputPublisher = InputPublisherBuilder
+                .build(dataId, argsObjects.getC(), new StdLineInput());
         this.jmMetric =
-                new JMMetric(stdInLineInputPublisher, argsObjects.getB());
-        jmMetric.bindDataIdToConfigId(dataId, argsObjects.getA());
-        stdInLineInputPublisher.start();
+                new JMMetric(stdLineInputPublisher, argsObjects.getB());
+        jmMetric.bindDataIdToConfigId(stdLineInputPublisher.getDataId(),
+                argsObjects.getA());
+        stdLineInputPublisher.start();
         log.info("==== Config List ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getConfigList()));
         log.info("==== DataId-ConfigIds ====");

@@ -81,12 +81,11 @@ public class OutputSubscriberBuilder {
     /**
      * Build output subscriber.
      *
-     * @param <T>             the type parameter
-     * @param outputInterface the output interface
+     * @param <T>    the type parameter
+     * @param output the output interface
      * @return the output subscriber
      */
-    public static <T> OutputSubscriber<T> build(
-            OutputInterface<T> outputInterface) {
-        return new OutputSubscriber<>(outputInterface);
+    public static <T> OutputSubscriber<T> build(OutputInterface<T> output) {
+        return new OutputSubscriber<>(output);
     }
 }
