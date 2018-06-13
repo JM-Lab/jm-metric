@@ -1,11 +1,11 @@
 [
   {
-    "configId": "StdOut",
+    "outputId": "StdOut",
     "outputConfigType": "STDOUT",
     "enableJsonString": true
   },
   {
-    "configId": "ESClient",
+    "outputId": "ESClient",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "127.0.0.1:9300",
     "nodeName": "JM-MacBook-Pro-6.local",
@@ -20,13 +20,13 @@
     "properties": {}
   },
   {
-    "configId": "File",
+    "outputId": "File",
     "outputConfigType": "FILE",
     "filePath": "outTest.txt",
     "enableJsonString": true
   },
   {
-    "configId": "File2",
+    "outputId": "File2",
     "outputConfigType": "File",
     "filePath": "outTest.txt",
     "enableJsonString": true

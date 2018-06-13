@@ -22,16 +22,12 @@ public class InputPublisherBuilder {
         return build(dataId, new FileInput(filePath));
     }
 
-    public static InputPublisher buildStdInput() {
-        return buildStdInput("StdIn");
-    }
-
     public static InputPublisher buildStdInput(String dataId) {
-        return build(dataId, new StdLineInput());
+        return build(dataId, new StdLineInput(dataId));
     }
 
     public static InputPublisher build(String dataId, List<String> data) {
-        return build(dataId, new AbstractInput() {
+        return build(dataId, new AbstractInput(null) {
             @Override
             protected void startImpl(Consumer<List<String>> inputConsumer) {
                 inputConsumer.accept(data);
@@ -44,14 +40,8 @@ public class InputPublisherBuilder {
         });
     }
 
-
     public static InputPublisher build(String dataId, InputInterface input) {
-        return build(dataId, null, input);
-    }
-
-    public static InputPublisher build(String dataId, Integer bulkSize,
-            InputInterface input) {
-        return build(dataId, bulkSize, null, input);
+        return build(dataId, null, null, input);
     }
 
     public static InputPublisher build(String dataId, Integer bulkSize,

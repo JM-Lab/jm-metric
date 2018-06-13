@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
-public class ElasticsearchOutput extends
-        AbstractOutput<ElasticsearchOutputConfig, List<FieldMap>> {
+public class ElasticsearchOutput extends AbstractOutput<List<FieldMap>> {
 
     private String zoneId;
     private String indexSuffixDateFormat;

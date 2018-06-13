@@ -1,40 +1,27 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.OutputConfigInterface;
-import lombok.Getter;
 import org.slf4j.Logger;
 
-/**
- * The type Abstract output.
- *
- * @param <C> the type parameter
- * @param <T> the type parameter
- */
-public abstract class AbstractOutput<C extends OutputConfigInterface, T> implements
-        OutputInterface<T> {
+import java.util.Map;
+
+public abstract class AbstractOutput<T> implements OutputInterface<T> {
 
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
-    /**
-     * The Output properties.
-     */
-    @Getter
-    protected C outputConfig;
+    protected OutputConfigInterface outputConfig;
 
     /**
      * Instantiates a new Abstract output.
      *
      * @param outputConfig the output properties
      */
-    public AbstractOutput(C outputConfig) {
+    public AbstractOutput(OutputConfigInterface outputConfig) {
         this.outputConfig = outputConfig;
     }
 
-    /**
-     * Gets properties id.
-     *
-     * @return the properties id
-     */
-    public String getConfigId() {return outputConfig.getConfigId();}
+    public Map<String, Object> getConfig() {
+        return outputConfig.extractConfigMap();
+    }
 
     @Override
     public void close() {

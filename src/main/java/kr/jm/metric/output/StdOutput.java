@@ -4,15 +4,18 @@ import kr.jm.metric.config.output.StdOutputConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMStream;
+import lombok.Getter;
 
 import java.util.function.Function;
 
 /**
  * The type Abstract string output.
  */
-public class StdOutput<T> extends AbstractOutput<StdOutputConfig, T> {
+public class StdOutput<T> extends AbstractOutput<T> {
 
     private Function<Object, String> toStringFunction;
+    @Getter
+    private boolean enableJsonString;
 
     /**
      * Instantiates a new Abstract string output.
@@ -21,6 +24,7 @@ public class StdOutput<T> extends AbstractOutput<StdOutputConfig, T> {
      */
     public StdOutput(StdOutputConfig outputConfig) {
         super(outputConfig);
+        this.enableJsonString = outputConfig.isEnableJsonString();
         this.toStringFunction = outputConfig
                 .isEnableJsonString() ? JMJson::toJsonString : Object::toString;
     }
@@ -44,15 +48,6 @@ public class StdOutput<T> extends AbstractOutput<StdOutputConfig, T> {
      */
     public StdOutput(boolean enableJsonString) {
         this(new StdOutputConfig(enableJsonString));
-    }
-
-    /**
-     * Is enable json string boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isEnableJsonString() {
-        return outputConfig.isEnableJsonString();
     }
 
     @Override

@@ -49,7 +49,7 @@ jshell -startup jsh/HelloJMMetric.jsh
 /env --class-path ~/.m2/repository/kr/jmlab/jm-metric/0.1.1/jm-metric-0.1.1-jar-with-dependencies.jar
 
 import kr.jm.metric.JMMetric;
-import kr.jm.metric.config.ApacheAccessLogMetricConfig;
+import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMString;
@@ -61,10 +61,10 @@ jmMetric.inputSingle("sampleData", "Hello JMMetric !!!");
 ```
 ```json
 {  
-   "dataId":"sampleData",
+   "inputId":"sampleData",
    "data":[  
       {  
-         "meta.dataId":"sampleData",
+         "meta.inputId":"sampleData",
          "meta.configId":"Raw",
          "rawData":"Hello JMMetric !!!",
          "meta.timestamp":1526883794254
@@ -82,7 +82,7 @@ jmMetric.inputSingle("sampleAccessLog", "223.62.219.101 - - [08/Jun/2015:16:59:5
 ```
 ```json
 {  
-   "dataId":"sampleAccessLog",
+   "inputId":"sampleAccessLog",
    "data":[  
       {  
          "remoteUser":"-",
@@ -94,7 +94,7 @@ jmMetric.inputSingle("sampleAccessLog", "223.62.219.101 - - [08/Jun/2015:16:59:5
          "rawData":"223.62.219.101 - - [08/Jun/2015:16:59:59 +0900] \"POST /app/5315 HTTP/1.1\" 200 1100 \"-\" \"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)\" 45195",
          "meta.timestamp":1526883967851,
          "requestTime":"45195",
-         "meta.dataId":"sampleAccessLog",
+         "meta.inputId":"sampleAccessLog",
          "sizeByte":"1100",
          "remoteLogName":"-",
          "timestamp":"08/Jun/2015:16:59:59 +0900",

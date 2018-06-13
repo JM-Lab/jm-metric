@@ -21,7 +21,7 @@ public class InputPublisher extends
 
     public InputPublisher(InputConfigInterface inputConfig,
             InputInterface input) {
-        this(inputConfig.getDataId(), inputConfig.getBulkSize(),
+        this(inputConfig.getInputId(), inputConfig.getBulkSize(),
                 inputConfig.getFlushIntervalSeconds(), input);
     }
 

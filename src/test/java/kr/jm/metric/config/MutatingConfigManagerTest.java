@@ -19,7 +19,8 @@ public class MutatingConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.mutatingConfigManager = new MutatingConfigManager();
+        this.mutatingConfigManager =
+                new MutatingConfigManager("MutatingConfig.json");
     }
 
     @Test
@@ -40,9 +41,9 @@ public class MutatingConfigManagerTest {
 
         System.out.println(mutatingConfigManager.getMutatingConfig(configId));
         System.out.println(
-                JMJson.toJsonString(mutatingConfigManager.getConfigList()));
+                JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
         assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
-        assertEquals(9, mutatingConfigManager.getConfigList().size());
+        assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -55,9 +56,9 @@ public class MutatingConfigManagerTest {
 
         System.out.println(mutatingConfigManager.getMutatingConfig(configId));
         System.out.println(
-                JMJson.toJsonString(mutatingConfigManager.getConfigList()));
+                JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
         assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
-        assertEquals(9, mutatingConfigManager.getConfigList().size());
+        assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -71,9 +72,9 @@ public class MutatingConfigManagerTest {
 
         System.out.println(mutatingConfigManager.getMutatingConfig(configId));
         System.out.println(
-                JMJson.toJsonString(mutatingConfigManager.getConfigList()));
+                JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
         assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
-        assertEquals(9, mutatingConfigManager.getConfigList().size());
+        assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -88,9 +89,9 @@ public class MutatingConfigManagerTest {
 
         System.out.println(mutatingConfigManager.getMutatingConfig(configId));
         System.out.println(
-                JMJson.toJsonString(mutatingConfigManager.getConfigList()));
+                JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
         assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
-        assertEquals(9, mutatingConfigManager.getConfigList().size());
+        assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -103,9 +104,9 @@ public class MutatingConfigManagerTest {
 
         System.out.println(mutatingConfigManager.getMutatingConfig(configId));
         System.out.println(
-                JMJson.toJsonString(mutatingConfigManager.getConfigList()));
+                JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
         assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
-        assertEquals(9, mutatingConfigManager.getConfigList().size());
+        assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
     public void insertConfig(MutatingConfig config) {
@@ -123,21 +124,22 @@ public class MutatingConfigManagerTest {
                 "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
                 .withBindDataIds("data1", "data2", "data3"));
         List<String> dataIdList =
-                mutatingConfigManager.getConfigList().stream().map
-                        (MutatingConfig::getBindDataIds).flatMap(Set::stream)
+                mutatingConfigManager.getConfigMap().values().stream()
+                        .map(MutatingConfig::getBindDataIds)
+                        .flatMap(Set::stream)
                         .collect(Collectors.toList());
         System.out.println(dataIdList);
         assertEquals(5, dataIdList.size());
         mutatingConfigManager.removeDataId("data2");
         dataIdList =
-                mutatingConfigManager.getConfigList().stream().map
+                mutatingConfigManager.getConfigMap().values().stream().map
                         (MutatingConfig::getBindDataIds).flatMap(Set::stream)
                         .collect(Collectors.toList());
         System.out.println(dataIdList);
         assertEquals(3, dataIdList.size());
         mutatingConfigManager.removeDataId("data3");
         dataIdList =
-                mutatingConfigManager.getConfigList().stream().map
+                mutatingConfigManager.getConfigMap().values().stream().map
                         (MutatingConfig::getBindDataIds).flatMap(Set::stream)
                         .collect(Collectors.toList());
         System.out.println(dataIdList);
@@ -151,10 +153,10 @@ public class MutatingConfigManagerTest {
     public void testLoadConfig() {
         assertEquals(9,
                 mutatingConfigManager.loadConfig("testMutatingConfig.json")
-                        .getConfigList().size());
+                        .getConfigMap().size());
         assertEquals("keyValueDelimiterSample2",
                 mutatingConfigManager.getMutatingConfig
-                ("keyValueDelimiterSample2").getConfigId());
+                        ("keyValueDelimiterSample2").getConfigId());
     }
 }
 

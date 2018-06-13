@@ -22,6 +22,9 @@ import java.util.Set;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MutatingConfig extends AbstractConfig {
+
+    @Getter
+    protected String configId;
     /**
      * The Metric properties type.
      */

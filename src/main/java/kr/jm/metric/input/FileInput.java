@@ -1,5 +1,6 @@
 package kr.jm.metric.input;
 
+import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.utils.JMFileAppender;
 import kr.jm.utils.helper.JMFiles;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,13 @@ public class FileInput extends AbstractInput {
 
     private JMFileAppender fileAppender;
 
+    public FileInput(FileInputConfig inputConfig) {
+        super(inputConfig);
+        this.fileAppender = new JMFileAppender(inputConfig.getFilePath());
+    }
+
     public FileInput(String filePath) {
-        this.fileAppender = new JMFileAppender(filePath);
+        this(new FileInputConfig(filePath));
     }
 
     /**

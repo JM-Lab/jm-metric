@@ -14,24 +14,25 @@ public class OutputConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.outputConfigManager = new OutputConfigManager();
+        this.outputConfigManager = new OutputConfigManager("OutputConfig.json");
     }
 
     @Test
     public void testGetOutput() {
-        OutputInterface esClient =
-                this.outputConfigManager.getOutput("ESClient");
-        System.out.println(esClient.getOutputConfig());
+        Assert.assertTrue(this.outputConfigManager.getOutputAsOpt("ESClient")
+                .isPresent());
+        System.out.println(
+                this.outputConfigManager.getConfigMap().get("ESClient"));
         OutputConfigInterface outputConfig =
-                this.outputConfigManager.getOutput("StdOut").getOutputConfig();
+                this.outputConfigManager.getConfigAsOpt("StdOut").get();
         System.out.println(outputConfig.getOutputConfigType());
         Map<String, Object> fileConfigMap = outputConfig.extractConfigMap();
         System.out.println(fileConfigMap);
         Assert.assertEquals("true",
                 fileConfigMap.get("enableJsonString").toString());
         Assert.assertEquals("STDOUT", fileConfigMap.get("outputConfigType"));
-        System.out.println(outputConfigManager.getOutputConfigMap());
-        Assert.assertEquals(4, outputConfigManager.getOutputConfigMap().size());
+        System.out.println(outputConfigManager.getConfigMap());
+        Assert.assertEquals(4, outputConfigManager.getConfigMap().size());
 
     }
 }

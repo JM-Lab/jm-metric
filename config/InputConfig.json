@@ -1,0 +1,17 @@
+[
+  //  {
+  //    "inputId": "StdIn",
+  //    "bulkSize": 16,
+  //    "flushIntervalSeconds": 1,
+  //    "inputConfigType": "STDIN",
+  //    "properties": {}
+  //  },
+  //  {
+  //    "inputId": "FileInput",
+  //    "bulkSize": 16,
+  //    "flushIntervalSeconds": 1,
+  //    "filePath": "webAccessLogSample.txt",
+  //    "inputConfigType": "FILE",
+  //    "properties": {}
+  //  }
+]

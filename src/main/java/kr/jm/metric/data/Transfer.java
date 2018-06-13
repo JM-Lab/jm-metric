@@ -32,7 +32,7 @@ public class Transfer<T> {
     /**
      * The constant DATA_ID.
      */
-    public static final String DATA_ID = "dataId";
+    public static final String DATA_ID = "inputId";
     /**
      * The constant TIMESTAMP.
      */

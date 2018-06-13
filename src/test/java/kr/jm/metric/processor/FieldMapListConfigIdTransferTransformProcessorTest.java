@@ -35,11 +35,12 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
 
     @Before
     public void setUp() {
-        this.mutatingConfigManager = new MutatingConfigManager();
+        String configFilePathOrClasspath = "MutatingConfig.json";
+        this.mutatingConfigManager =
+                new MutatingConfigManager(configFilePathOrClasspath);
         this.fieldMapListConfigIdTransferTransformProcessor =
                 new FieldMapListConfigIdTransferTransformProcessor(
                         mutatingConfigManager);
-        String configFilePathOrClasspath = "MutatingConfig.json";
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
         System.out.println(stringFromClasspathOrFilePath);

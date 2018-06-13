@@ -1,0 +1,9 @@
+[
+  {
+    "inputId": "StdIn",
+    "bulkSize": 16,
+    "flushIntervalSeconds": 1,
+    "inputConfigType": "STDIN",
+    "properties": {}
+  }
+]

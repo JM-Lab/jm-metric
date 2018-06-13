@@ -1,6 +1,6 @@
 [
   {
-    "configId": "MyElasticsearch",
+    "outputId": "MyElasticsearch",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "localhost:9300",
     "nodeName": null,
@@ -15,7 +15,7 @@
     "properties": {}
   },
   {
-    "configId": "File",
+    "outputId": "File",
     "outputConfigType": "FILE",
     "filePath": "outTest.txt",
     "enableJsonString": true

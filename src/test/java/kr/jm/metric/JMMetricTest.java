@@ -42,7 +42,8 @@ public class JMMetricTest {
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
         System.out.println(stringFromClasspathOrFilePath);
-        this.jmMetric.loadConfig(configFilePathOrClasspath);
+        this.jmMetric.getMutatingConfigManager()
+                .loadConfig(configFilePathOrClasspath);
     }
 
     @After
@@ -88,9 +89,11 @@ public class JMMetricTest {
         System.out.println(delimiterSampleMutatingConfig.getBindDataIds());
         jmMetric.bindDataIdToConfigId("testData",
                 "apacheAccessLogSample");
-        List<String> dataIdList = jmMetric.getConfigList().stream().map
-                (MutatingConfig::getBindDataIds).flatMap(Set::stream)
-                .collect(Collectors.toList());
+        List<String> dataIdList =
+                jmMetric.getMutatingConfigMap().values().stream()
+                        .map(MutatingConfig::getBindDataIds)
+                        .flatMap(Set::stream)
+                        .collect(Collectors.toList());
         System.out.println(dataIdList);
         List<String> inputConfigIdList =
                 jmMetric.getConfigIdList("testData");
@@ -99,8 +102,8 @@ public class JMMetricTest {
         System.out.println(dataIdList);
         jmMetric.removeDataId("testData");
         assertEquals(0, delimiterSampleMutatingConfig.getBindDataIds().size());
-        dataIdList = jmMetric.getConfigList().stream().map
-                (MutatingConfig::getBindDataIds).flatMap(Set::stream)
+        dataIdList = jmMetric.getMutatingConfigMap().values().stream()
+                .map(MutatingConfig::getBindDataIds).flatMap(Set::stream)
                 .collect(Collectors.toList());
         System.out.println(dataIdList);
         assertEquals(0, jmMetric.getConfigIdList("testData").size());
@@ -131,9 +134,6 @@ public class JMMetricTest {
         OutputSubscriber<List<FieldMap>> fileOutputSubscriber1 =
                 OutputSubscriberBuilder
                         .buildJsonStringFile(path1.toAbsolutePath().toString());
-        Optional<Path> pathAsOpt2 =
-                JMPathOperation.createTempFilePathAsOpt(Paths.get("test2.txt"));
-        assertTrue(pathAsOpt2.isPresent());
 
         jmMetric.bindDataIdToConfigId(FileName, "apache")
                 .bindDataIdToConfigId(FileName, "apache2");
@@ -143,7 +143,7 @@ public class JMMetricTest {
                 .consumeWith(fieldMapList -> lineCount
                         .add(fieldMapList.getData().stream().count()));
         jmMetric.inputClasspath(FileName);
-        JMThread.sleep(3000);
+        JMThread.sleep(6000);
         fileOutputSubscriber1.close();
         jmMetric.close();
         System.out.println(count);

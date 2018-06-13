@@ -1,7 +1,5 @@
 package kr.jm.metric;
 
-import kr.jm.metric.config.mutating.MutatingConfigManager;
-import kr.jm.metric.config.output.OutputConfigManager;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
@@ -31,9 +29,7 @@ public class JMMetric implements
             org.slf4j.LoggerFactory.getLogger(JMMetric.class);
 
     @Delegate
-    private MutatingConfigManager mutatingConfigManager;
-    @Delegate
-    private OutputConfigManager outputConfigManager;
+    private JMMetricConfigManager jmMetricConfigManager;
     private StringListTransferSubmissionPublisherInterface
             stringListTransferSubmissionPublisher;
     private FieldMapListConfigIdTransferTransformProcessor
@@ -123,8 +119,7 @@ public class JMMetric implements
             StringListTransferSubmissionPublisherInterface
                     stringListTransferSubmissionPublisher,
             String... outputConfigIds) {
-        this.mutatingConfigManager = new MutatingConfigManager();
-        this.outputConfigManager = new OutputConfigManager();
+        this.jmMetricConfigManager = new JMMetricConfigManager();
         this.stringListTransferSubmissionPublisher =
                 stringListTransferSubmissionPublisher;
         this.fieldMapListConfigIdTransferTransformProcessor =
@@ -132,7 +127,8 @@ public class JMMetric implements
                         .subscribeAndReturnSubcriber(
                                 new FieldMapListConfigIdTransferTransformProcessor(
                                         executor, maxBufferCapacity,
-                                        mutatingConfigManager));
+                                        jmMetricConfigManager
+                                                .getMutatingConfigManager()));
         JMStream.buildStream(outputConfigIds).forEach(this::addOutput);
     }
 
@@ -253,7 +249,9 @@ public class JMMetric implements
     }
 
     public void addOutput(String outputConfigId) {
-        subscribe(OutputSubscriberBuilder
-                .build(outputConfigManager.getOutput(outputConfigId)));
+        jmMetricConfigManager.getOutputConfigManager()
+                .getOutputAsOpt(outputConfigId)
+                .map(outputConfig -> OutputSubscriberBuilder
+                        .build(outputConfig)).ifPresent(this::subscribe);
     }
 }

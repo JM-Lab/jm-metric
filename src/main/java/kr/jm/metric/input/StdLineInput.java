@@ -1,5 +1,6 @@
 package kr.jm.metric.input;
 
+import kr.jm.metric.config.input.StdInLineInputConfig;
 import kr.jm.utils.StdInLineConsumer;
 
 import java.util.List;
@@ -11,6 +12,14 @@ import java.util.function.Consumer;
  */
 public class StdLineInput extends AbstractInput {
     private StdInLineConsumer stdInLineConsumer;
+
+    public StdLineInput(String inputId) {
+        this(new StdInLineInputConfig(inputId));
+    }
+
+    public StdLineInput(StdInLineInputConfig inputConfig) {
+        super(inputConfig);
+    }
 
     @Override
     protected void startImpl(Consumer<List<String>> inputConsumer) {

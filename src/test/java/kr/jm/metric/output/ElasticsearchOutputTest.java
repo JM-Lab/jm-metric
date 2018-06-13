@@ -43,7 +43,7 @@ public class ElasticsearchOutputTest {
                 new ElasticsearchOutput(
                         this.jmEmbeddedElasticsearch.getTransportIpPortPair());
         System.out.println(JMJson.toJsonString(
-                this.elasticsearchOutput.getOutputConfig()));
+                this.elasticsearchOutput.getConfig()));
     }
 
     /**

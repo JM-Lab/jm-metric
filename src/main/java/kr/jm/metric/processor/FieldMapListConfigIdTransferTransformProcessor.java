@@ -35,13 +35,6 @@ public class FieldMapListConfigIdTransferTransformProcessor implements
 
     /**
      * Instantiates a new Field map list properties id transfer transform processor.
-     */
-    public FieldMapListConfigIdTransferTransformProcessor() {
-        this(new MutatingConfigManager());
-    }
-
-    /**
-     * Instantiates a new Field map list properties id transfer transform processor.
      *
      * @param mutatingConfigManager the metric properties manager
      */

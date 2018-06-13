@@ -32,16 +32,18 @@ public class JMMetricMain {
      */
     public void main(String... args) {
         ABCObjects<String, String, Integer> argsObjects = buildArgsObject(args);
-        String dataId = "StdIn";
-        this.stdLineInputPublisher = InputPublisherBuilder
-                .build(dataId, argsObjects.getC(), new StdLineInput());
+        String inputId = "StdIn";
+        this.stdLineInputPublisher =
+                InputPublisherBuilder.build(inputId, argsObjects.getC(), null,
+                        new StdLineInput(inputId));
         this.jmMetric =
                 new JMMetric(stdLineInputPublisher, argsObjects.getB());
         jmMetric.bindDataIdToConfigId(stdLineInputPublisher.getDataId(),
                 argsObjects.getA());
         stdLineInputPublisher.start();
         log.info("==== Config List ====");
-        log.info(JMJson.toPrettyJsonString(jmMetric.getConfigList()));
+        log.info(JMJson.toPrettyJsonString(
+                jmMetric.getInputConfigManager().getConfigMap()));
         log.info("==== DataId-ConfigIds ====");
         log.info(JMJson.toPrettyJsonString(jmMetric.getDataIdConfigIdSetMap()));
         log.info("==== OutputConfigMap ====");

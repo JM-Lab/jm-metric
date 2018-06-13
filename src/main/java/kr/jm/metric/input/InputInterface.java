@@ -5,5 +5,7 @@ import java.util.function.Consumer;
 
 public interface InputInterface extends AutoCloseable {
 
+    String getInputId();
+
     void start(Consumer<List<String>> inputConsumer);
 }

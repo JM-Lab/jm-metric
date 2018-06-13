@@ -1,11 +1,11 @@
 [
   {
-    "configId": "StdOut",
+    "outputId": "StdOut",
     "outputConfigType": "STDOUT",
     "enableJsonString": true
   },
   {
-    "configId": "LocalElasticsearch",
+    "outputId": "LocalElasticsearch",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,
@@ -17,7 +17,7 @@
     "properties": {}
   },
   {
-    "configId": "AccessLog-LocalES",
+    "outputId": "AccessLog-LocalES",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,
@@ -30,7 +30,7 @@
     "properties": {}
   },
   {
-    "configId": "System-LocalES",
+    "outputId": "System-LocalES",
     "outputConfigType": "ELASTICSEARCH",
     "elasticsearchConnect": "localhost:9300",
     "clientTransportSniff": false,

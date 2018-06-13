@@ -8,13 +8,9 @@ import lombok.ToString;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The type Abstract output properties.
- */
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractMapConfig extends AbstractConfig implements
-        MapConfigInterface {
+public abstract class AbstractPropertiesConfig extends AbstractConfig {
 
     protected Map<String, Object> properties;
 

@@ -25,8 +25,7 @@ public class JMMetricSampleTest {
     @Test
     public void test() {
         JMMetric jmMetric = new JMMetric();
-        jmMetric.getConfigIdSet();
-        JMJson.toJsonString(jmMetric.getConfigList());
+        JMJson.toJsonString(jmMetric.getMutatingConfigMap());
     }
 
 

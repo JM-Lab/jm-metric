@@ -1,6 +1,5 @@
 package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
@@ -65,11 +64,6 @@ public class OutputSubscriberBuilder {
             @Override
             public void writeData(ConfigIdTransfer<T> data) {
                 writingConsumer.accept(data);
-            }
-
-            @Override
-            public <C extends OutputConfigInterface> C getOutputConfig() {
-                return null;
             }
 
             @Override
