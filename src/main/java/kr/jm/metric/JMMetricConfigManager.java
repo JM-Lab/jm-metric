@@ -1,17 +1,14 @@
 package kr.jm.metric;
 
-import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.mutating.MutatingConfig;
 import kr.jm.metric.config.mutating.MutatingConfigManager;
-import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 /**
  * The type Metric properties manager.
@@ -29,55 +26,47 @@ public class JMMetricConfigManager {
     private OutputConfigManager outputConfigManager;
 
     public JMMetricConfigManager() {
-        this.inputConfigManager = new InputConfigManager(INPUT_CONFIG_FILENAME);
-        this.mutatingConfigManager = new MutatingConfigManager
-                (MUTATING_CONFIG_FILENAME);
-        this.outputConfigManager = new OutputConfigManager
-                (OUTPUT_CONFIG_FILENAME);
+        this(INPUT_CONFIG_FILENAME, MUTATING_CONFIG_FILENAME,
+                OUTPUT_CONFIG_FILENAME);
     }
 
-    public MutatingConfigManager bindDataIdToConfigId(String dataId,
-            String configId) {
-        return this.mutatingConfigManager
-                .bindDataIdToConfigId(dataId, configId);
+    public JMMetricConfigManager(String inputConfigFileName, String
+            mutatingConfigFileName, String outputConfigFileName) {
+        this.inputConfigManager = new InputConfigManager(inputConfigFileName);
+        this.mutatingConfigManager =
+                new MutatingConfigManager(mutatingConfigFileName);
+        this.outputConfigManager =
+                new OutputConfigManager(outputConfigFileName);
     }
 
-    public List<MutatingConfig> getConfigListWithDataId(
-            String dataId) {
-        return this.mutatingConfigManager.getConfigListWithDataId(dataId);
+    public MutatingConfigManager bindInputIdToMutatingConfigId(
+            String inputId, String mutatingConfigId) {
+        return mutatingConfigManager
+                .bindInputIdToMutatingConfigId(inputId, mutatingConfigId);
     }
 
-    public List<String> getConfigIdList(String dataId) {
-        return this.mutatingConfigManager.getConfigIdList(dataId);
+    public Optional<MutatingConfig> getMutatingConfigAsOpt(String inputId) {
+        return mutatingConfigManager.getMutatingConfigAsOpt(inputId);
     }
 
-    public MutatingConfig getMutatingConfig(
-            String configId) {
-        return this.mutatingConfigManager.getMutatingConfig(configId);
+    public Optional<String> getMutatingConfigIdAsOpt(String inputId) {
+        return mutatingConfigManager.getMutatingConfigIdAsOpt(inputId);
     }
 
-    public MutatingConfigManager removeDataId(String dataId) {
-        return this.mutatingConfigManager.removeDataId(dataId);
+    public MutatingConfig getMutatingConfig(String configId) {
+        return mutatingConfigManager.getMutatingConfig(configId);
+    }
+
+    public MutatingConfigManager removeInputId(String inputId) {
+        return mutatingConfigManager.removeInputId(inputId);
     }
 
     public MutatingConfigManager insertConfig(
             MutatingConfig mutatingConfig) {
-        return this.mutatingConfigManager.insertConfig(mutatingConfig);
+        return mutatingConfigManager.insertConfig(mutatingConfig);
     }
 
-    public Map<String, Set<String>> getDataIdConfigIdSetMap() {
-        return this.mutatingConfigManager.getDataIdConfigIdSetMap();
-    }
-
-    public Map<String, InputConfigInterface> getInputConfigMap() {
-        return this.inputConfigManager.getConfigMap();
-    }
-
-    public Map<String, MutatingConfig> getMutatingConfigMap() {
-        return this.mutatingConfigManager.getConfigMap();
-    }
-
-    public Map<String, OutputConfigInterface> getOutputConfigMap() {
-        return this.outputConfigManager.getConfigMap();
+    public Map<String, String> getInputIdMutatingConfigIdMap() {
+        return mutatingConfigManager.getInputIdMutatingConfigIdMap();
     }
 }

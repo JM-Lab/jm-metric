@@ -1,15 +1,19 @@
 package kr.jm.metric;
 
+import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
 import kr.jm.metric.config.mutating.DelimiterMutatingConfig;
 import kr.jm.metric.config.mutating.MutatingConfig;
 import kr.jm.metric.config.mutating.field.DateFormatType;
 import kr.jm.metric.config.mutating.field.FieldConfig;
-import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMFiles;
+import kr.jm.utils.helper.JMJson;
+import kr.jm.utils.helper.JMPathOperation;
+import kr.jm.utils.helper.JMThread;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,12 +24,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class JMMetricTest {
     static {
@@ -37,13 +39,7 @@ public class JMMetricTest {
 
     @Before
     public void setUp() {
-        this.jmMetric = new JMMetric(true);
-        String configFilePathOrClasspath = "MutatingConfig.json";
-        String stringFromClasspathOrFilePath = JMResources
-                .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
-        System.out.println(stringFromClasspathOrFilePath);
-        this.jmMetric.getMutatingConfigManager()
-                .loadConfig(configFilePathOrClasspath);
+        this.jmMetric = new JMMetric();
     }
 
     @After
@@ -76,37 +72,38 @@ public class JMMetricTest {
                 nginxAccessLogSample.getFieldConfig().getFormat();
         System.out.println(nestedFormat);
         MutatingConfig requestMutatingConfig = nestedFormat.get("request");
-        requestMutatingConfig = requestMutatingConfig.getMutatingConfigType()
-                .transform(requestMutatingConfig);
+        requestMutatingConfig =
+                ConfigInterface.transformConfig(requestMutatingConfig,
+                        requestMutatingConfig.getMutatingConfigType()
+                                .getTypeReference());
         assertTrue(requestMutatingConfig instanceof DelimiterMutatingConfig);
         System.out.println(requestMutatingConfig.getClass());
     }
 
     @Test
-    public void testRemoveDataId() {
+    public void testRemoveInputId() {
         MutatingConfig delimiterSampleMutatingConfig =
                 jmMetric.getMutatingConfig("delimiterSample");
-        System.out.println(delimiterSampleMutatingConfig.getBindDataIds());
-        jmMetric.bindDataIdToConfigId("testData",
+        System.out.println(delimiterSampleMutatingConfig.getBindInputId());
+        jmMetric.bindInputIdToMutatingConfigId("testData",
                 "apacheAccessLogSample");
-        List<String> dataIdList =
-                jmMetric.getMutatingConfigMap().values().stream()
-                        .map(MutatingConfig::getBindDataIds)
-                        .flatMap(Set::stream)
+        List<String> inputIdList =
+                jmMetric.getMutatingConfigManager().getConfigMap().values()
+                        .stream().map(MutatingConfig::getBindInputId)
                         .collect(Collectors.toList());
-        System.out.println(dataIdList);
-        List<String> inputConfigIdList =
-                jmMetric.getConfigIdList("testData");
-        System.out.println(inputConfigIdList);
-        assertEquals(2, inputConfigIdList.size());
-        System.out.println(dataIdList);
-        jmMetric.removeDataId("testData");
-        assertEquals(0, delimiterSampleMutatingConfig.getBindDataIds().size());
-        dataIdList = jmMetric.getMutatingConfigMap().values().stream()
-                .map(MutatingConfig::getBindDataIds).flatMap(Set::stream)
-                .collect(Collectors.toList());
-        System.out.println(dataIdList);
-        assertEquals(0, jmMetric.getConfigIdList("testData").size());
+        System.out.println(inputIdList);
+        String configId = jmMetric.getMutatingConfigIdAsOpt("testData").get();
+        System.out.println(configId);
+        assertEquals("apacheAccessLogSample", configId);
+        System.out.println(inputIdList);
+        jmMetric.removeInputId("testData");
+        assertNull(delimiterSampleMutatingConfig.getBindInputId());
+        inputIdList =
+                jmMetric.getMutatingConfigManager().getConfigMap().values()
+                        .stream().map(MutatingConfig::getBindInputId)
+                        .collect(Collectors.toList());
+        System.out.println(inputIdList);
+        assertFalse(jmMetric.getMutatingConfigAsOpt("testData").isPresent());
     }
 
     @Test
@@ -131,30 +128,30 @@ public class JMMetricTest {
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
-        OutputSubscriber<List<FieldMap>> fileOutputSubscriber1 =
-                OutputSubscriberBuilder
-                        .buildJsonStringFile(path1.toAbsolutePath().toString());
+        OutputSubscriber fileOutputSubscriber1 = OutputSubscriberBuilder
+                .buildFileOutput(path1.toAbsolutePath().toString());
 
-        jmMetric.bindDataIdToConfigId(FileName, "apache")
-                .bindDataIdToConfigId(FileName, "apache2");
+        jmMetric.bindInputIdToMutatingConfigId(FileName, "apache")
+                .bindInputIdToMutatingConfigId(FileName, "apache2");
         jmMetric.subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
                 .subscribeWith(fileOutputSubscriber1)
-                .consumeWith(fieldMapList -> count.increment())
-                .consumeWith(fieldMapList -> lineCount
-                        .add(fieldMapList.getData().stream().count()));
-        jmMetric.inputClasspath(FileName);
-        JMThread.sleep(6000);
+                .consumeWith(configIdTransferList -> count.increment())
+                .consumeWith(configIdTransferList -> lineCount
+                        .add(configIdTransferList.size()));
+        InputPublisherBuilder.buildResourceInput(FileName)
+                .subscribeWith(jmMetric).start();
+        JMThread.sleep(3000);
         fileOutputSubscriber1.close();
         jmMetric.close();
         System.out.println(count);
-        assertEquals(22, count.longValue());
+        assertEquals(11, count.longValue());
         System.out.println(lineCount);
-        assertEquals(2048, lineCount.longValue());
+        assertEquals(1024, lineCount.longValue());
 
         System.out.println(JMFiles.readString(path1));
         List<String> readLineList = JMFiles.readLines(path1);
         System.out.println(readLineList.size());
-        assertEquals(2048, readLineList.size());
+        assertEquals(1024, readLineList.size());
 
     }
 

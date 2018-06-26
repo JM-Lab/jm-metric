@@ -38,7 +38,7 @@ public class JMMetricMainTest {
     public void testMain() {
         JMMetricMain jmMetricMain = new JMMetricMain();
         jmMetricMain.main("CombinedLogFormat");
-        List<ConfigIdTransfer<List<FieldMap>>> resultList = new ArrayList<>();
+        List<List<ConfigIdTransfer<FieldMap>>> resultList = new ArrayList<>();
         jmMetricMain.getJmMetric()
                 .subscribe(JMSubscriberBuilder.build(resultList::add));
         printWriter

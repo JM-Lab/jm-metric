@@ -1,13 +1,9 @@
 package kr.jm.metric;
 
-import kr.jm.metric.input.StdLineInput;
-import kr.jm.metric.input.publisher.InputPublisher;
-import kr.jm.metric.input.publisher.InputPublisherBuilder;
+import kr.jm.metric.config.AbstractConfigManager;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMString;
-import kr.jm.utils.helper.object.ABCObjects;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,14 +12,14 @@ import java.util.Arrays;
 /**
  * The type Jm metric main.
  */
+@Getter
 @Slf4j
 public class JMMetricMain {
 
-    private static final int DEFAULT_BULK_SIZE = 10;
-    @Getter
     private JMMetric jmMetric;
-    @Getter
-    private InputPublisher stdLineInputPublisher;
+    private String inputId = "StdIn";
+    private String mutatingId;
+    private String[] outputIds = {"StdOut"};
 
     /**
      * Main.
@@ -31,48 +27,49 @@ public class JMMetricMain {
      * @param args the args
      */
     public void main(String... args) {
-        ABCObjects<String, String, Integer> argsObjects = buildArgsObject(args);
-        String inputId = "StdIn";
-        this.stdLineInputPublisher =
-                InputPublisherBuilder.build(inputId, argsObjects.getC(), null,
-                        new StdLineInput(inputId));
-        this.jmMetric =
-                new JMMetric(stdLineInputPublisher, argsObjects.getB());
-        jmMetric.bindDataIdToConfigId(stdLineInputPublisher.getDataId(),
-                argsObjects.getA());
-        stdLineInputPublisher.start();
-        log.info("==== Config List ====");
-        log.info(JMJson.toPrettyJsonString(
-                jmMetric.getInputConfigManager().getConfigMap()));
-        log.info("==== DataId-ConfigIds ====");
-        log.info(JMJson.toPrettyJsonString(jmMetric.getDataIdConfigIdSetMap()));
-        log.info("==== OutputConfigMap ====");
-        log.info(JMJson.toPrettyJsonString(jmMetric.getOutputConfigMap()));
+        initArgs(args);
+
+        this.jmMetric = new JMMetric(inputId, mutatingId, outputIds);
+
+        logAndStdOutInfo("==== Input Config Map ====",
+                this.jmMetric.getInputConfigManager());
+        logAndStdOutInfo("==== Mutating Config Map ====",
+                this.jmMetric.getMutatingConfigManager());
+        logAndStdOutInfo("==== Output Config Map ====",
+                this.jmMetric.getOutputConfigManager());
+
+        this.jmMetric.start();
+
         OS.addShutdownHook(jmMetric::close);
     }
 
-    private ABCObjects<String, String, Integer> buildArgsObject(String[] args) {
+    private void logAndStdOutInfo(String infoHead,
+            AbstractConfigManager<?> configManager) {
+        log.info(infoHead);
+        System.out.println(infoHead);
+        String info = JMJson.toPrettyJsonString(configManager.getConfigMap());
+        log.info(info);
+        System.out.println(info);
+    }
+
+    private void initArgs(String[] args) {
         if (args.length < 1) {
             String message =
-                    "Wrong Args !!! - Args: <configId> [outputConfigId:default=StdOut] [bulkSize]";
+                    "Wrong Args !!! - Args: [inputId=:default=StdIn] " +
+                            "mutatingId> [outputIds...:default=StdOut]";
             System.err.println(message);
             JMExceptionManager.handleExceptionAndThrowRuntimeEx(log,
                     JMExceptionManager.newRunTimeException(message),
                     Arrays.toString(args));
         }
-        String configId = args[0];
-        String outputConfigId = "StdOut";
-        int bulkSize = DEFAULT_BULK_SIZE;
-        if (args.length == 2) {
-            if (JMString.isNumber(args[1]))
-                bulkSize = Integer.valueOf(args[1]);
-            else
-                outputConfigId = args[1];
-        } else if (args.length >= 3) {
-            outputConfigId = args[1];
-            bulkSize = JMString.isNumber(args[2]) ? Integer
-                    .valueOf(args[2]) : bulkSize;
+        if (args.length == 1) {
+            this.mutatingId = args[0];
+        } else if (args.length == 2) {
+            this.inputId = args[0];
+            this.mutatingId = args[1];
         }
-        return new ABCObjects<>(configId, outputConfigId, bulkSize);
+        if (args.length > 2)
+            this.outputIds = Arrays.stream(args).skip(2)
+                    .toArray(value -> new String[value - 2]);
     }
 }

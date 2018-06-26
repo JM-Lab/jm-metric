@@ -16,48 +16,51 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class JMMetricSampleTest {
-//    static {
-//        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
-//    }
+    static {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+    }
 
     // jshell --class-path .m2/repository/com/github/jm-lab/jm-metric/0.1.0-SNAPSHOT/jm-metric-0.1.0-jar-with-dependencies.jar
 
     @Test
     public void test() {
         JMMetric jmMetric = new JMMetric();
-        JMJson.toJsonString(jmMetric.getMutatingConfigMap());
+        JMJson.toJsonString(jmMetric.getMutatingConfigManager().getConfigMap());
     }
 
 
     @Test
     public void test1() {
         JMMetric jmMetric = new JMMetric();
-        jmMetric.bindDataIdToConfigId("testId", "jsonSample");
+        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
+                "jsonSample");
         jmMetric.consumeWith(JMConsumer.getSOPL());
-        jmMetric.inputSingle("testId", "{\"Hello\": \"World !!!\"}");
+        jmMetric.testInput("{\"Hello\": \"World !!!\"}");
         JMThread.sleep(1000);
     }
 
     @Test
     public void test2() {
         JMMetric jmMetric = new JMMetric();
-        jmMetric.bindDataIdToConfigId("sampleData", "rawSample");
+        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
+                "rawSample");
         jmMetric.consumeWith(JMConsumer.getSOPL())
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        jmMetric.inputSingle("sampleData", "Hello JMMetric !!!");
+        jmMetric.testInput("Hello JMMetric !!!");
         JMThread.sleep(1000);
 
-        JMTransformProcessor<ConfigIdTransfer<List<FieldMap>>, Stream<String>>
+        JMTransformProcessor<List<ConfigIdTransfer<FieldMap>>, Stream<String>>
                 wordStreamProcessor =
-                JMTransformProcessorBuilder.build(t -> t.getData()
-                        .stream().map(fieldMap -> fieldMap.extractRawData())
-                        .flatMap(JMWordSplitter::splitAsStream));
+                JMTransformProcessorBuilder
+                        .build(t -> t.stream().map(ConfigIdTransfer::getData)
+                                .map(fieldMap -> fieldMap.extractRawData())
+                                .flatMap(JMWordSplitter::splitAsStream));
         jmMetric.subscribeWith(wordStreamProcessor);
         wordStreamProcessor
                 .subscribeAndReturnProcessor(JMTransformProcessorBuilder
-                .build(WordCountGenerator::buildCountMap))
+                        .build(WordCountGenerator::buildCountMap))
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        jmMetric.inputSingle("sampleData", "Hello JMMetric !!!");
+        jmMetric.testInput("Hello JMMetric !!!");
 
         JMThread.sleep(1000);
 
@@ -66,12 +69,14 @@ public class JMMetricSampleTest {
     @Test
     public void test3() {
         JMMetric jmMetric = new JMMetric();
-        jmMetric.bindDataIdToConfigId("accessLog", "CombinedLogFormat");
+        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
+                "CombinedLogFormat");
         jmMetric.consumeWith(JMConsumer.getSOPL())
-                .subscribeWith(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        jmMetric.inputSingle("accessLog",
+                .subscribeWith(
+                        JMSubscriberBuilder.getJsonStringSOPLSubscriber());
+        jmMetric.testInput(
                 "141.248.111.36 - - [09/Apr/2018:18:03:52 +0900] \"POST /wp-content HTTP/1.0\" 200 4968 \"http://www.mccann.com/explore/about/\" \"Mozilla/5.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/5.0)\"");
-        jmMetric.inputSingle("accessLog",
+        jmMetric.testInput(
                 "223.62.219.101 - - [08/Jun/2015:16:59:59 +0900] \"POST /app/5315 HTTP/1.1\" 200 1100 \"-\" \"Dalvik/1.6.0 (Linux; U; Android 4.4.2; SHV-E330S Build/KOT49H)\"");
 
         JMThread.sleep(1000);

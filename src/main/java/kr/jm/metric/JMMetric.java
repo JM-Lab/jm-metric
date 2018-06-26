@@ -1,257 +1,129 @@
 package kr.jm.metric;
 
-import kr.jm.metric.data.ConfigIdTransfer;
-import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.input.publisher.InputPublisher;
+import kr.jm.metric.input.publisher.InputPublisherBuilder;
+import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
-import kr.jm.metric.processor.FieldMapListConfigIdTransferTransformProcessor;
-import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
-import kr.jm.metric.publisher.StringListTransferSubmissionPublisher;
-import kr.jm.metric.publisher.StringListTransferSubmissionPublisherInterface;
-import kr.jm.utils.flow.publisher.JMPublisherInterface;
+import kr.jm.metric.processor.FieldMapConfigIdTransferListTransformProcessor;
+import kr.jm.utils.datastructure.JMCollections;
+import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMStream;
 import kr.jm.utils.helper.JMThread;
 import lombok.experimental.Delegate;
-import org.slf4j.Logger;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Flow;
+import java.util.stream.Stream;
 
 /**
  * The type Jm metric.
  */
-public class JMMetric implements
-        JMPublisherInterface<ConfigIdTransfer<List<FieldMap>>>, AutoCloseable {
-    private static final Logger log =
-            org.slf4j.LoggerFactory.getLogger(JMMetric.class);
+public class JMMetric extends FieldMapConfigIdTransferListTransformProcessor {
 
     @Delegate
     private JMMetricConfigManager jmMetricConfigManager;
-    private StringListTransferSubmissionPublisherInterface
-            stringListTransferSubmissionPublisher;
-    private FieldMapListConfigIdTransferTransformProcessor
-            fieldMapListConfigIdTransferTransformProcessor;
 
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
+    private InputPublisher inputPublisher;
+    private List<OutputSubscriber> outputSubscriberList;
+
     public static void main(String[] args) {
         new JMMetricMain().main(args);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     */
-    public JMMetric(String... outputConfigIds) {
-        this(false, outputConfigIds);
+    public JMMetric() {
+        this(new JMMetricConfigManager(), "Raw");
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param isWaiting the is waiting
-     */
-    public JMMetric(boolean isWaiting, String... outputConfigIds) {
-        this(isWaiting, JMThread.newThreadPoolWithAvailableProcessors(),
-                outputConfigIds);
-    }
-
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
-     */
-    public JMMetric(
-            StringListTransferSubmissionPublisherInterface stringListTransferSubmissionPublisher,
-            String... outputConfigIds) {
+    public JMMetric(JMMetricConfigManager jmMetricConfigManager,
+            String mutatingConfigId) {
         this(JMThread.newThreadPoolWithAvailableProcessors(),
-                stringListTransferSubmissionPublisher, outputConfigIds);
+                Flow.defaultBufferSize(), jmMetricConfigManager, null,
+                mutatingConfigId);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param executor the executor
-     */
-    public JMMetric(ExecutorService executor, String... outputConfigIds) {
-        this(false, executor, outputConfigIds);
+    public JMMetric(String inputId, String mutatingConfigId,
+            String... outputIds) {
+        this(JMThread.newThreadPoolWithAvailableProcessors(), inputId,
+                mutatingConfigId, outputIds);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param isWaiting the is waiting
-     * @param executor  the executor
-     */
-    public JMMetric(boolean isWaiting, ExecutorService executor,
-            String... outputConfigIds) {
-        this(executor,
-                isWaiting ? new StringBulkWaitingTransferSubmissionPublisher() : new StringListTransferSubmissionPublisher(),
-                outputConfigIds);
+    public JMMetric(ExecutorService executor, String inputId,
+            String mutatingConfigId, String... outputIds) {
+        this(executor, Flow.defaultBufferSize(), new JMMetricConfigManager(),
+                inputId, mutatingConfigId, outputIds);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param executor                              the executor
-     * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
-     */
-    public JMMetric(ExecutorService executor,
-            StringListTransferSubmissionPublisherInterface stringListTransferSubmissionPublisher,
-            String... outputConfigIds) {
-        this(executor, Flow.defaultBufferSize(),
-                stringListTransferSubmissionPublisher, outputConfigIds);
+    private JMMetric(ExecutorService executor, int maxBufferCapacity,
+            JMMetricConfigManager jmMetricConfigManager, String inputId,
+            String mutatingConfigId, String... outputIds) {
+        super(executor, maxBufferCapacity,
+                jmMetricConfigManager.getMutatingConfigManager());
+        this.jmMetricConfigManager = jmMetricConfigManager;
+        Optional.ofNullable(inputId)
+                .ifPresentOrElse(this::setInput, () -> setInput("StdIn"));
+        bindInputIdToMutatingConfigId(inputId, mutatingConfigId);
+        this.outputSubscriberList = new ArrayList<>();
+        JMStream.buildStream(outputIds).forEach(this::addOutput);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param executor                              the executor
-     * @param maxBufferCapacity                     the max buffer capacity
-     * @param stringListTransferSubmissionPublisher the string list transfer submission publisher
-     */
-    public JMMetric(ExecutorService executor, int maxBufferCapacity,
-            StringListTransferSubmissionPublisherInterface
-                    stringListTransferSubmissionPublisher,
-            String... outputConfigIds) {
-        this.jmMetricConfigManager = new JMMetricConfigManager();
-        this.stringListTransferSubmissionPublisher =
-                stringListTransferSubmissionPublisher;
-        this.fieldMapListConfigIdTransferTransformProcessor =
-                this.stringListTransferSubmissionPublisher
-                        .subscribeAndReturnSubcriber(
-                                new FieldMapListConfigIdTransferTransformProcessor(
-                                        executor, maxBufferCapacity,
-                                        jmMetricConfigManager
-                                                .getMutatingConfigManager()));
-        JMStream.buildStream(outputConfigIds).forEach(this::addOutput);
+    public void setInput(String inputId) {
+        this.jmMetricConfigManager.getInputConfigManager()
+                .getMutatingConfigAsOpt(inputId)
+                .map(InputPublisherBuilder::build)
+                .map(inputPublisher -> this.inputPublisher = inputPublisher)
+                .ifPresentOrElse(
+                        inputPublisher -> inputPublisher.subscribe(this),
+                        () -> logAndThrowConfigError("setInput", inputId));
     }
 
-    /**
-     * Input file path.
-     *
-     * @param filePath the file path
-     */
-    public void inputFilePath(String filePath) {
-        stringListTransferSubmissionPublisher.inputFilePath(filePath);
+    private void logAndThrowConfigError(String methodName, String... params) {
+        JMExceptionManager.handleExceptionAndThrowRuntimeEx(log,
+                JMExceptionManager.newRunTimeException(
+                        "No Input Config Occur !!!"),
+                "setInput", params);
     }
 
-    /**
-     * Input file path.
-     *
-     * @param dataId   the data id
-     * @param filePath the file path
-     */
-    public void inputFilePath(String dataId, String filePath) {
-        stringListTransferSubmissionPublisher
-                .inputFilePath(dataId, filePath);
+    public void addOutput(String outputId) {
+        this.jmMetricConfigManager.getOutputConfigManager()
+                .getMutatingConfigAsOpt
+                        (outputId)
+                .map(OutputSubscriberBuilder::build)
+                .map(outputSubscriber -> JMCollections
+                        .addAndGet(this.outputSubscriberList, outputSubscriber))
+                .ifPresentOrElse(this::subscribe,
+                        () -> logAndThrowConfigError("setOutput", outputId));
     }
 
-    /**
-     * Input file.
-     *
-     * @param file the file
-     */
-    public void inputFile(File file) {
-        stringListTransferSubmissionPublisher.inputFile(file);
-    }
-
-    /**
-     * Input file.
-     *
-     * @param dataId the data id
-     * @param file   the file
-     */
-    public void inputFile(String dataId, File file) {
-        stringListTransferSubmissionPublisher.inputFile(dataId, file);
-    }
-
-    /**
-     * Input classpath.
-     *
-     * @param resourceClasspath the resource classpath
-     */
-    public void inputClasspath(String resourceClasspath) {
-        stringListTransferSubmissionPublisher.inputClasspath(resourceClasspath);
-    }
-
-    /**
-     * Input classpath.
-     *
-     * @param dataId            the data id
-     * @param resourceClasspath the resource classpath
-     */
-    public void inputClasspath(String dataId, String resourceClasspath) {
-        stringListTransferSubmissionPublisher
-                .inputClasspath(dataId, resourceClasspath);
-    }
-
-    /**
-     * Input file path or classpath.
-     *
-     * @param filePathOrResourceClasspath the file path or resource classpath
-     */
-    public void inputFilePathOrClasspath(String filePathOrResourceClasspath) {
-        stringListTransferSubmissionPublisher
-                .inputFilePathOrClasspath(filePathOrResourceClasspath);
-    }
-
-    /**
-     * Input file path or classpath.
-     *
-     * @param dataId                      the data id
-     * @param filePathOrResourceClasspath the file path or resource classpath
-     */
-    public void inputFilePathOrClasspath(String dataId,
-            String filePathOrResourceClasspath) {
-        stringListTransferSubmissionPublisher
-                .inputFilePathOrClasspath(dataId,
-                        filePathOrResourceClasspath);
-    }
-
-    /**
-     * Input.
-     *
-     * @param dataId   the data id
-     * @param dataList the data list
-     */
-    public void input(String dataId, List<String> dataList) {
-        JMOptional.getOptional(dataList).ifPresent(list ->
-                stringListTransferSubmissionPublisher
-                        .submit(dataId, list));
-    }
-
-    /**
-     * Input single.
-     *
-     * @param dataId the data id
-     * @param data   the data
-     */
-    public void inputSingle(String dataId, String data) {
-        stringListTransferSubmissionPublisher.submit(dataId, List.of(data));
+    public void start() {
+        JMLog.info(log, "start", getInputId(), getOutputIdList());
+        this.inputPublisher.start();
     }
 
     @Override
-    public void close() throws RuntimeException {
-        JMLog.info(log, "close");
-        fieldMapListConfigIdTransferTransformProcessor.close();
+    public void close() {
+        JMLog.info(log, "close", getInputId(), getOutputIdList());
+        Optional.ofNullable(this.inputPublisher)
+                .ifPresent(InputPublisher::close);
+        super.close();
+        this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
-    @Override
-    public void subscribe(
-            Flow.Subscriber<? super ConfigIdTransfer<List<FieldMap>>> subscriber) {
-        fieldMapListConfigIdTransferTransformProcessor.subscribe(subscriber);
+    public String getInputId() {
+        return this.inputPublisher.getInputId();
     }
 
-    public void addOutput(String outputConfigId) {
-        jmMetricConfigManager.getOutputConfigManager()
-                .getOutputAsOpt(outputConfigId)
-                .map(outputConfig -> OutputSubscriberBuilder
-                        .build(outputConfig)).ifPresent(this::subscribe);
+    public List<String> getOutputIdList() {
+        return JMCollections.buildNewList(this.outputSubscriberList,
+                OutputSubscriber::getOutputId);
+    }
+
+    public void testInput(String data) {inputPublisher.testInput(data);}
+
+    public void testInput(Stream<String> dataStream) {
+        inputPublisher.testInput(dataStream);
     }
 }
