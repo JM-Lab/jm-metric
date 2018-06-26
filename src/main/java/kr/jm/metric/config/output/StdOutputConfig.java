@@ -1,6 +1,6 @@
 package kr.jm.metric.config.output;
 
-import kr.jm.metric.output.StdOutput;
+import kr.jm.metric.output.StdOutLineOutput;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class StdOutputConfig extends AbstractOutputConfig {
      * @param enableJsonString the enable json string
      */
     public StdOutputConfig(boolean enableJsonString) {
-        this("StdOutput-Json-" + enableJsonString, enableJsonString);
+        this("StdOutLineOutput-Json-" + enableJsonString, enableJsonString);
     }
 
     public StdOutputConfig(String outputId, boolean enableJsonString) {
@@ -31,8 +31,8 @@ public class StdOutputConfig extends AbstractOutputConfig {
     }
 
     @Override
-    public StdOutput buildOutput() {
-        return new StdOutput(this);
+    public StdOutLineOutput buildOutput() {
+        return new StdOutLineOutput(this);
     }
 
     @Override

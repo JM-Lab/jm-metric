@@ -5,12 +5,10 @@ import kr.jm.utils.helper.JMJson;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MutatingConfigManagerTest {
 
@@ -38,10 +36,10 @@ public class MutatingConfigManagerTest {
                         JMArrays.buildArray("field1", "field2"));
         insertConfig(config);
 
-        System.out.println(mutatingConfigManager.getMutatingConfig(configId));
+        System.out.println(mutatingConfigManager.getConfig(configId));
         System.out.println(
                 JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
-        assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
+        assertNotNull(mutatingConfigManager.getConfig(configId));
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
@@ -53,10 +51,10 @@ public class MutatingConfigManagerTest {
                         "[{}\", ]");
         insertConfig(config);
 
-        System.out.println(mutatingConfigManager.getMutatingConfig(configId));
+        System.out.println(mutatingConfigManager.getConfig(configId));
         System.out.println(
                 JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
-        assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
+        assertNotNull(mutatingConfigManager.getConfig(configId));
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
@@ -69,10 +67,10 @@ public class MutatingConfigManagerTest {
                                 "url"));
         insertConfig(config);
 
-        System.out.println(mutatingConfigManager.getMutatingConfig(configId));
+        System.out.println(mutatingConfigManager.getConfig(configId));
         System.out.println(
                 JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
-        assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
+        assertNotNull(mutatingConfigManager.getConfig(configId));
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
@@ -86,10 +84,10 @@ public class MutatingConfigManagerTest {
                         apacheCommonLogFormat);
         insertConfig(config);
 
-        System.out.println(mutatingConfigManager.getMutatingConfig(configId));
+        System.out.println(mutatingConfigManager.getConfig(configId));
         System.out.println(
                 JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
-        assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
+        assertNotNull(mutatingConfigManager.getConfig(configId));
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
@@ -101,10 +99,10 @@ public class MutatingConfigManagerTest {
                         "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"");
         insertConfig(config);
 
-        System.out.println(mutatingConfigManager.getMutatingConfig(configId));
+        System.out.println(mutatingConfigManager.getConfig(configId));
         System.out.println(
                 JMJson.toJsonString(mutatingConfigManager.getConfigMap()));
-        assertNotNull(mutatingConfigManager.getMutatingConfig(configId));
+        assertNotNull(mutatingConfigManager.getConfig(configId));
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
@@ -114,59 +112,12 @@ public class MutatingConfigManagerTest {
     }
 
     @Test
-    public void testRemoveInputId() {
-        insertConfig(
-                new KeyValueDelimiterMutatingConfig("keyValueDelimiterSample",
-                        null, "=", ":",
-                        "[{}\", ]").bindInputId("data1"));
-        insertConfig(
-                new KeyValueDelimiterMutatingConfig("keyValueDelimiterSample2",
-                        null, "=", ":",
-                        "[{}\", ]").bindInputId("data2"));
-        insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample",
-                "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
-                .bindInputId("data1"));
-        insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample2",
-                "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
-                .bindInputId("data2"));
-        insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample3",
-                "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
-                .bindInputId("data3"));
-        List<String> inputIdList =
-                mutatingConfigManager.getConfigMap().values().stream()
-                        .map(MutatingConfig::getBindInputId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-        System.out.println(inputIdList);
-        assertEquals(5, inputIdList.size());
-        mutatingConfigManager.removeInputId("data2");
-        inputIdList =
-                mutatingConfigManager.getConfigMap().values().stream()
-                        .map(MutatingConfig::getBindInputId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-        System.out.println(inputIdList);
-        assertEquals(3, inputIdList.size());
-        mutatingConfigManager.removeInputId("data3");
-        inputIdList =
-                mutatingConfigManager.getConfigMap().values().stream()
-                        .map(MutatingConfig::getBindInputId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-        System.out.println(inputIdList);
-        assertEquals(2, inputIdList.size());
-        assertTrue(inputIdList.contains("data1"));
-        assertFalse(inputIdList.contains("data2"));
-        assertFalse(inputIdList.contains("data3"));
-    }
-
-    @Test
     public void testLoadConfig() {
         assertEquals(9,
                 mutatingConfigManager.loadConfig("testMutatingConfig.json")
                         .getConfigMap().size());
         assertEquals("keyValueDelimiterSample2",
-                mutatingConfigManager.getMutatingConfig
+                mutatingConfigManager.getConfig
                         ("keyValueDelimiterSample2").getConfigId());
     }
 }

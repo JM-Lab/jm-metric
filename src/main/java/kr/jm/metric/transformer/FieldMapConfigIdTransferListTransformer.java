@@ -1,13 +1,10 @@
 package kr.jm.metric.transformer;
 
 import kr.jm.metric.config.mutating.MutatingConfig;
-import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 /**
  * The type Field map properties id transfer list transformer.
@@ -16,30 +13,29 @@ import java.util.Optional;
 public class FieldMapConfigIdTransferListTransformer implements
         ConfigIdTransferListTransformerInterface<String, FieldMap> {
 
-    private MutatingConfigManager mutatingConfigManager;
+    private MutatingConfig mutatingConfig;
 
     /**
      * Instantiates a new Field map properties id transfer list transformer.
      *
-     * @param mutatingConfigManager the metric properties manager
+     * @param mutatingConfig the metric properties manager
      */
     public FieldMapConfigIdTransferListTransformer(
-            MutatingConfigManager mutatingConfigManager) {
-        this.mutatingConfigManager = mutatingConfigManager;
+            MutatingConfig mutatingConfig) {
+        this.mutatingConfig = mutatingConfig;
     }
 
     @Override
-    public Optional<MutatingConfig> getConfigAsOpt(String inputId) {
-        return mutatingConfigManager.getMutatingConfigAsOpt(inputId);
+    public MutatingConfig getMutatingConfig() {
+        return this.mutatingConfig;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public FieldMap transform(MutatingConfig mutatingConfig, String data) {
+    public FieldMap transform(String data) {
         try {
             return JMOptional.getOptional(
-                    mutatingConfig
-                            .getMetricBuilder()
+                    mutatingConfig.getMutatingConfigType().getFieldMapBuilder()
                             .buildFieldMap(mutatingConfig, data))
                     .orElseThrow(() -> JMExceptionManager
                             .newRunTimeException("Can't Transform !!!"));

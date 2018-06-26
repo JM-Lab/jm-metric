@@ -21,24 +21,21 @@ import java.util.concurrent.atomic.LongAdder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class FieldMapConfigIdTransferListTransformProcessorTest {
+public class MutatingProcessorTest {
     static {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
     }
 
     private static final String ResourceName = "webAccessLogSample.txt";
-    private FieldMapConfigIdTransferListTransformProcessor
-            fieldMapConfigIdTransferListTransformProcessor;
     private MutatingConfigManager mutatingConfigManager;
+    private MutatingProcessor mutatingProcessor;
 
     @Before
     public void setUp() {
         String configFilePathOrClasspath = "MutatingConfig.json";
         this.mutatingConfigManager =
                 new MutatingConfigManager(configFilePathOrClasspath);
-        this.fieldMapConfigIdTransferListTransformProcessor =
-                new FieldMapConfigIdTransferListTransformProcessor(
-                        mutatingConfigManager);
+
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
         System.out.println(stringFromClasspathOrFilePath);
@@ -50,7 +47,7 @@ public class FieldMapConfigIdTransferListTransformProcessorTest {
 
     @After
     public void tearDown() {
-        this.fieldMapConfigIdTransferListTransformProcessor.close();
+        this.mutatingProcessor.close();
     }
 
     @Test
@@ -59,9 +56,9 @@ public class FieldMapConfigIdTransferListTransformProcessorTest {
         LongAdder lineCount = new LongAdder();
         ApacheAccessLogMutatingConfig apacheAccessLogSample =
                 (ApacheAccessLogMutatingConfig) mutatingConfigManager
-                        .getMutatingConfig("apacheAccessLogSample");
+                        .getConfig("apacheAccessLogSample");
         FieldConfig fieldConfig = mutatingConfigManager
-                .getMutatingConfig("nginxAccessLogSample")
+                .getConfig("nginxAccessLogSample")
                 .getFieldConfig();
         ApacheAccessLogMutatingConfig apacheCommonLogMetricConfig =
                 new ApacheAccessLogMutatingConfig("apache", fieldConfig,
@@ -81,27 +78,24 @@ public class FieldMapConfigIdTransferListTransformProcessorTest {
                 .buildFileOutput(path1.toAbsolutePath().toString(),
                         configIdTransfers -> List.of(configIdTransfers));
 
-
-        mutatingConfigManager
-                .bindInputIdToMutatingConfigId(ResourceName, "apache");
-        mutatingConfigManager
-                .bindInputIdToMutatingConfigId(ResourceName, "apache2");
-        fieldMapConfigIdTransferListTransformProcessor.subscribe(
+        this.mutatingProcessor =
+                new MutatingProcessor(
+                        mutatingConfigManager.getConfig("apache"));
+        mutatingProcessor.subscribe(
                 JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        fieldMapConfigIdTransferListTransformProcessor.subscribe(
+        mutatingProcessor.subscribe(
                 JMSubscriberBuilder
                         .build(configIdTransfer -> count.increment()));
-        fieldMapConfigIdTransferListTransformProcessor.subscribe(
+        mutatingProcessor.subscribe(
                 JMSubscriberBuilder.build(configIdTransferList -> lineCount
                         .add(configIdTransferList.size())));
-        fieldMapConfigIdTransferListTransformProcessor
-                .subscribe(fileOutputSubscriber1);
+        mutatingProcessor.subscribe(fileOutputSubscriber1);
         InputPublisherBuilder.buildResourceInput(ResourceName)
-                .subscribeWith(fieldMapConfigIdTransferListTransformProcessor)
+                .subscribeWith(mutatingProcessor)
                 .start();
         JMThread.sleep(3000);
         fileOutputSubscriber1.close();
-        fieldMapConfigIdTransferListTransformProcessor.close();
+        mutatingProcessor.close();
         System.out.println(count);
         assertEquals(11, count.longValue());
         System.out.println(lineCount);

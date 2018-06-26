@@ -15,14 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-
 public class FieldMapConfigIdTransferListTransformerTest {
     private static final String FileName = "webAccessLogSample.txt";
     private FieldMapConfigIdTransferListTransformer
             fieldMapConfigIdDataTransferListTransformer;
-    private FieldMapListConfigIdTransferListTransformer
-            fieldMapListConfigIdDataTransferListTransformer;
     private static final String ConfigId = "apacheCommonLogTest";
     private List<String> lineList;
 
@@ -32,15 +28,12 @@ public class FieldMapConfigIdTransferListTransformerTest {
         this.lineList = JMResources.readLines(FileName);
         MutatingConfig config = new ApacheAccessLogMutatingConfig
                 (ConfigId, "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" " +
-                        "\"%{User-agent}i\" %D").bindInputId(FileName);
+                        "\"%{User-agent}i\" %D");
         MutatingConfigManager mutatingConfigManager =
                 new MutatingConfigManager(List.of(config));
         this.fieldMapConfigIdDataTransferListTransformer =
                 new FieldMapConfigIdTransferListTransformer(
-                        mutatingConfigManager);
-        this.fieldMapListConfigIdDataTransferListTransformer = new
-                FieldMapListConfigIdTransferListTransformer(
-                mutatingConfigManager);
+                        mutatingConfigManager.getConfig(ConfigId));
     }
 
     @Test
@@ -48,25 +41,16 @@ public class FieldMapConfigIdTransferListTransformerTest {
         List<Transfer<String>> transferList = lineList.stream()
                 .map(log -> new Transfer<>(FileName, log))
                 .collect(Collectors.toList());
-        List<ConfigIdTransfer<FieldMap>> transferMap =
+        List<ConfigIdTransfer<FieldMap>> configIdTransferList =
                 fieldMapConfigIdDataTransferListTransformer
                         .apply(transferList);
-        System.out.println(transferMap);
-
-        List<ConfigIdTransfer<List<FieldMap>>> dataTransferListMap =
-                fieldMapListConfigIdDataTransferListTransformer
-                        .apply(List.of(new Transfer<>(FileName, lineList)));
-        assertEquals(1, dataTransferListMap.size());
-        Transfer<List<FieldMap>> listTransfer =
-                dataTransferListMap.get(0);
-        System.out.println(listTransfer);
+        System.out.println(configIdTransferList);
 
         List<Map<String, Object>> collect =
-                transferMap.stream().map(Transfer::getData)
+                configIdTransferList.stream().map(Transfer::getData)
                         .collect(Collectors.toList());
-        Assert.assertEquals(collect.size(), listTransfer.getData().size());
-        Assert.assertEquals(collect.toString(),
-                listTransfer.getData().toString());
+        Assert.assertEquals(1024, collect.size());
+
     }
 
 }

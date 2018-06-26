@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * The type Abstract string output.
  */
-public class StdOutput extends AbstractOutput {
+public class StdOutLineOutput extends AbstractOutput {
 
     @Getter
     private boolean enableJsonString;
@@ -25,15 +25,15 @@ public class StdOutput extends AbstractOutput {
     /**
      * Instantiates a new Abstract string output.
      */
-    public StdOutput() {
+    public StdOutLineOutput() {
         this(false);
     }
 
-    public StdOutput(boolean enableJsonString) {
+    public StdOutLineOutput(boolean enableJsonString) {
         this(enableJsonString, null);
     }
 
-    public StdOutput(boolean enableJsonString,
+    public StdOutLineOutput(boolean enableJsonString,
             Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         this(new StdOutputConfig(enableJsonString),
                 transformOutputObjectFunction);
@@ -44,11 +44,11 @@ public class StdOutput extends AbstractOutput {
      *
      * @param outputConfig the output properties
      */
-    public StdOutput(StdOutputConfig outputConfig) {
+    public StdOutLineOutput(StdOutputConfig outputConfig) {
         this(outputConfig, null);
     }
 
-    public StdOutput(StdOutputConfig outputConfig,
+    public StdOutLineOutput(StdOutputConfig outputConfig,
             Function<List<ConfigIdTransfer<FieldMap>>, List<Object>>
                     transformOutputObjectFunction) {
         super(outputConfig);

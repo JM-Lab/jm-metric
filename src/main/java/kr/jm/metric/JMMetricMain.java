@@ -1,9 +1,7 @@
 package kr.jm.metric;
 
-import kr.jm.metric.config.AbstractConfigManager;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMJson;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,26 +28,9 @@ public class JMMetricMain {
         initArgs(args);
 
         this.jmMetric = new JMMetric(inputId, mutatingId, outputIds);
-
-        logAndStdOutInfo("==== Input Config Map ====",
-                this.jmMetric.getInputConfigManager());
-        logAndStdOutInfo("==== Mutating Config Map ====",
-                this.jmMetric.getMutatingConfigManager());
-        logAndStdOutInfo("==== Output Config Map ====",
-                this.jmMetric.getOutputConfigManager());
-
+        this.jmMetric.printAllConfig();
         this.jmMetric.start();
-
         OS.addShutdownHook(jmMetric::close);
-    }
-
-    private void logAndStdOutInfo(String infoHead,
-            AbstractConfigManager<?> configManager) {
-        log.info(infoHead);
-        System.out.println(infoHead);
-        String info = JMJson.toPrettyJsonString(configManager.getConfigMap());
-        log.info(info);
-        System.out.println(info);
     }
 
     private void initArgs(String[] args) {

@@ -1,6 +1,6 @@
 package kr.jm.metric.config.input;
 
-import kr.jm.metric.input.StdLineInput;
+import kr.jm.metric.input.StdInLineInput;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -24,7 +24,7 @@ public class StdInLineInputConfig extends AbstractInputConfig {
     }
 
     @Override
-    public StdLineInput buildInput() {
-        return new StdLineInput(this);
+    public StdInLineInput buildInput() {
+        return new StdInLineInput(this);
     }
 }

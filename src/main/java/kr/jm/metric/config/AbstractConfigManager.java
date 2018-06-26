@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-
 public abstract class AbstractConfigManager<C extends ConfigInterface> {
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     private static ObjectMapper ConfigObjectMapper = new ObjectMapper()
@@ -80,7 +79,7 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
 
     public AbstractConfigManager<C> insertConfig(C inputConfig) {
         this.configMap.put(extractConfigId(inputConfig), inputConfig);
-        JMLog.info(log, "insertConfig", inputConfig);
+        JMLog.info(log, "insertOutputConfig", inputConfig);
         return this;
     }
 
@@ -142,8 +141,11 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
         return Collections.unmodifiableMap(this.configMap);
     }
 
-    public Optional<C> getMutatingConfigAsOpt(String configId) {
-        return JMOptional.getOptional(this.configMap, configId);
+    public C getConfig(String configId) {
+        return JMOptional.getOptional(this.configMap, configId).orElseGet(
+                () -> JMExceptionManager.handleExceptionAndReturnNull(log,
+                        JMExceptionManager.newRunTimeException("No Config !!!"),
+                        "getConfig", configId));
     }
 
     public Number extractNumberConfig(String configId, String key,

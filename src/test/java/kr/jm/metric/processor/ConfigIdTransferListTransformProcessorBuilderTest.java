@@ -7,14 +7,11 @@ import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.publisher.TransferSubmissionPublisher;
 import kr.jm.metric.transformer.FieldMapConfigIdTransferListTransformer;
-import kr.jm.metric.transformer.FieldMapListConfigIdTransferListTransformer;
-import kr.jm.utils.collections.JMListMap;
 import kr.jm.utils.flow.processor.JMConcurrentTransformProcessor;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMResources;
-import kr.jm.utils.helper.JMThread;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +28,6 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
     private List<String> lineList;
     private JMConcurrentTransformProcessor<List<Transfer<String>>, List<ConfigIdTransfer<FieldMap>>>
             fieldMapConfigIdTransferListTransformProcessor;
-    private JMConcurrentTransformProcessor<List<Transfer<List<String>>>,
-            List<ConfigIdTransfer<List<FieldMap>>>>
-            fieldMapListConfigIdTransferListTransformProcessor;
     private TransferSubmissionPublisher<List<String>>
             transferSubmissionPublisher;
 
@@ -44,34 +38,15 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
                 List.of(new ApacheAccessLogMutatingConfig(CONFIG_ID,
                         "%h %l %u %t \"%r\" %>s %b " +
                                 "\"%{Referer}i\" " +
-                                "\"%{User-agent}i\" %D")
-                        .bindInputId(TEST_ID))
+                                "\"%{User-agent}i\" %D"))
         );
-        mutatingConfigManager
-                .insertConfig(new ApacheAccessLogMutatingConfig(CONFIG_ID,
-                        "%h %l %u %t \"%r\" %>s %b " +
-                                "\"%{Referer}i\" " +
-                                "\"%{User-agent}i\" %D")
-                        .bindInputId(TEST_ID + "1"));
-        mutatingConfigManager
-                .insertConfig(new ApacheAccessLogMutatingConfig(CONFIG_ID,
-                        "%h %l %u %t \"%r\" %>s %b " +
-                                "\"%{Referer}i\" " +
-                                "\"%{User-agent}i\" %D")
-                        .bindInputId(TEST_ID + "2"));
 
         this.fieldMapConfigIdTransferListTransformProcessor =
                 JMTransformProcessorBuilder.buildWithThreadPool(
                         new FieldMapConfigIdTransferListTransformer(
-                                mutatingConfigManager));
-        this.fieldMapListConfigIdTransferListTransformProcessor
-                = JMTransformProcessorBuilder.buildWithThreadPool(
-                new FieldMapListConfigIdTransferListTransformer(
-                        mutatingConfigManager));
+                                mutatingConfigManager.getConfig(CONFIG_ID)));
         this.transferSubmissionPublisher = new TransferSubmissionPublisher<>();
-        this.transferSubmissionPublisher.subscribeAndReturnSubcriber(
-                JMTransformProcessorBuilder.build(List::of))
-                .subscribe(fieldMapListConfigIdTransferListTransformProcessor);
+
     }
 
     @Test
@@ -95,20 +70,7 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
         lineList.forEach(
                 line -> transferSubmissionPublisher.submit(TEST_ID, line));
 
-
-        CompletableFuture<List<ConfigIdTransfer<List<FieldMap>>>>
-                dataTransferCompletableFuture2 = new CompletableFuture<>();
-        fieldMapListConfigIdTransferListTransformProcessor
-                .subscribe(JMSubscriberBuilder
-                        .build(dataTransferCompletableFuture2::complete));
         this.transferSubmissionPublisher.submit(TEST_ID, lineList);
-        List<ConfigIdTransfer<List<FieldMap>>> dataTransferMap2 =
-                dataTransferCompletableFuture2.get();
-        System.out.println(JMJson.toJsonString(dataTransferMap2));
-        Assert.assertEquals(1, dataTransferMap2.size());
-        Assert.assertEquals(1024,
-                dataTransferMap2.get(0).getData().size());
-
         System.out.println(
                 JMJson.toJsonString(dataTransferCompletableFuture1.get()));
         Transfer<List<FieldMap>> transfer1 =
@@ -116,29 +78,4 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
         Assert.assertEquals(1024, transfer1.getData().size());
     }
 
-    @Test
-    public void testProcessInParallel() {
-        JMListMap<String, Transfer<List<FieldMap>>> resultMap =
-                new JMListMap<>();
-        fieldMapListConfigIdTransferListTransformProcessor
-                .subscribe(JMSubscriberBuilder
-                        .build(configIdFieldMapListDataTransferList -> configIdFieldMapListDataTransferList
-                                .stream().forEach(dataTransfer -> resultMap
-                                        .add(dataTransfer.getInputId(),
-                                                dataTransfer))));
-        JMThread.runAsync(() ->
-                transferSubmissionPublisher.submit(TEST_ID + 1, lineList));
-        JMThread.runAsync(() ->
-                transferSubmissionPublisher.submit(TEST_ID + 2, lineList));
-        JMThread.sleep(1000);
-        System.out.println(JMJson.toJsonString(resultMap));
-        Assert.assertEquals(2, resultMap.size());
-        List<FieldMap> resultData1 =
-                resultMap.get(TEST_ID + 1).get(0).getData();
-        List<FieldMap> resultData2 =
-                resultMap.get(TEST_ID + 1).get(0).getData();
-        Assert.assertEquals(1024, resultData1.size());
-        Assert.assertEquals(1024, resultData2.size());
-        Assert.assertEquals(resultData1.toString(), resultData2.toString());
-    }
 }

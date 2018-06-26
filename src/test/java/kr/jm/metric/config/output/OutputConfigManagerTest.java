@@ -17,13 +17,11 @@ public class OutputConfigManagerTest {
 
     @Test
     public void testGetOutput() {
-        Assert.assertTrue(
-                this.outputConfigManager.getMutatingConfigAsOpt("ESClient")
-                .isPresent());
+        Assert.assertNotNull(this.outputConfigManager.getConfig("ESClient"));
         System.out.println(
                 this.outputConfigManager.getConfigMap().get("ESClient"));
         OutputConfigInterface outputConfig =
-                this.outputConfigManager.getMutatingConfigAsOpt("StdOut").get();
+                this.outputConfigManager.getConfig("StdOut");
         System.out.println(outputConfig.getOutputConfigType());
         Map<String, Object> fileConfigMap = outputConfig.extractConfigMap();
         System.out.println(fileConfigMap);

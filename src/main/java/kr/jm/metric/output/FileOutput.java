@@ -14,7 +14,7 @@ import java.util.function.Function;
  * The type File output.
  */
 @Slf4j
-public class FileOutput extends StdOutput {
+public class FileOutput extends StdOutLineOutput {
 
     private JMFileAppender fileAppender;
 

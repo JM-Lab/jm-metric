@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JMMetricTest {
     static {
@@ -50,10 +50,12 @@ public class JMMetricTest {
     @Test
     public void testMutatingConfig() {
         MutatingConfig apacheCommonLog =
-                jmMetric.getMutatingConfig("apacheAccessLogSample");
+                jmMetric.getJmMetricConfigManager()
+                        .getMutatingConfig("apacheAccessLogSample");
         System.out.println(JMJson.toJsonString(apacheCommonLog));
         MutatingConfig nginxAccessLogSample =
-                jmMetric.getMutatingConfig("nginxAccessLogSample");
+                jmMetric.getJmMetricConfigManager()
+                        .getMutatingConfig("nginxAccessLogSample");
         System.out.println(JMJson.toJsonString(nginxAccessLogSample));
         assertEquals(DateFormatType.CUSTOM,
                 nginxAccessLogSample.getFieldConfig().getDateFormat()
@@ -81,49 +83,26 @@ public class JMMetricTest {
     }
 
     @Test
-    public void testRemoveInputId() {
-        MutatingConfig delimiterSampleMutatingConfig =
-                jmMetric.getMutatingConfig("delimiterSample");
-        System.out.println(delimiterSampleMutatingConfig.getBindInputId());
-        jmMetric.bindInputIdToMutatingConfigId("testData",
-                "apacheAccessLogSample");
-        List<String> inputIdList =
-                jmMetric.getMutatingConfigManager().getConfigMap().values()
-                        .stream().map(MutatingConfig::getBindInputId)
-                        .collect(Collectors.toList());
-        System.out.println(inputIdList);
-        String configId = jmMetric.getMutatingConfigIdAsOpt("testData").get();
-        System.out.println(configId);
-        assertEquals("apacheAccessLogSample", configId);
-        System.out.println(inputIdList);
-        jmMetric.removeInputId("testData");
-        assertNull(delimiterSampleMutatingConfig.getBindInputId());
-        inputIdList =
-                jmMetric.getMutatingConfigManager().getConfigMap().values()
-                        .stream().map(MutatingConfig::getBindInputId)
-                        .collect(Collectors.toList());
-        System.out.println(inputIdList);
-        assertFalse(jmMetric.getMutatingConfigAsOpt("testData").isPresent());
-    }
-
-    @Test
     public void testInput() {
         LongAdder count = new LongAdder();
         LongAdder lineCount = new LongAdder();
+        JMMetricConfigManager jmMetricConfigManager = new
+                JMMetricConfigManager();
         ApacheAccessLogMutatingConfig apacheAccessLogSample =
-                (ApacheAccessLogMutatingConfig) jmMetric.getMutatingConfig
-                        ("apacheAccessLogSample");
+                (ApacheAccessLogMutatingConfig) jmMetricConfigManager
+                        .getMutatingConfig
+                                ("apacheAccessLogSample");
         FieldConfig fieldConfig =
-                jmMetric.getMutatingConfig("nginxAccessLogSample")
+                jmMetricConfigManager.getMutatingConfig("nginxAccessLogSample")
                         .getFieldConfig();
-        ApacheAccessLogMutatingConfig inputConfig =
+        ApacheAccessLogMutatingConfig mutatingConfig =
                 new ApacheAccessLogMutatingConfig("apache", fieldConfig,
                         apacheAccessLogSample.getFormat());
-        jmMetric.insertConfig(inputConfig);
-        ApacheAccessLogMutatingConfig inputConfig2 =
+        jmMetricConfigManager.insertMutatingConfig(mutatingConfig);
+        ApacheAccessLogMutatingConfig mutatingConfig2 =
                 new ApacheAccessLogMutatingConfig("apache2", fieldConfig,
                         apacheAccessLogSample.getFormat());
-        jmMetric.insertConfig(inputConfig2);
+        jmMetricConfigManager.insertMutatingConfig(mutatingConfig2);
         Optional<Path> pathAsOpt1 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
@@ -131,8 +110,8 @@ public class JMMetricTest {
         OutputSubscriber fileOutputSubscriber1 = OutputSubscriberBuilder
                 .buildFileOutput(path1.toAbsolutePath().toString());
 
-        jmMetric.bindInputIdToMutatingConfigId(FileName, "apache")
-                .bindInputIdToMutatingConfigId(FileName, "apache2");
+        jmMetric = new JMMetric(jmMetricConfigManager, null, "apache");
+
         jmMetric.subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
                 .subscribeWith(fileOutputSubscriber1)
                 .consumeWith(configIdTransferList -> count.increment())

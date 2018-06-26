@@ -33,10 +33,6 @@ public class MutatingConfig extends AbstractConfig {
      * The Fields.
      */
     protected String[] fields;
-    /**
-     * The Bind data ids.
-     */
-    protected String bindInputId;
 
     /**
      * The Chunk type.
@@ -89,27 +85,6 @@ public class MutatingConfig extends AbstractConfig {
     public String[] getFields() {
         return JMLambda.supplierIfNull(this.fields,
                 () -> this.fields = JMArrays.EMPTY_STRINGS);
-    }
-
-    /**
-     * Gets bind data ids.
-     *
-     * @return the bind data ids
-     */
-    public String getBindInputId() {
-        return this.bindInputId;
-    }
-
-    public MutatingConfig bindInputId(String inputId) {
-        log.info(
-                "bindInputId - configId = {}, bindInputId = {}, oldBindInputId = {}",
-                this.configId, inputId, this.bindInputId);
-        this.bindInputId = inputId;
-        return this;
-    }
-
-    public MutatingConfig clearBindInputId() {
-        return bindInputId(null);
     }
 
 }

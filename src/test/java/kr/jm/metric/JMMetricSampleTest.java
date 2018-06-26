@@ -7,7 +7,6 @@ import kr.jm.utils.flow.processor.JMTransformProcessor;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMConsumer;
-import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMThread;
 import kr.jm.utils.stats.generator.WordCountGenerator;
 import org.junit.Test;
@@ -25,15 +24,13 @@ public class JMMetricSampleTest {
     @Test
     public void test() {
         JMMetric jmMetric = new JMMetric();
-        JMJson.toJsonString(jmMetric.getMutatingConfigManager().getConfigMap());
+        jmMetric.printAllConfig();
     }
 
 
     @Test
     public void test1() {
-        JMMetric jmMetric = new JMMetric();
-        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
-                "jsonSample");
+        JMMetric jmMetric = new JMMetric("jsonSample");
         jmMetric.consumeWith(JMConsumer.getSOPL());
         jmMetric.testInput("{\"Hello\": \"World !!!\"}");
         JMThread.sleep(1000);
@@ -41,9 +38,7 @@ public class JMMetricSampleTest {
 
     @Test
     public void test2() {
-        JMMetric jmMetric = new JMMetric();
-        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
-                "rawSample");
+        JMMetric jmMetric = new JMMetric("rawSample");
         jmMetric.consumeWith(JMConsumer.getSOPL())
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.testInput("Hello JMMetric !!!");
@@ -68,9 +63,7 @@ public class JMMetricSampleTest {
 
     @Test
     public void test3() {
-        JMMetric jmMetric = new JMMetric();
-        jmMetric.bindInputIdToMutatingConfigId(jmMetric.getInputId(),
-                "CombinedLogFormat");
+        JMMetric jmMetric = new JMMetric("CombinedLogFormat");
         jmMetric.consumeWith(JMConsumer.getSOPL())
                 .subscribeWith(
                         JMSubscriberBuilder.getJsonStringSOPLSubscriber());

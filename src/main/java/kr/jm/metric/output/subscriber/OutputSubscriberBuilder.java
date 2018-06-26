@@ -5,7 +5,7 @@ import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
-import kr.jm.metric.output.StdOutput;
+import kr.jm.metric.output.StdOutLineOutput;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -72,7 +72,8 @@ public class OutputSubscriberBuilder {
     public static OutputSubscriber buildStdOut(boolean enableJsonString,
             Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         return build(
-                new StdOutput(enableJsonString, transformOutputObjectFunction));
+                new StdOutLineOutput(enableJsonString,
+                        transformOutputObjectFunction));
     }
 
 

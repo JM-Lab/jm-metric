@@ -1,14 +1,18 @@
 package kr.jm.metric;
 
+import kr.jm.metric.config.AbstractConfigManager;
+import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.mutating.MutatingConfig;
 import kr.jm.metric.config.mutating.MutatingConfigManager;
+import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
+import kr.jm.utils.helper.JMJson;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * The type Metric properties manager.
@@ -39,34 +43,90 @@ public class JMMetricConfigManager {
                 new OutputConfigManager(outputConfigFileName);
     }
 
-    public MutatingConfigManager bindInputIdToMutatingConfigId(
-            String inputId, String mutatingConfigId) {
-        return mutatingConfigManager
-                .bindInputIdToMutatingConfigId(inputId, mutatingConfigId);
+    public Map<String, InputConfigInterface> getInputConfigMap() {
+        return inputConfigManager.getConfigMap();
     }
 
-    public Optional<MutatingConfig> getMutatingConfigAsOpt(String inputId) {
-        return mutatingConfigManager.getMutatingConfigAsOpt(inputId);
+    public InputConfigInterface getInputConfig(String inputConfigId) {
+        return inputConfigManager.getConfig(inputConfigId);
     }
 
-    public Optional<String> getMutatingConfigIdAsOpt(String inputId) {
-        return mutatingConfigManager.getMutatingConfigIdAsOpt(inputId);
+    public InputConfigInterface removeInputConfig(String inputConfigId) {
+        return inputConfigManager.removeConfig(inputConfigId);
     }
 
-    public MutatingConfig getMutatingConfig(String configId) {
-        return mutatingConfigManager.getMutatingConfig(configId);
+    public JMMetricConfigManager insertInputConfig(
+            InputConfigInterface inputConfig) {
+        inputConfigManager.insertConfig(inputConfig);
+        return this;
     }
 
-    public MutatingConfigManager removeInputId(String inputId) {
-        return mutatingConfigManager.removeInputId(inputId);
+    public AbstractConfigManager<InputConfigInterface> insertConfigList(
+            List<InputConfigInterface> configList) {
+        return inputConfigManager.insertConfigList(configList);
     }
 
-    public MutatingConfigManager insertConfig(
+    public JMMetricConfigManager insertMutatingConfigList(
+            List<MutatingConfig> configList) {
+        mutatingConfigManager.insertConfigList(configList);
+        return this;
+    }
+
+    public MutatingConfig getMutatingConfig(String mutatingConfigId) {
+        return mutatingConfigManager.getConfig(mutatingConfigId);
+    }
+
+    public JMMetricConfigManager insertMutatingConfig(
             MutatingConfig mutatingConfig) {
-        return mutatingConfigManager.insertConfig(mutatingConfig);
+        mutatingConfigManager.insertConfig(mutatingConfig);
+        return this;
     }
 
-    public Map<String, String> getInputIdMutatingConfigIdMap() {
-        return mutatingConfigManager.getInputIdMutatingConfigIdMap();
+    public Map<String, MutatingConfig> getMutatingConfigMap() {
+        return mutatingConfigManager.getConfigMap();
+    }
+
+    public MutatingConfig removeMutatingConfig(String mutatingConfigId) {
+        return mutatingConfigManager.removeConfig(mutatingConfigId);
+    }
+
+    public JMMetricConfigManager insertOutputConfigList(
+            List<OutputConfigInterface> outputConfigList) {
+        outputConfigManager.insertConfigList(outputConfigList);
+        return this;
+    }
+
+    public JMMetricConfigManager insertOutputConfig(
+            OutputConfigInterface inputOutputConfig) {
+        outputConfigManager.insertConfig(inputOutputConfig);
+        return this;
+    }
+
+    public Map<String, OutputConfigInterface> getOutputConfigMap() {
+        return outputConfigManager.getConfigMap();
+    }
+
+    public OutputConfigInterface getOutputConfig(
+            String outputConfigId) {
+        return outputConfigManager.getConfig(outputConfigId);
+    }
+
+    public OutputConfigInterface removeOutputConfig(String outputConfigId) {
+        return outputConfigManager.removeConfig(outputConfigId);
+    }
+
+    public void printAllConfig() {
+        logAndStdOut("==== Input Config Map ====", inputConfigManager);
+        logAndStdOut("==== Mutating Config Map ====", mutatingConfigManager);
+        logAndStdOut("==== Output Config Map ====", outputConfigManager);
+    }
+
+    private void logAndStdOut(String infoHead,
+            AbstractConfigManager configManager) {
+        log.info(infoHead);
+        System.out.println(infoHead);
+        String info = JMJson.toPrettyJsonString(configManager.getConfigMap());
+        log.info(info);
+        System.out.println(info);
     }
 }

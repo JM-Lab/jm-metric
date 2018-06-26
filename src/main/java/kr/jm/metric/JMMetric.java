@@ -1,33 +1,40 @@
 package kr.jm.metric;
 
+import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.publisher.InputPublisher;
 import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
-import kr.jm.metric.processor.FieldMapConfigIdTransferListTransformProcessor;
+import kr.jm.metric.processor.MutatingProcessor;
 import kr.jm.utils.datastructure.JMCollections;
-import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.flow.processor.JMTransformProcessorInterface;
 import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMStream;
 import kr.jm.utils.helper.JMThread;
-import lombok.experimental.Delegate;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Flow;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * The type Jm metric.
  */
-public class JMMetric extends FieldMapConfigIdTransferListTransformProcessor {
-
-    @Delegate
+@Slf4j
+public class JMMetric implements
+        JMTransformProcessorInterface<List<Transfer<String>>,
+                List<ConfigIdTransfer<FieldMap>>>, AutoCloseable {
+    @Getter
     private JMMetricConfigManager jmMetricConfigManager;
-
     private InputPublisher inputPublisher;
+    private MutatingProcessor mutatingProcessor;
     private List<OutputSubscriber> outputSubscriberList;
 
     public static void main(String[] args) {
@@ -35,85 +42,78 @@ public class JMMetric extends FieldMapConfigIdTransferListTransformProcessor {
     }
 
     public JMMetric() {
-        this(new JMMetricConfigManager(), "Raw");
+        this(null);
     }
 
-    public JMMetric(JMMetricConfigManager jmMetricConfigManager,
-            String mutatingConfigId) {
-        this(JMThread.newThreadPoolWithAvailableProcessors(),
-                Flow.defaultBufferSize(), jmMetricConfigManager, null,
-                mutatingConfigId);
+    public JMMetric(String mutatingConfigId) {
+        this(null, mutatingConfigId);
     }
 
     public JMMetric(String inputId, String mutatingConfigId,
             String... outputIds) {
-        this(JMThread.newThreadPoolWithAvailableProcessors(), inputId,
+        this(new JMMetricConfigManager(),
+                JMThread.newThreadPoolWithAvailableProcessors(), inputId,
                 mutatingConfigId, outputIds);
     }
 
-    public JMMetric(ExecutorService executor, String inputId,
+    public JMMetric(JMMetricConfigManager jmMetricConfigManager, String inputId,
             String mutatingConfigId, String... outputIds) {
-        this(executor, Flow.defaultBufferSize(), new JMMetricConfigManager(),
-                inputId, mutatingConfigId, outputIds);
+        this(jmMetricConfigManager,
+                JMThread.newThreadPoolWithAvailableProcessors(), inputId,
+                mutatingConfigId, outputIds);
     }
 
-    private JMMetric(ExecutorService executor, int maxBufferCapacity,
-            JMMetricConfigManager jmMetricConfigManager, String inputId,
-            String mutatingConfigId, String... outputIds) {
-        super(executor, maxBufferCapacity,
-                jmMetricConfigManager.getMutatingConfigManager());
+    public JMMetric(JMMetricConfigManager jmMetricConfigManager,
+            ExecutorService executor, String inputId, String mutatingConfigId,
+            String... outputIds) {
+        this(jmMetricConfigManager, executor, Flow.defaultBufferSize(), inputId,
+                mutatingConfigId, outputIds);
+    }
+
+    private JMMetric(JMMetricConfigManager jmMetricConfigManager,
+            ExecutorService executor, int maxBufferCapacity,
+            String inputId, String mutatingConfigId, String... outputIds) {
         this.jmMetricConfigManager = jmMetricConfigManager;
-        Optional.ofNullable(inputId)
-                .ifPresentOrElse(this::setInput, () -> setInput("StdIn"));
-        bindInputIdToMutatingConfigId(inputId, mutatingConfigId);
-        this.outputSubscriberList = new ArrayList<>();
-        JMStream.buildStream(outputIds).forEach(this::addOutput);
-    }
-
-    public void setInput(String inputId) {
-        this.jmMetricConfigManager.getInputConfigManager()
-                .getMutatingConfigAsOpt(inputId)
-                .map(InputPublisherBuilder::build)
-                .map(inputPublisher -> this.inputPublisher = inputPublisher)
-                .ifPresentOrElse(
-                        inputPublisher -> inputPublisher.subscribe(this),
-                        () -> logAndThrowConfigError("setInput", inputId));
-    }
-
-    private void logAndThrowConfigError(String methodName, String... params) {
-        JMExceptionManager.handleExceptionAndThrowRuntimeEx(log,
-                JMExceptionManager.newRunTimeException(
-                        "No Input Config Occur !!!"),
-                "setInput", params);
-    }
-
-    public void addOutput(String outputId) {
-        this.jmMetricConfigManager.getOutputConfigManager()
-                .getMutatingConfigAsOpt
-                        (outputId)
+        this.inputPublisher =
+                InputPublisherBuilder.build(jmMetricConfigManager
+                        .getInputConfig(
+                                Optional.ofNullable(inputId).orElse("StdIn")));
+        this.mutatingProcessor =
+                this.inputPublisher.subscribeAndReturnSubcriber(
+                        new MutatingProcessor(executor, maxBufferCapacity,
+                                jmMetricConfigManager.getMutatingConfig(
+                                        Optional.ofNullable(mutatingConfigId)
+                                                .orElse("Raw"))));
+        this.outputSubscriberList = JMStream.buildStream(
+                JMOptional.getOptional(outputIds)
+                        .orElseGet(() -> new String[]{"StdOut"}))
+                .map(jmMetricConfigManager::getOutputConfig)
                 .map(OutputSubscriberBuilder::build)
-                .map(outputSubscriber -> JMCollections
-                        .addAndGet(this.outputSubscriberList, outputSubscriber))
-                .ifPresentOrElse(this::subscribe,
-                        () -> logAndThrowConfigError("setOutput", outputId));
+                .peek(mutatingProcessor::subscribe)
+                .collect(Collectors.toList());
     }
 
     public void start() {
-        JMLog.info(log, "start", getInputId(), getOutputIdList());
+        JMLog.info(log, "start", getInputId(), getMutatingId(),
+                getOutputIdList());
         this.inputPublisher.start();
     }
 
     @Override
     public void close() {
-        JMLog.info(log, "close", getInputId(), getOutputIdList());
-        Optional.ofNullable(this.inputPublisher)
-                .ifPresent(InputPublisher::close);
-        super.close();
+        JMLog.info(log, "close", getInputId(), getMutatingId(),
+                getOutputIdList());
+        this.inputPublisher.close();
+        this.mutatingProcessor.close();
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
     public String getInputId() {
         return this.inputPublisher.getInputId();
+    }
+
+    public String getMutatingId() {
+        return this.mutatingProcessor.getMutatingId();
     }
 
     public List<String> getOutputIdList() {
@@ -125,5 +125,35 @@ public class JMMetric extends FieldMapConfigIdTransferListTransformProcessor {
 
     public void testInput(Stream<String> dataStream) {
         inputPublisher.testInput(dataStream);
+    }
+
+    @Override
+    public void subscribe(
+            Flow.Subscriber<? super List<ConfigIdTransfer<FieldMap>>> subscriber) {
+        mutatingProcessor.subscribe(subscriber);
+    }
+
+    @Override
+    public void onSubscribe(Flow.Subscription subscription) {
+        mutatingProcessor.onSubscribe(subscription);
+    }
+
+    @Override
+    public void onNext(List<Transfer<String>> item) {
+        mutatingProcessor.onNext(item);
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        mutatingProcessor.onError(throwable);
+    }
+
+    @Override
+    public void onComplete() {
+        mutatingProcessor.onComplete();
+    }
+
+    public void printAllConfig() {
+        jmMetricConfigManager.printAllConfig();
     }
 }

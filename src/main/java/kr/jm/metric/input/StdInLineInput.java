@@ -10,14 +10,14 @@ import java.util.function.Consumer;
 /**
  * The type Abstract string output.
  */
-public class StdLineInput extends AbstractInput<StdInLineInputConfig> {
+public class StdInLineInput extends AbstractInput<StdInLineInputConfig> {
     private StdInLineConsumer stdInLineConsumer;
 
-    public StdLineInput(String inputId) {
+    public StdInLineInput(String inputId) {
         this(new StdInLineInputConfig(inputId));
     }
 
-    public StdLineInput(StdInLineInputConfig inputConfig) {
+    public StdInLineInput(StdInLineInputConfig inputConfig) {
         super(inputConfig);
     }
 

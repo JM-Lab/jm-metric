@@ -19,22 +19,9 @@ import java.util.stream.Collectors;
 public interface ConfigIdTransferListTransformerInterface<I, O> extends
         Function<List<Transfer<I>>, List<ConfigIdTransfer<O>>> {
 
-    /**
-     * Transform o.
-     *
-     * @param mutatingConfig the metric properties
-     * @param data           the data
-     * @return the o
-     */
-    O transform(MutatingConfig mutatingConfig, I data);
+    O transform(I data);
 
-    /**
-     * Gets input properties list.
-     *
-     * @param inputId the data id
-     * @return the input properties list
-     */
-    Optional<MutatingConfig> getConfigAsOpt(String inputId);
+    MutatingConfig getMutatingConfig();
 
     @Override
     default List<ConfigIdTransfer<O>> apply(List<Transfer<I>> transferList) {
@@ -44,25 +31,12 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
 
     private Optional<ConfigIdTransfer<O>> buildConfigIdTransferAsOpt(
             Transfer<I> transfer) {
-        return getConfigAsOpt(transfer.getInputId())
-                .map(inputConfig -> newListConfigTransfer(transfer,
-                        Optional.ofNullable(transfer.getMeta())
-                                .orElseGet(Collections::emptyMap), inputConfig,
-                        inputConfig.getFieldConfig()));
-    }
-
-    @SuppressWarnings("unchecked")
-    private ConfigIdTransfer<O> newListConfigTransfer(
-            Transfer<I> transfer, Map<String, Object> meta,
-            MutatingConfig mutatingConfig, FieldMeta fieldMeta) {
-        return Optional
-                .ofNullable(transform(mutatingConfig, transfer.getData()))
-                .map(o -> transfer.newWith(o,
-                        buildConfigTransferMeta(new HashMap<>(meta),
-                                fieldMeta)))
-                .map(t -> new ConfigIdTransfer<>(mutatingConfig.getConfigId(),
-                        t))
-                .orElse(null);
+        return Optional.ofNullable(transform(transfer.getData()))
+                .map(o -> transfer.newWith(o, buildConfigTransferMeta(
+                        new HashMap<>(Optional.ofNullable(transfer.getMeta())
+                                .orElseGet(Collections::emptyMap)),
+                        getMutatingConfig().getFieldConfig())))
+                .map(t -> new ConfigIdTransfer<>(transfer.getInputId(), t));
     }
 
     private Map<String, Object> buildConfigTransferMeta(

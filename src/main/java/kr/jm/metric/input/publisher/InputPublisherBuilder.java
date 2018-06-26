@@ -4,7 +4,7 @@ import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.FileInput;
 import kr.jm.metric.input.InputInterface;
-import kr.jm.metric.input.StdLineInput;
+import kr.jm.metric.input.StdInLineInput;
 import kr.jm.utils.helper.JMResources;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class InputPublisherBuilder {
     }
 
     public static InputPublisher buildStdInput(String inputId) {
-        return build(new StdLineInput(inputId));
+        return build(new StdInLineInput(inputId));
     }
 
     public static InputPublisher build(InputInterface input) {
