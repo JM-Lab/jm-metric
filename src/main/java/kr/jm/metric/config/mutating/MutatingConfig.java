@@ -5,16 +5,10 @@ import kr.jm.metric.config.AbstractConfig;
 import kr.jm.metric.config.mutating.field.FieldConfig;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.helper.JMLambda;
-import kr.jm.utils.helper.JMOptional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The type Metric properties.
@@ -42,7 +36,7 @@ public class MutatingConfig extends AbstractConfig {
     /**
      * The Bind data ids.
      */
-    protected Set<String> bindDataIds;
+    protected String bindInputId;
 
     /**
      * The Chunk type.
@@ -102,32 +96,20 @@ public class MutatingConfig extends AbstractConfig {
      *
      * @return the bind data ids
      */
-    public Set<String> getBindDataIds() {
-        return JMLambda.supplierIfNull(this.bindDataIds,
-                () -> this.bindDataIds = Collections.synchronizedSet(new
-                        HashSet<>()));
+    public String getBindInputId() {
+        return this.bindInputId;
     }
 
-    /**
-     * With bind data ids metric properties.
-     *
-     * @param dataIds the data ids
-     * @return the metric properties
-     */
-    public MutatingConfig withBindDataIds(String... dataIds) {
-        JMOptional.getOptional(dataIds).map(Arrays::asList)
-                .ifPresent(getBindDataIds()::addAll);
+    public MutatingConfig bindInputId(String inputId) {
+        log.info(
+                "bindInputId - configId = {}, bindInputId = {}, oldBindInputId = {}",
+                this.configId, inputId, this.bindInputId);
+        this.bindInputId = inputId;
         return this;
     }
 
-    /**
-     * Remove bind data id boolean.
-     *
-     * @param dataId the data id
-     * @return the boolean
-     */
-    public boolean removeBindDataId(String dataId) {
-        return getBindDataIds().remove(dataId);
+    public MutatingConfig clearBindInputId() {
+        return bindInputId(null);
     }
 
 }

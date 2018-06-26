@@ -22,6 +22,11 @@ public class StdOutputConfig extends AbstractOutputConfig {
      * @param enableJsonString the enable json string
      */
     public StdOutputConfig(boolean enableJsonString) {
+        this("StdOutput-Json-" + enableJsonString, enableJsonString);
+    }
+
+    public StdOutputConfig(String outputId, boolean enableJsonString) {
+        super(outputId);
         this.enableJsonString = enableJsonString;
     }
 

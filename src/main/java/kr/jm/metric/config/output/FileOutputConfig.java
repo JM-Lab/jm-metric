@@ -23,7 +23,12 @@ public class FileOutputConfig extends StdOutputConfig {
      * @param filePath         the file path
      */
     public FileOutputConfig(boolean enableJsonString, String filePath) {
-        super(enableJsonString);
+        this(filePath + "Json-" + enableJsonString, enableJsonString, filePath);
+    }
+
+    public FileOutputConfig(String outputId, boolean enableJsonString,
+            String filePath) {
+        super(outputId, enableJsonString);
         this.filePath = filePath;
     }
 

@@ -1,5 +1,6 @@
 package kr.jm.metric.config.mutating.field;
 
+import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.mutating.MutatingConfig;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.helper.JMOptional;
@@ -131,9 +132,10 @@ public class FieldConfig extends FieldMeta {
     @SuppressWarnings("unchecked")
     private Map<String, Object> buildNestedFieldStringMap(
             MutatingConfig mutatingConfig, String targetString) {
-        return mutatingConfig.getMetricBuilder()
-                .buildFieldObjectMap(mutatingConfig.getMutatingConfigType()
-                        .transform(mutatingConfig), targetString);
+        return mutatingConfig.getMetricBuilder().buildFieldObjectMap(
+                ConfigInterface.transformConfig(mutatingConfig,
+                        mutatingConfig.getMutatingConfigType()
+                                .getTypeReference()), targetString);
     }
 
     private Object transformWithDataType(DataType dataType, String data) {

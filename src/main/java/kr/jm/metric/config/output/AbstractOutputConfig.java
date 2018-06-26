@@ -16,4 +16,8 @@ public abstract class AbstractOutputConfig extends
         AbstractPropertiesConfig implements
         OutputConfigInterface {
     protected String outputId;
+
+    public AbstractOutputConfig(String outputId) {
+        this.outputId = outputId;
+    }
 }

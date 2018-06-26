@@ -1,6 +1,5 @@
-package kr.jm.metric.config;
+package kr.jm.metric.config.mutating;
 
-import kr.jm.metric.config.mutating.*;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.helper.JMJson;
 import org.junit.Before;
@@ -8,7 +7,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -109,44 +108,56 @@ public class MutatingConfigManagerTest {
         assertEquals(9, mutatingConfigManager.getConfigMap().size());
     }
 
-    public void insertConfig(MutatingConfig config) {
+    private void insertConfig(MutatingConfig config) {
         System.out.println(JMJson.toJsonString(config));
         mutatingConfigManager.insertConfig(config);
     }
 
     @Test
-    public void testRemoveDataId() {
+    public void testRemoveInputId() {
         insertConfig(
                 new KeyValueDelimiterMutatingConfig("keyValueDelimiterSample",
                         null, "=", ":",
-                        "[{}\", ]").withBindDataIds("data1", "data2"));
+                        "[{}\", ]").bindInputId("data1"));
+        insertConfig(
+                new KeyValueDelimiterMutatingConfig("keyValueDelimiterSample2",
+                        null, "=", ":",
+                        "[{}\", ]").bindInputId("data2"));
         insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample",
                 "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
-                .withBindDataIds("data1", "data2", "data3"));
-        List<String> dataIdList =
+                .bindInputId("data1"));
+        insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample2",
+                "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
+                .bindInputId("data2"));
+        insertConfig(new NginxAccessLogMutatingConfig("nginxAccessLogSample3",
+                "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"")
+                .bindInputId("data3"));
+        List<String> inputIdList =
                 mutatingConfigManager.getConfigMap().values().stream()
-                        .map(MutatingConfig::getBindDataIds)
-                        .flatMap(Set::stream)
+                        .map(MutatingConfig::getBindInputId)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-        System.out.println(dataIdList);
-        assertEquals(5, dataIdList.size());
-        mutatingConfigManager.removeDataId("data2");
-        dataIdList =
-                mutatingConfigManager.getConfigMap().values().stream().map
-                        (MutatingConfig::getBindDataIds).flatMap(Set::stream)
+        System.out.println(inputIdList);
+        assertEquals(5, inputIdList.size());
+        mutatingConfigManager.removeInputId("data2");
+        inputIdList =
+                mutatingConfigManager.getConfigMap().values().stream()
+                        .map(MutatingConfig::getBindInputId)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-        System.out.println(dataIdList);
-        assertEquals(3, dataIdList.size());
-        mutatingConfigManager.removeDataId("data3");
-        dataIdList =
-                mutatingConfigManager.getConfigMap().values().stream().map
-                        (MutatingConfig::getBindDataIds).flatMap(Set::stream)
+        System.out.println(inputIdList);
+        assertEquals(3, inputIdList.size());
+        mutatingConfigManager.removeInputId("data3");
+        inputIdList =
+                mutatingConfigManager.getConfigMap().values().stream()
+                        .map(MutatingConfig::getBindInputId)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-        System.out.println(dataIdList);
-        assertEquals(2, dataIdList.size());
-        assertTrue(dataIdList.contains("data1"));
-        assertFalse(dataIdList.contains("data2"));
-        assertFalse(dataIdList.contains("data3"));
+        System.out.println(inputIdList);
+        assertEquals(2, inputIdList.size());
+        assertTrue(inputIdList.contains("data1"));
+        assertFalse(inputIdList.contains("data2"));
+        assertFalse(inputIdList.contains("data3"));
     }
 
     @Test

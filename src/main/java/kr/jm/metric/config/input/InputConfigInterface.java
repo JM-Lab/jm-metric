@@ -11,6 +11,10 @@ public interface InputConfigInterface extends PropertiesConfigInterface {
 
     Integer getFlushIntervalSeconds();
 
+    Long getWaitingMillis();
+
+    Integer getQueueSizeLimit();
+
     InputConfigType getInputConfigType();
 
     <O extends InputInterface> O buildInput();

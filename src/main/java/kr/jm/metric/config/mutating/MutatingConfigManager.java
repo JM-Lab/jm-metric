@@ -1,15 +1,15 @@
 package kr.jm.metric.config.mutating;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.AbstractConfigManager;
-import kr.jm.utils.datastructure.JMCollections;
-import kr.jm.utils.datastructure.JMMap;
-import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMLog;
 import kr.jm.utils.helper.JMOptional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * The type Metric properties manager.
@@ -18,7 +18,7 @@ public class MutatingConfigManager extends
         AbstractConfigManager<MutatingConfig> {
 
     private static final String MUTATING_CONFIG_TYPE = "mutatingConfigType";
-    private Map<String, Set<String>> dataIdConfigIdSetMap;
+    private Map<String, String> inputIdConfigIdMap;
 
     public MutatingConfigManager(String configFilename) {
         super(configFilename);
@@ -34,26 +34,14 @@ public class MutatingConfigManager extends
     }
 
     @Override
-    protected MutatingConfig transformToConfig(
-            Map<String, Object> metricConfigMap) {
-        try {
-            return getConfigType(metricConfigMap).transform(metricConfigMap);
-        } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturnNull(log, e,
-                    "transformToConfig", metricConfigMap);
-        }
+    protected TypeReference<MutatingConfig> extractConfigTypeReference(
+            String configTypeString) {
+        return MutatingConfigType.valueOf(configTypeString).getTypeReference();
     }
 
-    private MutatingConfigType getConfigType(
-            Map<String, Object> metricConfigMap) {
-        return JMOptional.getOptional(metricConfigMap, MUTATING_CONFIG_TYPE)
-                .map(Object::toString)
-                .map(MutatingConfigType::valueOf)
-                .orElseGet(() -> JMExceptionManager.throwRunTimeException(
-                        "Wrong MutatingConfigType !!! : " +
-                                MUTATING_CONFIG_TYPE +
-                                "=" +
-                                metricConfigMap.get(MUTATING_CONFIG_TYPE)));
+    @Override
+    protected String getConfigTypeKey() {
+        return MUTATING_CONFIG_TYPE;
     }
 
     @Override
@@ -64,50 +52,56 @@ public class MutatingConfigManager extends
     /**
      * Bind data id to properties id metric properties manager.
      *
-     * @param dataId   the data id
-     * @param configId the properties id
+     * @param inputId          the data id
+     * @param mutatingConfigId the properties id
      * @return the metric properties manager
      */
-    public MutatingConfigManager bindDataIdToConfigId(String dataId,
-            String configId) {
-        JMLog.info(log, "bindDataIdToConfigId", dataId, configId);
-        Optional.ofNullable(this.configMap.get(configId))
-                .map(metricConfig -> metricConfig.withBindDataIds(dataId))
-                .ifPresentOrElse(metricConfig -> JMMap
-                        .getOrPutGetNew(getDataIdConfigIdSetMap(), dataId,
-                                () -> new HashSet<>()).add(configId), () -> log
-                        .warn("No ConfigId Occur !!! - inputSingle configId = {}",
-                                configId));
+    public MutatingConfigManager bindInputIdToMutatingConfigId(String inputId,
+            String mutatingConfigId) {
+        JMOptional.getOptional(this.configMap, mutatingConfigId)
+                .map(metricConfig -> metricConfig.bindInputId(inputId))
+                .ifPresentOrElse(
+                        config -> putInputIdMutatingConfigId(inputId,
+                                mutatingConfigId),
+                        () -> log
+                                .warn("No ConfigId Occur !!! - mutatingConfigId = {}",
+                                        mutatingConfigId));
         return this;
+    }
+
+    private void putInputIdMutatingConfigId(String inputId,
+            String mutatingConfigId) {
+        Optional.ofNullable(
+                getInputIdMutatingConfigIdMap().put(inputId, mutatingConfigId))
+                .ifPresentOrElse(oldConfigId -> log
+                                .warn("Change ConfigId Occur !!! - " +
+                                                "oldConfigId = {}, " +
+                                                "newConfigId = {}, inputId = {}",
+                                        oldConfigId, mutatingConfigId, inputId),
+                        () -> JMLog
+                                .info(log, "bindInputIdToMutatingConfigId",
+                                        inputId, mutatingConfigId));
     }
 
 
     /**
      * Gets properties list with data id.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @return the properties list with data id
      */
-    public List<MutatingConfig> getConfigListWithDataId(String dataId) {
-        return getConfigIdList(dataId).stream().map(this::getMutatingConfig)
-                .collect(Collectors.toList());
+    public Optional<MutatingConfig> getMutatingConfigAsOpt(String inputId) {
+        return getMutatingConfigIdAsOpt(inputId).map(this::getMutatingConfig);
     }
 
     /**
      * Gets properties id list.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @return the properties id list
      */
-    public List<String> getConfigIdList(String dataId) {
-        return JMOptional.getOptional(getDataIdConfigIdSetMap(), dataId)
-                .map(JMCollections::newList)
-                .orElseGet(() -> warnEmptyList(dataId));
-    }
-
-    private List<String> warnEmptyList(String dataId) {
-        log.warn("No ConfigIdList Occur !!! - inputId = {}", dataId);
-        return Collections.emptyList();
+    public Optional<String> getMutatingConfigIdAsOpt(String inputId) {
+        return JMOptional.getOptional(getInputIdMutatingConfigIdMap(), inputId);
     }
 
     /**
@@ -123,29 +117,24 @@ public class MutatingConfigManager extends
     /**
      * Remove data id metric properties manager.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @return the metric properties manager
      */
-    public MutatingConfigManager removeDataId(String dataId) {
-        Optional.ofNullable(getDataIdConfigIdSetMap().remove(dataId)).stream()
-                .flatMap(Set::stream).map(this.configMap::get)
-                .forEach(
-                        inputConfig -> inputConfig.removeBindDataId(dataId));
+    public MutatingConfigManager removeInputId(String inputId) {
+        this.configMap.values().stream().filter(mutatingConfig -> inputId
+                .equals(mutatingConfig.bindInputId))
+                .forEach(MutatingConfig::clearBindInputId);
+        getInputIdMutatingConfigIdMap().remove(inputId);
         return this;
     }
 
     @Override
     public MutatingConfigManager insertConfig(MutatingConfig mutatingConfig) {
         super.insertConfig(mutatingConfig);
-        insertConfigAndBindDataIdConfigId(mutatingConfig,
-                mutatingConfig.getConfigId());
+        Optional.ofNullable(mutatingConfig.getBindInputId()).ifPresent
+                (bindInputId -> bindInputIdToMutatingConfigId(bindInputId,
+                        mutatingConfig.getConfigId()));
         return this;
-    }
-
-    private void insertConfigAndBindDataIdConfigId(
-            MutatingConfig mutatingConfig, String configId) {
-        mutatingConfig.getBindDataIds()
-                .forEach(dataId -> bindDataIdToConfigId(dataId, configId));
     }
 
     /**
@@ -153,9 +142,9 @@ public class MutatingConfigManager extends
      *
      * @return the data id properties id set map
      */
-    public Map<String, Set<String>> getDataIdConfigIdSetMap() {
-        return JMLambda.supplierIfNull(this.dataIdConfigIdSetMap,
-                () -> this.dataIdConfigIdSetMap = new HashMap<>());
+    public Map<String, String> getInputIdMutatingConfigIdMap() {
+        return JMLambda.supplierIfNull(this.inputIdConfigIdMap,
+                () -> this.inputIdConfigIdMap = new HashMap<>());
     }
 
 }

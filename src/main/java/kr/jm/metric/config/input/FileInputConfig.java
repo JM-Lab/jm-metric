@@ -17,13 +17,13 @@ public class FileInputConfig extends AbstractInputConfig {
         this(filePath, null, null, filePath);
     }
 
-    public FileInputConfig(String dataId, String filePath) {
-        this(dataId, null, null, filePath);
+    public FileInputConfig(String inputId, String filePath) {
+        this(inputId, null, null, filePath);
     }
 
-    public FileInputConfig(String dataId, Integer bulkSize,
+    public FileInputConfig(String inputId, Integer bulkSize,
             Integer flushIntervalSeconds, String filePath) {
-        super(dataId, bulkSize, flushIntervalSeconds);
+        super(inputId, bulkSize, flushIntervalSeconds);
         this.filePath = filePath;
     }
 

@@ -138,10 +138,21 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName, boolean clientTransportSniff, String clusterName,
             String indexPrefix, String indexSuffixDateFormat, String zoneId) {
-        this(elasticsearchConnect, nodeName, clientTransportSniff,
-                clusterName, indexPrefix, indexSuffixDateFormat, zoneId,
+        this(elasticsearchConnect, nodeName, clientTransportSniff, clusterName,
+                indexPrefix, indexSuffixDateFormat, zoneId,
                 DEFAULT_BULK_ACTIONS, DEFAULT_BULK_SIZE_KB,
                 DEFAULT_FLUSH_INTERVAL_SECONDS);
+    }
+
+    public ElasticsearchOutputConfig(String elasticsearchConnect,
+            String nodeName,
+            boolean clientTransportSniff, String clusterName,
+            String indexPrefix, String indexSuffixDateFormat, String zoneId,
+            int bulkActions, long bulkSizeKB, int flushIntervalSeconds) {
+        this("ESOutput-" + nodeName, elasticsearchConnect, nodeName,
+                clientTransportSniff, clusterName, indexPrefix,
+                indexSuffixDateFormat, zoneId, bulkActions, bulkSizeKB,
+                flushIntervalSeconds);
     }
 
     /**
@@ -158,11 +169,12 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
      * @param bulkSizeKB            the bulk size kb
      * @param flushIntervalSeconds  the flush interval seconds
      */
-    public ElasticsearchOutputConfig(
+    public ElasticsearchOutputConfig(String outputId,
             String elasticsearchConnect, String nodeName,
             boolean clientTransportSniff, String clusterName,
             String indexPrefix, String indexSuffixDateFormat, String zoneId,
             int bulkActions, long bulkSizeKB, int flushIntervalSeconds) {
+        super(outputId);
         this.elasticsearchConnect = elasticsearchConnect;
         this.nodeName = nodeName;
         this.clientTransportSniff = clientTransportSniff;

@@ -1,6 +1,7 @@
 package kr.jm.metric.config;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.enums.OS;
@@ -9,6 +10,7 @@ import kr.jm.utils.helper.*;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 
@@ -23,7 +25,7 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
     protected Map<String, C> configMap;
 
     public AbstractConfigManager() {
-        this.configMap = new HashMap<>();
+        this.configMap = new ConcurrentHashMap<>();
     }
 
     public AbstractConfigManager(String configFilename) {
@@ -82,7 +84,28 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
         return this;
     }
 
-    protected abstract C transformToConfig(Map<String, Object> configMap);
+    private C transformToConfig(
+            Map<String, Object> configMap) {
+        return getConfigTypeStringAsOpt(configMap)
+                .map(this::extractConfigTypeReference)
+                .map(typeReference -> ConfigInterface
+                        .transformConfig(configMap, typeReference))
+                .orElseGet(() -> JMExceptionManager
+                        .handleExceptionAndReturnNull(log, JMExceptionManager
+                                        .newRunTimeException("Config Error Occur !!!"),
+                                "transformToConfig", configMap));
+    }
+
+    protected abstract TypeReference<C> extractConfigTypeReference(
+            String configTypeString);
+
+    protected Optional<String> getConfigTypeStringAsOpt(
+            Map<String, Object> configMap) {
+        return JMOptional.getOptional(configMap, getConfigTypeKey())
+                .map(Object::toString);
+    }
+
+    protected abstract String getConfigTypeKey();
 
     protected abstract String extractConfigId(C inputConfig);
 
@@ -119,7 +142,7 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
         return Collections.unmodifiableMap(this.configMap);
     }
 
-    public Optional<C> getConfigAsOpt(String configId) {
+    public Optional<C> getMutatingConfigAsOpt(String configId) {
         return JMOptional.getOptional(this.configMap, configId);
     }
 
@@ -135,6 +158,10 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
                 .map(ConfigInterface::extractConfigMap)
                 .flatMap(map -> JMOptional.getOptional(map, key))
                 .map(Object::toString).orElse(JMString.EMPTY);
+    }
+
+    public C removeConfig(String configId) {
+        return this.configMap.remove(configId);
     }
 
 }

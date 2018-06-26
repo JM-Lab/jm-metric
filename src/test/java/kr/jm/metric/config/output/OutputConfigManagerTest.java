@@ -1,7 +1,5 @@
-package kr.jm.metric.output;
+package kr.jm.metric.config.output;
 
-import kr.jm.metric.config.output.OutputConfigInterface;
-import kr.jm.metric.config.output.OutputConfigManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +17,13 @@ public class OutputConfigManagerTest {
 
     @Test
     public void testGetOutput() {
-        Assert.assertTrue(this.outputConfigManager.getOutputAsOpt("ESClient")
+        Assert.assertTrue(
+                this.outputConfigManager.getMutatingConfigAsOpt("ESClient")
                 .isPresent());
         System.out.println(
                 this.outputConfigManager.getConfigMap().get("ESClient"));
         OutputConfigInterface outputConfig =
-                this.outputConfigManager.getConfigAsOpt("StdOut").get();
+                this.outputConfigManager.getMutatingConfigAsOpt("StdOut").get();
         System.out.println(outputConfig.getOutputConfigType());
         Map<String, Object> fileConfigMap = outputConfig.extractConfigMap();
         System.out.println(fileConfigMap);

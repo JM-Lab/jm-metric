@@ -19,7 +19,8 @@ public class InputConfigManagerTest {
     public void testGetInput() {
         System.out.println(
                 JMJson.toJsonString(inputConfigManager.getConfigMap()));
-        InputInterface stdInput = this.inputConfigManager.getInput("StdIn");
+        InputInterface stdInput = this.inputConfigManager.getMutatingConfigAsOpt
+                ("StdIn").get().buildInput();
         Assert.assertEquals("StdIn", stdInput.getInputId());
         Assert.assertEquals(2, inputConfigManager.getConfigMap().size());
     }

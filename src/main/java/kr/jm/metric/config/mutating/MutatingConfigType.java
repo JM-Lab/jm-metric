@@ -2,7 +2,6 @@ package kr.jm.metric.config.mutating;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.builder.*;
-import kr.jm.utils.helper.JMJson;
 
 /**
  * The enum Metric properties type.
@@ -149,14 +148,4 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
     };
 
-    /**
-     * Transform t.
-     *
-     * @param <T>          the type parameter
-     * @param metricConfig the metric properties
-     * @return the t
-     */
-    public <T extends MutatingConfig> T transform(Object metricConfig) {
-        return JMJson.transform(metricConfig, getTypeReference());
-    }
 }

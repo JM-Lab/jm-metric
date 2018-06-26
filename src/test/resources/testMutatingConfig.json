@@ -10,7 +10,7 @@
   {
     "configId": "delimiterSample",
     "mutatingConfigType": "DELIMITER",
-    "bindDataIds": ["testData"],
+    "bindInputIds": ["testData"],
     "fields": ["field1", "field2"],
     "delimiterRegex": null,
     "discardRegex": "(){}[];\", "
@@ -18,7 +18,7 @@
   {
     "configId": "keyValueDelimiterSample2",
     "mutatingConfigType": "KEY_VALUE_DELIMITER",
-    "bindDataIds": [],
+    "bindInputIds": [],
     // option
     "fields": ["remoteHost", "remoteLogName", "remoteUser", "timestamp", "request", "httpStatusCode", "sizeByte", "referer", "userAgent"],
     "delimiterRegex": ":",
@@ -37,19 +37,19 @@
   {
     "configId": "apacheAccessLogSample",
     "mutatingConfigType": "APACHE_ACCESS_LOG",
-    "bindDataIds": [],
+    "bindInputIds": [],
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" %D"
   },
   {
     "configId": "CombinedLogFormat",
     "mutatingConfigType": "APACHE_ACCESS_LOG",
-    "bindDataIds": [],
+    "bindInputIds": [],
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""
   },
   {
     "configId": "nginxAccessLogSample",
     "mutatingConfigType": "NGINX_ACCESS_LOG",
-    "bindDataIds": [],
+    "bindInputIds": [],
     "format": "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"",
     "fieldNameMap": {
       "$remote_addr": "remoteHost",

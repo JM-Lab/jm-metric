@@ -9,13 +9,13 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StdInLineInputConfig extends AbstractInputConfig {
 
-    public StdInLineInputConfig(String dataId) {
-        super(dataId);
+    public StdInLineInputConfig(String inputId) {
+        super(inputId);
     }
 
-    public StdInLineInputConfig(String dataId, Integer bulkSize,
+    public StdInLineInputConfig(String inputId, Integer bulkSize,
             Integer flushIntervalSeconds) {
-        super(dataId, bulkSize, flushIntervalSeconds);
+        super(inputId, bulkSize, flushIntervalSeconds);
     }
 
     @Override

@@ -19,5 +19,13 @@ public enum InputConfigType implements InputConfigTypeInterface {
         public TypeReference<FileInputConfig> getTypeReference() {
             return typeReference;
         }
+    }, KAFKA {
+        private TypeReference<KafkaInputConfig> typeReference =
+                new TypeReference<>() {};
+
+        @Override
+        public TypeReference<KafkaInputConfig> getTypeReference() {
+            return typeReference;
+        }
     }
 }
