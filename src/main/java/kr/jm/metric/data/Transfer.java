@@ -40,7 +40,7 @@ public class Transfer<T> {
     /**
      * The Data id.
      */
-    protected String dataId;
+    protected String inputId;
     /**
      * The Data.
      */
@@ -57,46 +57,46 @@ public class Transfer<T> {
     /**
      * Instantiates a new Transfer.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @param data   the data
      */
-    public Transfer(String dataId, T data) {
-        this(dataId, data, null);
+    public Transfer(String inputId, T data) {
+        this(inputId, data, null);
     }
 
     /**
      * Instantiates a new Transfer.
      *
-     * @param dataId    the data id
+     * @param inputId    the data id
      * @param data      the data
      * @param timestamp the timestamp
      */
-    public Transfer(String dataId, T data, long timestamp) {
-        this(dataId, data, timestamp, null);
+    public Transfer(String inputId, T data, long timestamp) {
+        this(inputId, data, timestamp, null);
     }
 
     /**
      * Instantiates a new Transfer.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @param data   the data
      * @param meta   the meta
      */
-    public Transfer(String dataId, T data, Map<String, Object> meta) {
-        this(dataId, data, System.currentTimeMillis(), meta);
+    public Transfer(String inputId, T data, Map<String, Object> meta) {
+        this(inputId, data, System.currentTimeMillis(), meta);
     }
 
     /**
      * Instantiates a new Transfer.
      *
-     * @param dataId    the data id
+     * @param inputId    the data id
      * @param data      the data
      * @param timestamp the timestamp
      * @param meta      the meta
      */
-    public Transfer(String dataId, T data, long timestamp,
+    public Transfer(String inputId, T data, long timestamp,
             Map<String, Object> meta) {
-        this.dataId = dataId;
+        this.inputId = inputId;
         this.data = data;
         this.timestamp = timestamp;
         this.meta = meta;
@@ -182,7 +182,7 @@ public class Transfer<T> {
      */
     public <D> Transfer<D> newWith(D data, long timestamp,
             Map<String, Object> meta) {
-        return new Transfer<>(this.dataId, data, timestamp,
+        return new Transfer<>(this.inputId, data, timestamp,
                 new HashMap<>(meta));
     }
 
@@ -235,7 +235,7 @@ public class Transfer<T> {
      */
     protected Map<String, Object> buildMetaForFieldMap() {
         Map<String, Object> meta = getMeta();
-        meta.put(DATA_ID, dataId);
+        meta.put(DATA_ID, inputId);
         meta.put(TIMESTAMP, timestamp);
         return meta;
     }

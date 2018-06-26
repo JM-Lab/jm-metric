@@ -1,5 +1,7 @@
 package kr.jm.metric.publisher;
 
+import kr.jm.metric.data.Transfer;
+import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.utils.accumulator.CountBytesSizeAccumulator;
 import kr.jm.utils.helper.JMConsumer;
 import kr.jm.utils.helper.JMThread;
@@ -8,18 +10,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StringBulkWaitingTransferSubmissionPublisherTest {
+public class StringTransferBulkWaitingSubmissionPublisherTest {
 
 
-    private kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher
-            stringBulkTransferWaitingSubmissionPublisher;
+    private StringTransferBulkWaitingSubmissionPublisher
+            stringTransferBulkWaitingSubmissionPublisher;
 
     private CountBytesSizeAccumulator countBytesSizeAccumulator;
 
     @Before
     public void setUp() {
-        this.stringBulkTransferWaitingSubmissionPublisher =
-                new kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher();
+        this.stringTransferBulkWaitingSubmissionPublisher =
+                new StringTransferBulkWaitingSubmissionPublisher();
         this.countBytesSizeAccumulator = new CountBytesSizeAccumulator();
     }
 
@@ -29,16 +31,18 @@ public class StringBulkWaitingTransferSubmissionPublisherTest {
 
     @Test
     public void testInsert() {
-        stringBulkTransferWaitingSubmissionPublisher
+        stringTransferBulkWaitingSubmissionPublisher
                 .consume(JMConsumer.getSOPL());
-        stringBulkTransferWaitingSubmissionPublisher.consume(
-                dataTransfer -> dataTransfer.getData().stream()
+        stringTransferBulkWaitingSubmissionPublisher.consume(
+                list -> list.stream().map(Transfer::getData)
                         .map(String::getBytes).map(bytes -> bytes.length)
                         .forEach(
                                 countBytesSizeAccumulator::increaseCountAccumulateBytes));
-        stringBulkTransferWaitingSubmissionPublisher
-                .inputFilePathOrClasspath("testId", "webAccessLogSample.txt");
-        JMThread.sleep(2000);
+        InputPublisherBuilder.buildResourceInput("webAccessLogSample.txt")
+                .consumeWith(
+                        stringTransferBulkWaitingSubmissionPublisher::submit)
+                .start();
+        JMThread.sleep(4000);
         Assert.assertEquals(1024, countBytesSizeAccumulator.getCount());
         System.out.println(countBytesSizeAccumulator.getBytesSize());
     }

@@ -33,7 +33,7 @@ public class ConfigIdTransfer<T> extends Transfer<T> {
      * @param transfer  the transfer
      */
     public ConfigIdTransfer(String configId, Transfer<T> transfer) {
-        super(transfer.getDataId(), transfer.getData(), transfer
+        super(transfer.getInputId(), transfer.getData(), transfer
                 .getTimestamp(), transfer.getMeta());
         this.configId = configId;
     }

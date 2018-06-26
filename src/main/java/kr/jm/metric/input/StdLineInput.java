@@ -1,16 +1,16 @@
 package kr.jm.metric.input;
 
 import kr.jm.metric.config.input.StdInLineInputConfig;
+import kr.jm.metric.data.Transfer;
 import kr.jm.utils.StdInLineConsumer;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
  * The type Abstract string output.
  */
-public class StdLineInput extends AbstractInput {
+public class StdLineInput extends AbstractInput<StdInLineInputConfig> {
     private StdInLineConsumer stdInLineConsumer;
 
     public StdLineInput(String inputId) {
@@ -22,9 +22,9 @@ public class StdLineInput extends AbstractInput {
     }
 
     @Override
-    protected void startImpl(Consumer<List<String>> inputConsumer) {
+    protected void startImpl(Consumer<Transfer<String>> inputConsumer) {
         this.stdInLineConsumer =
-                new StdInLineConsumer(s -> inputConsumer.accept(List.of(s)))
+                new StdInLineConsumer(s -> inputConsumer.accept(newTransfer(s)))
                         .consumeStdIn();
     }
 
