@@ -1,17 +1,17 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
 
-/**
- * The interface Output interface.
- *
- * @param <T> the type parameter
- */
-public interface OutputInterface<T> extends AutoCloseable {
+import java.util.List;
+
+
+public interface OutputInterface extends AutoCloseable {
+    String getOutputId();
     /**
      * Write data.
      *
      * @param data the data
      */
-    void writeData(ConfigIdTransfer<T> data);
+    void writeData(List<ConfigIdTransfer<FieldMap>> data);
 }

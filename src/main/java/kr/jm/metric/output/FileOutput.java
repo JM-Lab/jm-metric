@@ -1,16 +1,20 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.FileOutputConfig;
+import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.JMFileAppender;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * The type File output.
  */
 @Slf4j
-public class FileOutput<T> extends StdOutput<T> {
+public class FileOutput extends StdOutput {
 
     private JMFileAppender fileAppender;
 
@@ -20,8 +24,7 @@ public class FileOutput<T> extends StdOutput<T> {
      * @param fileOutputConfig the file output properties
      */
     public FileOutput(FileOutputConfig fileOutputConfig) {
-        super(fileOutputConfig);
-        this.fileAppender = new JMFileAppender(fileOutputConfig.getFilePath());
+        this(fileOutputConfig, null);
     }
 
     /**
@@ -30,18 +33,34 @@ public class FileOutput<T> extends StdOutput<T> {
      * @param filePath the file path
      */
     public FileOutput(String filePath) {
-        this(filePath, false);
+        this(filePath, null);
+    }
+
+    public FileOutput(String filePath,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        this(false, filePath, transformOutputObjectFunction);
     }
 
     /**
      * Instantiates a new File output.
      *
-     * @param filePath         the file path
      * @param enableJsonString the enable json string
+     * @param filePath         the file path
      */
-    public FileOutput(String filePath,
-            boolean enableJsonString) {
-        this(new FileOutputConfig(enableJsonString, filePath));
+    public FileOutput(boolean enableJsonString, String filePath) {
+        this(enableJsonString, filePath, null);
+    }
+
+    public FileOutput(boolean enableJsonString, String filePath,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        this(new FileOutputConfig(enableJsonString, filePath),
+                transformOutputObjectFunction);
+    }
+
+    public FileOutput(FileOutputConfig fileOutputConfig,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        super(fileOutputConfig, transformOutputObjectFunction);
+        this.fileAppender = new JMFileAppender(fileOutputConfig.getFilePath());
     }
 
     /**

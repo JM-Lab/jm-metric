@@ -71,7 +71,10 @@ public class ElasticsearchOutputTest {
                         .map(line -> JMJson.withJsonString(line,
                                 new TypeReference<ConfigIdTransfer<List<FieldMap>>>() {}))
                         .collect(Collectors.toList());
-        dataList.stream().forEach(elasticsearchOutput::writeData);
+        elasticsearchOutput.writeData(
+                dataList.stream().flatMap(configIdTransfer -> configIdTransfer
+                        .newStreamWith(configIdTransfer.getData()))
+                        .collect(Collectors.toList()));
         JMThread.sleep(3000);
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);

@@ -1,52 +1,52 @@
 package kr.jm.metric.output.subscriber;
 
 import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.subscriber.JMSubscriber;
 import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
+import lombok.Getter;
 
-import java.util.Objects;
+import java.util.List;
 
-/**
- * The type Output subscriber.
- *
- * @param <T> the type parameter
- */
-public class OutputSubscriber<T> extends JMSubscriber<ConfigIdTransfer<T>>
+public class OutputSubscriber extends
+        JMSubscriber<List<ConfigIdTransfer<FieldMap>>>
         implements AutoCloseable {
 
-    private OutputInterface<T> subscriberOutput;
+    @Getter
+    protected String outputId;
+    private OutputInterface output;
 
     /**
      * Instantiates a new Output subscriber.
      *
-     * @param subscriberOutput the subscriber output
+     * @param output the subscriber output
      */
-    public OutputSubscriber(OutputInterface<T> subscriberOutput) {
-        this.subscriberOutput = subscriberOutput;
+    public OutputSubscriber(OutputInterface output) {
+        super();
+        this.outputId = output.getOutputId();
+        this.output = output;
         setDataConsumer(this::write);
     }
 
     @Override
     public void close() {
-        JMLog.info(log, "close");
+        JMLog.info(log, "close", outputId);
         try {
-            subscriberOutput.close();
+            output.close();
         } catch (Exception e) {
-            JMExceptionManager.logException(log, e, "close");
+            JMExceptionManager.logException(log, e, "close", outputId);
         }
     }
 
-    private void write(ConfigIdTransfer<T> data) {
-        if (Objects.isNull(data)) {
-            JMLog.debug(log, "write", data);
-            return;
-        }
+    private void write(List<ConfigIdTransfer<FieldMap>> data) {
         try {
-            this.subscriberOutput.writeData(data);
+            JMOptional.getOptional(data).ifPresentOrElse(this.output::writeData,
+                    () -> JMLog.debug(log, "write", outputId, data));
         } catch (Exception e) {
-            JMExceptionManager.logException(log, e, "write", data);
+            JMExceptionManager.logException(log, e, "write", outputId, data);
         }
     }
 

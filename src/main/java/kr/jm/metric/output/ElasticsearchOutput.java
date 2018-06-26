@@ -11,10 +11,10 @@ import org.elasticsearch.common.settings.Settings;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 @Getter
-public class ElasticsearchOutput extends AbstractOutput<List<FieldMap>> {
+public class ElasticsearchOutput extends AbstractOutput {
 
     private String zoneId;
     private String indexSuffixDateFormat;
@@ -143,7 +143,8 @@ public class ElasticsearchOutput extends AbstractOutput<List<FieldMap>> {
             ElasticsearchOutputConfig outputConfig) {
         super(outputConfig);
         this.index = JMString.EMPTY;
-        this.indexPrefix = outputConfig.getIndexPrefix();
+        this.indexPrefix = Optional.ofNullable(outputConfig.getIndexPrefix())
+                .orElse("jm-metric");
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
         this.zoneId = outputConfig.getZoneId();
         this.elasticsearchClient = new JMElasticsearchClient(
@@ -175,7 +176,7 @@ public class ElasticsearchOutput extends AbstractOutput<List<FieldMap>> {
             synchronized (this.index) {
                 this.indexSuffixDate = indexSuffixDate;
                 return this.index =
-                        getIndexPrefix() + JMString.HYPHEN + indexSuffixDate;
+                        this.indexPrefix + JMString.HYPHEN + indexSuffixDate;
             }
         return this.index;
     }
@@ -186,13 +187,16 @@ public class ElasticsearchOutput extends AbstractOutput<List<FieldMap>> {
     }
 
     @Override
-    public void writeData(ConfigIdTransfer<List<FieldMap>> data) {
-        this.elasticsearchClient.sendWithBulkProcessor(data.getData(),
-                buildIndex(data.getTimestamp()), getIndexPrefix());
+    public void writeData(List<ConfigIdTransfer<FieldMap>> data) {
+        for (ConfigIdTransfer<FieldMap> configIdTransfer : data)
+            writeConfigIdTransfer(configIdTransfer.getData(),
+                    configIdTransfer.getTimestamp());
     }
 
-    private String getIndexPrefix() {
-        return Objects.requireNonNull(this.indexPrefix, () -> this.indexPrefix
-                = "jm-metric");
+    private void writeConfigIdTransfer(FieldMap fieldMap, long timestamp) {
+        this.elasticsearchClient
+                .sendWithBulkProcessor(fieldMap, buildIndex(timestamp),
+                        this.indexPrefix);
     }
+
 }

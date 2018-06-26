@@ -1,13 +1,16 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.OutputConfigInterface;
+import lombok.Getter;
 import org.slf4j.Logger;
 
 import java.util.Map;
 
-public abstract class AbstractOutput<T> implements OutputInterface<T> {
+public abstract class AbstractOutput implements OutputInterface {
 
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+    @Getter
+    protected String outputId;
     protected OutputConfigInterface outputConfig;
 
     /**
@@ -17,6 +20,7 @@ public abstract class AbstractOutput<T> implements OutputInterface<T> {
      */
     public AbstractOutput(OutputConfigInterface outputConfig) {
         this.outputConfig = outputConfig;
+        this.outputId = outputConfig.getOutputId();
     }
 
     public Map<String, Object> getConfig() {

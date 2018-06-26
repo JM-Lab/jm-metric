@@ -1,11 +1,15 @@
 package kr.jm.metric.output.subscriber;
 
+import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.metric.output.StdOutput;
 
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * The type Output subscriber builder.
@@ -13,24 +17,32 @@ import java.util.function.Consumer;
 public class OutputSubscriberBuilder {
 
     /**
-     * Build file output subscriber.
-     *
-     * @param filePath the file path
-     * @return the output subscriber
-     */
-    public static <T> OutputSubscriber<T> buildFile(String filePath) {
-        return build(new FileOutput<>(filePath));
-    }
-
-    /**
      * Build file to json string output subscriber.
      *
      * @param filePath the file path
      * @return the output subscriber
      */
-    public static <T> OutputSubscriber<T> buildJsonStringFile(
-            String filePath) {
-        return build(new FileOutput<>(filePath, true));
+    public static OutputSubscriber buildFileOutput(String filePath) {
+        return buildFileOutput(true, filePath);
+    }
+
+    public static OutputSubscriber buildFileOutput(
+            boolean enableJsonString, String filePath) {
+        return buildFileOutput(enableJsonString, filePath, null);
+    }
+
+    public static OutputSubscriber buildFileOutput(String filePath,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        return buildFileOutput(true, filePath,
+                transformOutputObjectFunction);
+    }
+
+
+    public static OutputSubscriber buildFileOutput(boolean enableJsonString,
+            String filePath,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        return build(new FileOutput(enableJsonString, filePath,
+                transformOutputObjectFunction));
     }
 
     /**
@@ -38,8 +50,8 @@ public class OutputSubscriberBuilder {
      *
      * @return the output subscriber
      */
-    public static <T> OutputSubscriber<T> buildJsonStringStdOut() {
-        return build(new StdOutput<>(true));
+    public static OutputSubscriber buildStdOut() {
+        return buildStdOut(true);
     }
 
     /**
@@ -47,39 +59,48 @@ public class OutputSubscriberBuilder {
      *
      * @return the abstract string output
      */
-    public static <T> OutputSubscriber<T> buildStdOut() {
-        return build(new StdOutput<>());
+    public static OutputSubscriber buildStdOut(boolean enableJsonString) {
+        return buildStdOut(enableJsonString, null);
     }
 
-    /**
-     * Build output subscriber.
-     *
-     * @param <T>             the type parameter
-     * @param writingConsumer the writing consumer
-     * @return the output subscriber
-     */
-    public static <T> OutputSubscriber<T> build(
-            Consumer<ConfigIdTransfer<T>> writingConsumer) {
-        return build(new OutputInterface<>() {
+    public static OutputSubscriber buildStdOut(
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        return buildStdOut(true, transformOutputObjectFunction);
+    }
+
+
+    public static OutputSubscriber buildStdOut(boolean enableJsonString,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        return build(
+                new StdOutput(enableJsonString, transformOutputObjectFunction));
+    }
+
+
+    public static OutputSubscriber buildOutput(String outputId,
+            Consumer<List<ConfigIdTransfer<FieldMap>>> outputConsumer) {
+        return new OutputSubscriber(new OutputInterface() {
             @Override
-            public void writeData(ConfigIdTransfer<T> data) {
-                writingConsumer.accept(data);
+            public String getOutputId() {
+                return outputId;
+            }
+
+            @Override
+            public void writeData(List<ConfigIdTransfer<FieldMap>> data) {
+                outputConsumer.accept(data);
             }
 
             @Override
             public void close() {
+
             }
         });
     }
 
-    /**
-     * Build output subscriber.
-     *
-     * @param <T>    the type parameter
-     * @param output the output interface
-     * @return the output subscriber
-     */
-    public static <T> OutputSubscriber<T> build(OutputInterface<T> output) {
-        return new OutputSubscriber<>(output);
+    public static OutputSubscriber build(OutputConfigInterface outputConfig) {
+        return new OutputSubscriber(outputConfig.buildOutput());
+    }
+
+    public static OutputSubscriber build(OutputInterface output) {
+        return new OutputSubscriber(output);
     }
 }

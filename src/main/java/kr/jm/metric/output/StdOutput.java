@@ -2,20 +2,42 @@ package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.StdOutputConfig;
 import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMStream;
 import lombok.Getter;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * The type Abstract string output.
  */
-public class StdOutput<T> extends AbstractOutput<T> {
+public class StdOutput extends AbstractOutput {
 
-    private Function<Object, String> toStringFunction;
     @Getter
     private boolean enableJsonString;
+    private Function<List<ConfigIdTransfer<FieldMap>>, List<Object>>
+            transformOutputObjectFunction;
+    private Function<Object, String> toStringFunction;
+
+    /**
+     * Instantiates a new Abstract string output.
+     */
+    public StdOutput() {
+        this(false);
+    }
+
+    public StdOutput(boolean enableJsonString) {
+        this(enableJsonString, null);
+    }
+
+    public StdOutput(boolean enableJsonString,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+        this(new StdOutputConfig(enableJsonString),
+                transformOutputObjectFunction);
+    }
 
     /**
      * Instantiates a new Abstract string output.
@@ -23,8 +45,19 @@ public class StdOutput<T> extends AbstractOutput<T> {
      * @param outputConfig the output properties
      */
     public StdOutput(StdOutputConfig outputConfig) {
+        this(outputConfig, null);
+    }
+
+    public StdOutput(StdOutputConfig outputConfig,
+            Function<List<ConfigIdTransfer<FieldMap>>, List<Object>>
+                    transformOutputObjectFunction) {
         super(outputConfig);
         this.enableJsonString = outputConfig.isEnableJsonString();
+        this.transformOutputObjectFunction =
+                Optional.ofNullable(transformOutputObjectFunction)
+                        .orElseGet(() -> list -> list.stream()
+                                .map(ConfigIdTransfer::getData)
+                                .collect(Collectors.toList()));
         this.toStringFunction = outputConfig
                 .isEnableJsonString() ? JMJson::toJsonString : Object::toString;
     }
@@ -34,30 +67,13 @@ public class StdOutput<T> extends AbstractOutput<T> {
 
     }
 
-    /**
-     * Instantiates a new Abstract string output.
-     */
-    public StdOutput() {
-        this(false);
-    }
-
-    /**
-     * Instantiates a new Abstract string output.
-     *
-     * @param enableJsonString the enable json string
-     */
-    public StdOutput(boolean enableJsonString) {
-        this(new StdOutputConfig(enableJsonString));
-    }
-
-    @Override
-    public void writeData(ConfigIdTransfer<T> data) {
-        JMStream.buildStream(data.getData()).map(toStringFunction::apply)
-                .forEach(this::writeString);
-    }
-
     protected void writeString(String string) {
         System.out.println(string);
     }
 
+    @Override
+    public void writeData(List<ConfigIdTransfer<FieldMap>> data) {
+        transformOutputObjectFunction.apply(data).stream()
+                .map(toStringFunction::apply).forEach(this::writeString);
+    }
 }
