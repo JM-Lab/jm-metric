@@ -3,11 +3,9 @@ package kr.jm.metric.processor;
 import kr.jm.metric.config.mutating.ApacheAccessLogMutatingConfig;
 import kr.jm.metric.config.mutating.MutatingConfigManager;
 import kr.jm.metric.config.mutating.field.FieldConfig;
-import kr.jm.metric.data.ConfigIdTransfer;
-import kr.jm.metric.data.FieldMap;
-import kr.jm.metric.publisher.StringBulkWaitingTransferSubmissionPublisher;
-import kr.jm.metric.publisher.StringListTransferSubmissionPublisherInterface;
-import kr.jm.utils.flow.subscriber.JMFileSubscriber;
+import kr.jm.metric.input.publisher.InputPublisherBuilder;
+import kr.jm.metric.output.subscriber.OutputSubscriber;
+import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.*;
 import org.junit.After;
@@ -23,14 +21,14 @@ import java.util.concurrent.atomic.LongAdder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class FieldMapListConfigIdTransferTransformProcessorTest {
+public class FieldMapConfigIdTransferListTransformProcessorTest {
     static {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
     }
 
-    private static final String FileName = "webAccessLogSample.txt";
-    private FieldMapListConfigIdTransferTransformProcessor
-            fieldMapListConfigIdTransferTransformProcessor;
+    private static final String ResourceName = "webAccessLogSample.txt";
+    private FieldMapConfigIdTransferListTransformProcessor
+            fieldMapConfigIdTransferListTransformProcessor;
     private MutatingConfigManager mutatingConfigManager;
 
     @Before
@@ -38,8 +36,8 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
         String configFilePathOrClasspath = "MutatingConfig.json";
         this.mutatingConfigManager =
                 new MutatingConfigManager(configFilePathOrClasspath);
-        this.fieldMapListConfigIdTransferTransformProcessor =
-                new FieldMapListConfigIdTransferTransformProcessor(
+        this.fieldMapConfigIdTransferListTransformProcessor =
+                new FieldMapConfigIdTransferListTransformProcessor(
                         mutatingConfigManager);
         String stringFromClasspathOrFilePath = JMResources
                 .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
@@ -52,7 +50,7 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
 
     @After
     public void tearDown() {
-        this.fieldMapListConfigIdTransferTransformProcessor.close();
+        this.fieldMapConfigIdTransferListTransformProcessor.close();
     }
 
     @Test
@@ -79,47 +77,40 @@ public class FieldMapListConfigIdTransferTransformProcessorTest {
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
-        JMFileSubscriber<ConfigIdTransfer<List<FieldMap>>>
-                fileOutputSubscriber1 =
-                JMSubscriberBuilder.buildJsonStringFileSubscriber(
-                        path1.toAbsolutePath().toString());
+        OutputSubscriber fileOutputSubscriber1 = OutputSubscriberBuilder
+                .buildFileOutput(path1.toAbsolutePath().toString(),
+                        configIdTransfers -> List.of(configIdTransfers));
 
 
         mutatingConfigManager
-                .bindDataIdToConfigId(FileName, "apache");
+                .bindInputIdToMutatingConfigId(ResourceName, "apache");
         mutatingConfigManager
-                .bindDataIdToConfigId(FileName, "apache2");
-        fieldMapListConfigIdTransferTransformProcessor.subscribe(
+                .bindInputIdToMutatingConfigId(ResourceName, "apache2");
+        fieldMapConfigIdTransferListTransformProcessor.subscribe(
                 JMSubscriberBuilder.getJsonStringSOPLSubscriber());
-        fieldMapListConfigIdTransferTransformProcessor.subscribe(
+        fieldMapConfigIdTransferListTransformProcessor.subscribe(
                 JMSubscriberBuilder
                         .build(configIdTransfer -> count.increment()));
-        fieldMapListConfigIdTransferTransformProcessor.subscribe(
-                JMSubscriberBuilder
-                        .build(configIdTransfer -> lineCount
-                                .add(configIdTransfer.getData().stream()
-                                        .count())));
-        fieldMapListConfigIdTransferTransformProcessor
+        fieldMapConfigIdTransferListTransformProcessor.subscribe(
+                JMSubscriberBuilder.build(configIdTransferList -> lineCount
+                        .add(configIdTransferList.size())));
+        fieldMapConfigIdTransferListTransformProcessor
                 .subscribe(fileOutputSubscriber1);
-
-        StringListTransferSubmissionPublisherInterface
-                stringListTransferSubmissionPublisher =
-                new StringBulkWaitingTransferSubmissionPublisher();
-        stringListTransferSubmissionPublisher
-                .subscribe(fieldMapListConfigIdTransferTransformProcessor);
-        stringListTransferSubmissionPublisher.inputClasspath(FileName);
+        InputPublisherBuilder.buildResourceInput(ResourceName)
+                .subscribeWith(fieldMapConfigIdTransferListTransformProcessor)
+                .start();
         JMThread.sleep(3000);
         fileOutputSubscriber1.close();
-        fieldMapListConfigIdTransferTransformProcessor.close();
+        fieldMapConfigIdTransferListTransformProcessor.close();
         System.out.println(count);
-        assertEquals(22, count.longValue());
+        assertEquals(11, count.longValue());
         System.out.println(lineCount);
-        assertEquals(2048, lineCount.longValue());
+        assertEquals(1024, lineCount.longValue());
 
         System.out.println(JMFiles.readString(path1));
         List<String> readLineList = JMFiles.readLines(path1);
         System.out.println(readLineList.size());
-        assertEquals(22, readLineList.size());
+        assertEquals(11, readLineList.size());
 
     }
 }

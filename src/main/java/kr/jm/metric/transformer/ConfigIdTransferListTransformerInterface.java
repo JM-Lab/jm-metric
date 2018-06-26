@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
  * @param <O> the type parameter
  */
 public interface ConfigIdTransferListTransformerInterface<I, O> extends
-        Function<Transfer<I>, List<ConfigIdTransfer<O>>> {
+        Function<List<Transfer<I>>, List<ConfigIdTransfer<O>>> {
 
     /**
      * Transform o.
      *
      * @param mutatingConfig the metric properties
-     * @param data         the data
+     * @param data           the data
      * @return the o
      */
     O transform(MutatingConfig mutatingConfig, I data);
@@ -31,24 +31,24 @@ public interface ConfigIdTransferListTransformerInterface<I, O> extends
     /**
      * Gets input properties list.
      *
-     * @param dataId the data id
+     * @param inputId the data id
      * @return the input properties list
      */
-    List<MutatingConfig> getInputConfigList(String dataId);
+    Optional<MutatingConfig> getConfigAsOpt(String inputId);
 
     @Override
-    default List<ConfigIdTransfer<O>> apply(Transfer<I> transfer) {
-        return apply(transfer, getInputConfigList(transfer
-                .getDataId()), Optional.ofNullable(transfer.getMeta())
-                .orElseGet(Collections::emptyMap));
+    default List<ConfigIdTransfer<O>> apply(List<Transfer<I>> transferList) {
+        return transferList.stream().map(this::buildConfigIdTransferAsOpt)
+                .flatMap(Optional::stream).collect(Collectors.toList());
     }
 
-    private List<ConfigIdTransfer<O>> apply(Transfer<I> transfer,
-            List<MutatingConfig> mutatingConfigList, Map<String, Object> meta) {
-        return mutatingConfigList.stream()
-                .map(inputConfig -> newListConfigTransfer(transfer, meta,
-                        inputConfig, inputConfig.getFieldConfig()))
-                .filter(Objects::nonNull).collect(Collectors.toList());
+    private Optional<ConfigIdTransfer<O>> buildConfigIdTransferAsOpt(
+            Transfer<I> transfer) {
+        return getConfigAsOpt(transfer.getInputId())
+                .map(inputConfig -> newListConfigTransfer(transfer,
+                        Optional.ofNullable(transfer.getMeta())
+                                .orElseGet(Collections::emptyMap), inputConfig,
+                        inputConfig.getFieldConfig()));
     }
 
     @SuppressWarnings("unchecked")

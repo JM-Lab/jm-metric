@@ -48,7 +48,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
                 new ApacheAccessLogMutatingConfig(ConfigId, fieldConfig,
                         "%h %l %u %t \"%r\" %>s %b " + "\"%{Referer}i\" " +
                                 "\"%{User-agent}i\" %D")
-                        .withBindDataIds(FileName);
+                        .bindInputId(FileName);
         System.out.println(JMJson.toJsonString(config));
         this.mutatingConfigManager = new MutatingConfigManager(List.of(config));
         this.fieldMapListConfigIdDataTransferListTransformer =
@@ -61,7 +61,7 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         List<String> readLineList = JMResources.readLines(FileName);
         List<ConfigIdTransfer<List<FieldMap>>> listDataTransferList =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .apply(new Transfer<>(FileName, readLineList));
+                        .apply(List.of(new Transfer<>(FileName, readLineList)));
         System.out.println(listDataTransferList);
         assertEquals(1, listDataTransferList.size());
         Transfer<List<FieldMap>> listTransfer =
@@ -92,7 +92,8 @@ public class FieldMapListConfigIdTransferListTransformerTest {
         this.mutatingConfigManager
                 .insertConfigList(List.of(new JsonMutatingConfig("JSON",
                         fieldConfig, true)));
-        this.mutatingConfigManager.bindDataIdToConfigId("jsonList", "JSON");
+        this.mutatingConfigManager
+                .bindInputIdToMutatingConfigId("jsonList", "JSON");
 
         String targetString =
                 "[{\"values\":[204,206],\"dstypes\":[\"derive\",\"derive\"]," +
@@ -100,8 +101,8 @@ public class FieldMapListConfigIdTransferListTransformerTest {
                         "\"interval\":5.000,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_packets\",\"type_instance\":\"\"},{\"values\":[0,0],\"dstypes\":[\"derive\",\"derive\"],\"dsnames\":[\"rx\",\"tx\"],\"time\":1523355042.220,\"interval\":5.000,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_errors\",\"type_instance\":\"\"}]";
         List<ConfigIdTransfer<List<FieldMap>>> listDataTransferList =
                 fieldMapListConfigIdDataTransferListTransformer
-                        .apply(new Transfer<>("jsonList",
-                                List.of(targetString)));
+                        .apply(List.of(new Transfer<>("jsonList",
+                                List.of(targetString))));
         System.out.println(listDataTransferList);
         assertEquals(1, listDataTransferList.size());
         Transfer<List<FieldMap>> listTransfer = listDataTransferList.get(0);

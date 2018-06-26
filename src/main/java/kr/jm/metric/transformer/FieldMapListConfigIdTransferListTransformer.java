@@ -37,8 +37,8 @@ public class FieldMapListConfigIdTransferListTransformer implements
     }
 
     @Override
-    public List<MutatingConfig> getInputConfigList(String dataId) {
-        return this.inputTransformer.getInputConfigList(dataId);
+    public Optional<MutatingConfig> getConfigAsOpt(String inputId) {
+        return this.inputTransformer.getConfigAsOpt(inputId);
     }
 
     @Override

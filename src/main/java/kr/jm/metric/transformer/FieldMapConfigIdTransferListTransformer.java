@@ -7,7 +7,7 @@ import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * The type Field map properties id transfer list transformer.
@@ -29,8 +29,8 @@ public class FieldMapConfigIdTransferListTransformer implements
     }
 
     @Override
-    public List<MutatingConfig> getInputConfigList(String dataId) {
-        return mutatingConfigManager.getConfigListWithDataId(dataId);
+    public Optional<MutatingConfig> getConfigAsOpt(String inputId) {
+        return mutatingConfigManager.getMutatingConfigAsOpt(inputId);
     }
 
     @SuppressWarnings("unchecked")

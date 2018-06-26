@@ -29,9 +29,10 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
     private static final String TEST_ID = "testId";
     private static final String CONFIG_ID = "apacheAccessLogSample";
     private List<String> lineList;
-    private JMConcurrentTransformProcessor<Transfer<String>, List<ConfigIdTransfer<FieldMap>>>
+    private JMConcurrentTransformProcessor<List<Transfer<String>>, List<ConfigIdTransfer<FieldMap>>>
             fieldMapConfigIdTransferListTransformProcessor;
-    private JMConcurrentTransformProcessor<Transfer<List<String>>, List<ConfigIdTransfer<List<FieldMap>>>>
+    private JMConcurrentTransformProcessor<List<Transfer<List<String>>>,
+            List<ConfigIdTransfer<List<FieldMap>>>>
             fieldMapListConfigIdTransferListTransformProcessor;
     private TransferSubmissionPublisher<List<String>>
             transferSubmissionPublisher;
@@ -44,9 +45,21 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
                         "%h %l %u %t \"%r\" %>s %b " +
                                 "\"%{Referer}i\" " +
                                 "\"%{User-agent}i\" %D")
-                        .withBindDataIds(TEST_ID, TEST_ID + "1",
-                                TEST_ID + "2"))
+                        .bindInputId(TEST_ID))
         );
+        mutatingConfigManager
+                .insertConfig(new ApacheAccessLogMutatingConfig(CONFIG_ID,
+                        "%h %l %u %t \"%r\" %>s %b " +
+                                "\"%{Referer}i\" " +
+                                "\"%{User-agent}i\" %D")
+                        .bindInputId(TEST_ID + "1"));
+        mutatingConfigManager
+                .insertConfig(new ApacheAccessLogMutatingConfig(CONFIG_ID,
+                        "%h %l %u %t \"%r\" %>s %b " +
+                                "\"%{Referer}i\" " +
+                                "\"%{User-agent}i\" %D")
+                        .bindInputId(TEST_ID + "2"));
+
         this.fieldMapConfigIdTransferListTransformProcessor =
                 JMTransformProcessorBuilder.buildWithThreadPool(
                         new FieldMapConfigIdTransferListTransformer(
@@ -56,7 +69,8 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
                 new FieldMapListConfigIdTransferListTransformer(
                         mutatingConfigManager));
         this.transferSubmissionPublisher = new TransferSubmissionPublisher<>();
-        this.transferSubmissionPublisher
+        this.transferSubmissionPublisher.subscribeAndReturnSubcriber(
+                JMTransformProcessorBuilder.build(List::of))
                 .subscribe(fieldMapListConfigIdTransferListTransformProcessor);
     }
 
@@ -64,7 +78,8 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
     public void testProcess() throws ExecutionException, InterruptedException {
         TransferSubmissionPublisher<String> transferSubmissionPublisher =
                 new TransferSubmissionPublisher<>();
-        transferSubmissionPublisher
+        transferSubmissionPublisher.subscribeAndReturnSubcriber(
+                JMTransformProcessorBuilder.build(List::of))
                 .subscribe(fieldMapConfigIdTransferListTransformProcessor);
         CompletableFuture<List<Transfer<List<FieldMap>>>>
                 dataTransferCompletableFuture1 = new CompletableFuture<>();
@@ -109,7 +124,7 @@ public class ConfigIdTransferListTransformProcessorBuilderTest {
                 .subscribe(JMSubscriberBuilder
                         .build(configIdFieldMapListDataTransferList -> configIdFieldMapListDataTransferList
                                 .stream().forEach(dataTransfer -> resultMap
-                                        .add(dataTransfer.getDataId(),
+                                        .add(dataTransfer.getInputId(),
                                                 dataTransfer))));
         JMThread.runAsync(() ->
                 transferSubmissionPublisher.submit(TEST_ID + 1, lineList));
