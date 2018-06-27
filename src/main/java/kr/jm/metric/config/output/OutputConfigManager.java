@@ -1,6 +1,5 @@
 package kr.jm.metric.config.output;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.AbstractConfigManager;
 
 public class OutputConfigManager extends
@@ -12,9 +11,9 @@ public class OutputConfigManager extends
     }
 
     @Override
-    protected TypeReference<OutputConfigInterface> extractConfigTypeReference(
+    protected Class<OutputConfigInterface> extractConfigClass(
             String configTypeString) {
-        return OutputConfigType.valueOf(configTypeString).getTypeReference();
+        return OutputConfigType.valueOf(configTypeString).getConfigClass();
     }
 
     @Override

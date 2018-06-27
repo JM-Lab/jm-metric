@@ -1,6 +1,5 @@
 package kr.jm.metric.config.mutating;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.mutating.builder.*;
 
 /**
@@ -12,8 +11,6 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
      * The Delimiter.
      */
     DELIMITER {
-        private TypeReference<DelimiterMutatingConfig> typeReference =
-                new TypeReference<>() {};
         private DelimiterFieldMapBuilder delimiterFieldMapBuilder =
                 new DelimiterFieldMapBuilder();
 
@@ -23,17 +20,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<DelimiterMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<DelimiterMutatingConfig> getConfigClass() {
+            return DelimiterMutatingConfig.class;
         }
     },
     /**
      * The Key value delimiter.
      */
     KEY_VALUE_DELIMITER {
-        private TypeReference<KeyValueDelimiterMutatingConfig>
-                typeReference =
-                new TypeReference<>() {};
         private KeyValueDelimiterFieldMapBuilder
                 keyValueDelimiterFieldMapBuilder =
                 new KeyValueDelimiterFieldMapBuilder();
@@ -44,16 +38,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<KeyValueDelimiterMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<KeyValueDelimiterMutatingConfig> getConfigClass() {
+            return KeyValueDelimiterMutatingConfig.class;
         }
     },
     /**
      * The Formatted.
      */
     FORMATTED {
-        private TypeReference<FormattedMutatingConfig> typeReference =
-                new TypeReference<>() {};
         private FormattedFieldMapBuilder formattedFieldMapBuilder =
                 new FormattedFieldMapBuilder();
 
@@ -63,17 +55,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<FormattedMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<FormattedMutatingConfig> getConfigClass() {
+            return FormattedMutatingConfig.class;
         }
     },
     /**
      * The Apache access log.
      */
     APACHE_ACCESS_LOG {
-        private TypeReference<ApacheAccessLogMutatingConfig>
-                typeReference =
-                new TypeReference<>() {};
         private ApacheAccessLogFieldMapBuilder
                 apacheAccessLogFieldMapBuilder =
                 new ApacheAccessLogFieldMapBuilder();
@@ -84,17 +73,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<ApacheAccessLogMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<ApacheAccessLogMutatingConfig> getConfigClass() {
+            return ApacheAccessLogMutatingConfig.class;
         }
     },
     /**
      * The Nginx access log.
      */
     NGINX_ACCESS_LOG {
-        private TypeReference<NginxAccessLogMutatingConfig>
-                typeReference =
-                new TypeReference<>() {};
         private NginxAccessLogFieldMapBuilder
                 nginxAccessLogFieldMapBuilder =
                 new NginxAccessLogFieldMapBuilder();
@@ -105,16 +91,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<NginxAccessLogMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<NginxAccessLogMutatingConfig> getConfigClass() {
+            return NginxAccessLogMutatingConfig.class;
         }
     },
     /**
      * The Json.
      */
     JSON {
-        private TypeReference<JsonMutatingConfig> typeReference =
-                new TypeReference<>() {};
         private JsonFieldMapBuilder jsonFieldMapBuilder =
                 new JsonFieldMapBuilder();
 
@@ -124,16 +108,14 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<JsonMutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<JsonMutatingConfig> getConfigClass() {
+            return JsonMutatingConfig.class;
         }
     },
     /**
      * The Raw.
      */
     RAW {
-        private TypeReference<MutatingConfig> typeReference =
-                new TypeReference<>() {};
         private RawFieldMapBuilder rawFieldMapBuilder =
                 new RawFieldMapBuilder();
 
@@ -143,9 +125,10 @@ public enum MutatingConfigType implements MutatingConfigTypeInterface {
         }
 
         @Override
-        public TypeReference<MutatingConfig> getTypeReference() {
-            return typeReference;
+        public Class<JsonMutatingConfig> getConfigClass() {
+            return JsonMutatingConfig.class;
         }
+
     };
 
 }

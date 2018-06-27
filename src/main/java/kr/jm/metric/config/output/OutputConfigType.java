@@ -1,31 +1,22 @@
 package kr.jm.metric.config.output;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import kr.jm.metric.config.ConfigTypeInterface;
 
-public enum OutputConfigType implements OutputConfigTypeInterface {
+public enum OutputConfigType implements ConfigTypeInterface {
     STDOUT {
-        private TypeReference<StdOutputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<StdOutputConfig> getTypeReference() {
-            return typeReference;
+        public Class<StdOutputConfig> getConfigClass() {
+            return StdOutputConfig.class;
         }
     }, FILE {
-        private TypeReference<FileOutputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<FileOutputConfig> getTypeReference() {
-            return typeReference;
+        public Class<FileOutputConfig> getConfigClass() {
+            return FileOutputConfig.class;
         }
     }, ELASTICSEARCH {
-        private TypeReference<ElasticsearchOutputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<ElasticsearchOutputConfig> getTypeReference() {
-            return typeReference;
+        public Class<ElasticsearchOutputConfig> getConfigClass() {
+            return ElasticsearchOutputConfig.class;
         }
     }
 }

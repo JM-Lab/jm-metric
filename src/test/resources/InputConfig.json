@@ -22,5 +22,18 @@
   //    "filePath": "webAccessLogSample.txt",
   //    "inputConfigType": "FILE",
   //    "properties": {}
+  //  },
+  //  {
+  //    "inputId": "KafkaInput",
+  //    "bulkSize": null,
+  //    "flushIntervalSeconds": null,
+  //    "waitingMillis": null,
+  //    "queueSizeLimit": null,
+  //    "bootstrapServers": "localhost:63671",
+  //    "groupId": "KafkaInputGroup-Test",
+  //    "topics": ["JMKafkaProducer-Test"],
+  //    "inputConfigType": "KAFKA",
+  //    "latest": false,
+  //    "properties": {}
   //  }
 ]

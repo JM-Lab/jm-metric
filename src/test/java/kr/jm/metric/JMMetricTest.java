@@ -77,7 +77,7 @@ public class JMMetricTest {
         requestMutatingConfig =
                 ConfigInterface.transformConfig(requestMutatingConfig,
                         requestMutatingConfig.getMutatingConfigType()
-                                .getTypeReference());
+                                .getConfigClass());
         assertTrue(requestMutatingConfig instanceof DelimiterMutatingConfig);
         System.out.println(requestMutatingConfig.getClass());
     }

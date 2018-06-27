@@ -1,31 +1,22 @@
 package kr.jm.metric.config.input;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import kr.jm.metric.config.ConfigTypeInterface;
 
-public enum InputConfigType implements InputConfigTypeInterface {
+public enum InputConfigType implements ConfigTypeInterface {
     STDIN {
-        private TypeReference<StdInLineInputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<StdInLineInputConfig> getTypeReference() {
-            return typeReference;
+        public Class<StdInLineInputConfig> getConfigClass() {
+            return StdInLineInputConfig.class;
         }
     }, FILE {
-        private TypeReference<FileInputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<FileInputConfig> getTypeReference() {
-            return typeReference;
+        public Class<FileInputConfig> getConfigClass() {
+            return FileInputConfig.class;
         }
     }, KAFKA {
-        private TypeReference<KafkaInputConfig> typeReference =
-                new TypeReference<>() {};
-
         @Override
-        public TypeReference<KafkaInputConfig> getTypeReference() {
-            return typeReference;
+        public Class<KafkaInputConfig> getConfigClass() {
+            return KafkaInputConfig.class;
         }
     }
 }

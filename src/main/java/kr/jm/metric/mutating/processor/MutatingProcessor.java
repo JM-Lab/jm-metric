@@ -11,6 +11,7 @@ import kr.jm.utils.helper.JMThread;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Flow;
+import java.util.function.Consumer;
 
 public class MutatingProcessor extends
         JMConcurrentTransformProcessor<List<Transfer<String>>, List<ConfigIdTransfer<FieldMap>>> {
@@ -35,5 +36,19 @@ public class MutatingProcessor extends
 
     public String getMutatingId() {
         return this.mutatingId;
+    }
+
+    @Override
+    public MutatingProcessor subscribeWith(
+            Flow.Subscriber<List<ConfigIdTransfer<FieldMap>>>... subscribers) {
+        super.subscribeWith(subscribers);
+        return this;
+    }
+
+    @Override
+    public MutatingProcessor consumeWith(
+            Consumer<List<ConfigIdTransfer<FieldMap>>>... consumers) {
+        super.consumeWith(consumers);
+        return this;
     }
 }

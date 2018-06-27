@@ -1,6 +1,5 @@
 package kr.jm.metric.config.input;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.AbstractConfigManager;
 
 public class InputConfigManager extends
@@ -12,9 +11,9 @@ public class InputConfigManager extends
     }
 
     @Override
-    protected TypeReference<InputConfigInterface> extractConfigTypeReference(
+    protected Class<InputConfigInterface> extractConfigClass(
             String configTypeString) {
-        return InputConfigType.valueOf(configTypeString).getTypeReference();
+        return InputConfigType.valueOf(configTypeString).getConfigClass();
     }
 
     @Override

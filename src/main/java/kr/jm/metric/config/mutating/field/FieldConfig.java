@@ -135,7 +135,7 @@ public class FieldConfig extends FieldMeta {
         return mutatingConfig.getMetricBuilder().buildFieldObjectMap(
                 ConfigInterface.transformConfig(mutatingConfig,
                         mutatingConfig.getMutatingConfigType()
-                                .getTypeReference()), targetString);
+                                .getConfigClass()), targetString);
     }
 
     private Object transformWithDataType(DataType dataType, String data) {

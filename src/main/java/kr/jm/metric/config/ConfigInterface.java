@@ -20,4 +20,14 @@ public interface ConfigInterface {
             Map<String, Object> configMap, TypeReference<C> typeReference) {
         return JMJson.transform(configMap, typeReference);
     }
+
+    static <C extends ConfigInterface> C transformConfig(C configInterface,
+            Class<C> configClass) {
+        return transformConfig(configInterface.extractConfigMap(), configClass);
+    }
+
+    static <C extends ConfigInterface> C transformConfig(
+            Map<String, Object> configMap, Class<C> configClass) {
+        return JMJson.transform(configMap, configClass);
+    }
 }

@@ -1,12 +1,12 @@
 package kr.jm.metric.config.mutating;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import kr.jm.metric.config.ConfigTypeInterface;
 import kr.jm.metric.mutating.builder.FieldMapBuilderInterface;
 
 /**
  * The interface Metric properties type interface.
  */
-public interface MutatingConfigTypeInterface {
+public interface MutatingConfigTypeInterface extends ConfigTypeInterface {
     /**
      * Gets field map builder.
      *
@@ -14,13 +14,5 @@ public interface MutatingConfigTypeInterface {
      * @return the field map builder
      */
     <P extends FieldMapBuilderInterface> P getFieldMapBuilder();
-
-    /**
-     * Gets type reference.
-     *
-     * @param <T> the type parameter
-     * @return the type reference
-     */
-    <T extends MutatingConfig> TypeReference<T> getTypeReference();
 
 }

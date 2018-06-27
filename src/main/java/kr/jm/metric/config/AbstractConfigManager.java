@@ -1,7 +1,6 @@
 package kr.jm.metric.config;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.enums.OS;
@@ -86,7 +85,7 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
     private C transformToConfig(
             Map<String, Object> configMap) {
         return getConfigTypeStringAsOpt(configMap)
-                .map(this::extractConfigTypeReference)
+                .map(this::extractConfigClass)
                 .map(typeReference -> ConfigInterface
                         .transformConfig(configMap, typeReference))
                 .orElseGet(() -> JMExceptionManager
@@ -95,8 +94,7 @@ public abstract class AbstractConfigManager<C extends ConfigInterface> {
                                 "transformToConfig", configMap));
     }
 
-    protected abstract TypeReference<C> extractConfigTypeReference(
-            String configTypeString);
+    protected abstract Class<C> extractConfigClass(String configTypeString);
 
     protected Optional<String> getConfigTypeStringAsOpt(
             Map<String, Object> configMap) {

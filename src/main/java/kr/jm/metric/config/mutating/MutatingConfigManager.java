@@ -1,6 +1,5 @@
 package kr.jm.metric.config.mutating;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.AbstractConfigManager;
 
 import java.util.List;
@@ -27,9 +26,9 @@ public class MutatingConfigManager extends
     }
 
     @Override
-    protected TypeReference<MutatingConfig> extractConfigTypeReference(
+    protected Class<MutatingConfig> extractConfigClass(
             String configTypeString) {
-        return MutatingConfigType.valueOf(configTypeString).getTypeReference();
+        return MutatingConfigType.valueOf(configTypeString).getConfigClass();
     }
 
     @Override
