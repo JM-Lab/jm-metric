@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutating;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kr.jm.metric.builder.FieldMapBuilderInterface;
+import kr.jm.metric.mutating.builder.FieldMapBuilderInterface;
 
 /**
  * The interface Metric properties type interface.

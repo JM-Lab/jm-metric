@@ -1,8 +1,8 @@
 package kr.jm.metric.config.mutating;
 
-import kr.jm.metric.builder.FieldMapBuilderInterface;
 import kr.jm.metric.config.AbstractConfig;
 import kr.jm.metric.config.mutating.field.FieldConfig;
+import kr.jm.metric.mutating.builder.FieldMapBuilderInterface;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.helper.JMLambda;
 import lombok.AccessLevel;

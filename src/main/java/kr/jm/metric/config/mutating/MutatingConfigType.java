@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutating;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kr.jm.metric.builder.*;
+import kr.jm.metric.mutating.builder.*;
 
 /**
  * The enum Metric properties type.

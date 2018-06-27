@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutating;
 
-import kr.jm.metric.builder.FormattedFieldMapBuilder;
 import kr.jm.metric.config.mutating.field.FieldConfig;
+import kr.jm.metric.mutating.builder.FormattedFieldMapBuilder;
 import kr.jm.utils.datastructure.JMArrays;
 import lombok.ToString;
 
