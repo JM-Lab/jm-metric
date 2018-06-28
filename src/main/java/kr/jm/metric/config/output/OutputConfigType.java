@@ -18,5 +18,10 @@ public enum OutputConfigType implements ConfigTypeInterface {
         public Class<ElasticsearchOutputConfig> getConfigClass() {
             return ElasticsearchOutputConfig.class;
         }
+    }, KAFKA {
+        @Override
+        public Class<KafkaOutputConfig> getConfigClass() {
+            return KafkaOutputConfig.class;
+        }
     }
 }
