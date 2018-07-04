@@ -35,9 +35,27 @@ public class JMMetricMainTest {
     }
 
     @Test
-    public void testMain() {
+    public void testMain1() {
+        JMMetricMain jmMetricMain = new JMMetricMain();
+        jmMetricMain.main();
+    }
+
+    @Test
+    public void testMain2() {
+        JMMetricMain jmMetricMain = new JMMetricMain();
+        jmMetricMain.main("-h", "-m", "CombinedLogFormat");
+    }
+
+    @Test
+    public void testMain3() {
         JMMetricMain jmMetricMain = new JMMetricMain();
         jmMetricMain.main("CombinedLogFormat");
+    }
+
+    @Test
+    public void testMain() {
+        JMMetricMain jmMetricMain = new JMMetricMain();
+        jmMetricMain.main("-m", "CombinedLogFormat");
         List<List<ConfigIdTransfer<FieldMap>>> resultList = new ArrayList<>();
         jmMetricMain.getJmMetric()
                 .subscribe(JMSubscriberBuilder.build(resultList::add));

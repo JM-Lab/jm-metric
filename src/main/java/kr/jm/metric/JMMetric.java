@@ -89,7 +89,7 @@ public class JMMetric implements
                         .orElseGet(() -> new String[]{"StdOut"}))
                 .map(jmMetricConfigManager::getOutputConfig)
                 .map(OutputSubscriberBuilder::build)
-                .peek(mutatingProcessor::subscribe)
+                .map(mutatingProcessor::subscribeAndReturnSubcriber)
                 .collect(Collectors.toList());
     }
 
