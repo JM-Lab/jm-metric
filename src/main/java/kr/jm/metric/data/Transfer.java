@@ -1,5 +1,6 @@
 package kr.jm.metric.data;
 
+import kr.jm.utils.helper.JMOptional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,15 +31,15 @@ public class Transfer<T> {
      */
     public static final String DATA = "data";
     /**
-     * The constant DATA_ID.
+     * The constant INPUT_ID.
      */
-    public static final String DATA_ID = "inputId";
+    public static final String INPUT_ID = "inputId";
     /**
      * The constant TIMESTAMP.
      */
     public static final String TIMESTAMP = "timestamp";
     /**
-     * The Data id.
+     * The Input id.
      */
     protected String inputId;
     /**
@@ -57,8 +58,8 @@ public class Transfer<T> {
     /**
      * Instantiates a new Transfer.
      *
-     * @param inputId the data id
-     * @param data   the data
+     * @param inputId the input id
+     * @param data    the data
      */
     public Transfer(String inputId, T data) {
         this(inputId, data, null);
@@ -67,7 +68,7 @@ public class Transfer<T> {
     /**
      * Instantiates a new Transfer.
      *
-     * @param inputId    the data id
+     * @param inputId   the input id
      * @param data      the data
      * @param timestamp the timestamp
      */
@@ -78,9 +79,9 @@ public class Transfer<T> {
     /**
      * Instantiates a new Transfer.
      *
-     * @param inputId the data id
-     * @param data   the data
-     * @param meta   the meta
+     * @param inputId the input id
+     * @param data    the data
+     * @param meta    the meta
      */
     public Transfer(String inputId, T data, Map<String, Object> meta) {
         this(inputId, data, System.currentTimeMillis(), meta);
@@ -89,7 +90,7 @@ public class Transfer<T> {
     /**
      * Instantiates a new Transfer.
      *
-     * @param inputId    the data id
+     * @param inputId   the input id
      * @param data      the data
      * @param timestamp the timestamp
      * @param meta      the meta
@@ -183,7 +184,8 @@ public class Transfer<T> {
     public <D> Transfer<D> newWith(D data, long timestamp,
             Map<String, Object> meta) {
         return new Transfer<>(this.inputId, data, timestamp,
-                new HashMap<>(meta));
+                JMOptional.getOptional(meta).map(HashMap::new)
+                        .orElseGet(HashMap::new));
     }
 
     /**
@@ -193,7 +195,7 @@ public class Transfer<T> {
      * @param dataList the data list
      * @return the list
      */
-    public <D> List<? extends Transfer<D>> newListWith(List<D> dataList) {
+    public <D> List<Transfer<D>> newListWith(List<D> dataList) {
         return newStreamWith(dataList).collect(Collectors.toList());
     }
 
@@ -204,7 +206,7 @@ public class Transfer<T> {
      * @param dataList the data list
      * @return the stream
      */
-    public <D> Stream<? extends Transfer<D>> newStreamWith(
+    public <D> Stream<Transfer<D>> newStreamWith(
             List<D> dataList) {
         return dataList.stream().map(this::newWith);
     }
@@ -221,7 +223,7 @@ public class Transfer<T> {
     private Map<String, Object> buildFieldMapWithMeta(
             Map<String, Object> newFieldMap) {
         if (this.data instanceof Map)
-            newFieldMap.putAll((Map<String, ?>) data);
+            newFieldMap.putAll((Map<String, Object>) data);
         else
             newFieldMap.put(DATA, data);
         newFieldMap.put(META, buildMetaForFieldMap());
@@ -235,7 +237,7 @@ public class Transfer<T> {
      */
     protected Map<String, Object> buildMetaForFieldMap() {
         Map<String, Object> meta = getMeta();
-        meta.put(DATA_ID, inputId);
+        meta.put(INPUT_ID, inputId);
         meta.put(TIMESTAMP, timestamp);
         return meta;
     }

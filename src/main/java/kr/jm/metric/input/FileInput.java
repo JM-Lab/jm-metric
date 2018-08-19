@@ -3,16 +3,21 @@ package kr.jm.metric.input;
 import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMFiles;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 
 import java.util.function.Consumer;
 
 /**
- * The type File output.
+ * The type File input.
  */
-@Slf4j
+@ToString(callSuper = true)
 public class FileInput extends AbstractInput<FileInputConfig> {
 
+    /**
+     * Instantiates a new File input.
+     *
+     * @param inputConfig the input config
+     */
     public FileInput(FileInputConfig inputConfig) {
         super(inputConfig);
     }
@@ -23,6 +28,11 @@ public class FileInput extends AbstractInput<FileInputConfig> {
                 .forEach(this::newTransfer);
     }
 
+    /**
+     * Instantiates a new File input.
+     *
+     * @param filePath the file path
+     */
     public FileInput(String filePath) {
         this(new FileInputConfig(filePath));
     }

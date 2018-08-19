@@ -2,15 +2,15 @@
   "format": {
     "request": {
       "fields": ["requestMethod", "requestUrl", "requestProtocol"],
-      "mutatingConfigType": "DELIMITER"
+      "mutatorConfigType": "DELIMITER"
     }
   },
   "dateFormat": {
-    "timestamp": {
+    "receivedTimestamp": {
       "dateFormatType": "CUSTOM",
       "format": "dd/MMM/yyyy:HH:mm:ss Z",
       "zoneOffset": "",
-      "changeDateFormat": {
+      "changeDateConfig": {
         "dateFormatType": "CUSTOM",
         "format": "yyyy-MM-dd'T'HH:mm:ssZ",
         "zoneOffset": "+1000"

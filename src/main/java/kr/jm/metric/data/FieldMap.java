@@ -1,9 +1,10 @@
 package kr.jm.metric.data;
 
-import kr.jm.metric.config.mutating.field.FieldConfig;
+import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.helper.JMString;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.*;
 @SuppressWarnings("ALL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FieldMap implements Map<String, Object> {
+    private static final String META_PREFIX = Transfer.META + JMString.DOT;
     /**
      * The constant EMPTY_FIELD_MAP.
      */
@@ -27,10 +29,21 @@ public class FieldMap implements Map<String, Object> {
     /**
      * Instantiates a new Field map.
      *
-     * @param fieldMap the field map
+     * @param fieldObjectMap the field object map
      */
-    public FieldMap(Map<String, Object> fieldMap) {
-        this.fieldMap = JMMap.newFlatKeyMap(fieldMap);
+    public FieldMap(Map<String, Object> fieldObjectMap) {
+        this.fieldMap = JMMap.newFlatKeyMap(fieldObjectMap);
+    }
+
+    /**
+     * New field map field map.
+     *
+     * @return the field map
+     */
+    public FieldMap newFieldMap() {
+        FieldMap newFieldMap = new FieldMap();
+        newFieldMap.fieldMap = new HashMap<>(this.fieldMap);
+        return newFieldMap;
     }
 
     /**
@@ -76,7 +89,7 @@ public class FieldMap implements Map<String, Object> {
     }
 
     private boolean isMeta(String field) {
-        return field.startsWith(Transfer.META);
+        return field.startsWith(META_PREFIX);
     }
 
     @Override

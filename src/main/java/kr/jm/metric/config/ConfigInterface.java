@@ -1,31 +1,43 @@
 package kr.jm.metric.config;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.utils.helper.JMJson;
 
 import java.util.Map;
 
+/**
+ * The interface Config interface.
+ */
 public interface ConfigInterface {
+
+    /**
+     * Extract config map map.
+     *
+     * @return the map
+     */
     default Map<String, Object> extractConfigMap() {
         return JMJson.transformToMap(this);
     }
 
-    static <C extends ConfigInterface> C transformConfig(C configInterface,
-            TypeReference<C> typeReference) {
-        return transformConfig(configInterface.extractConfigMap(),
-                typeReference);
-    }
-
-    static <C extends ConfigInterface> C transformConfig(
-            Map<String, Object> configMap, TypeReference<C> typeReference) {
-        return JMJson.transform(configMap, typeReference);
-    }
-
-    static <C extends ConfigInterface> C transformConfig(C configInterface,
+    /**
+     * Transform config c.
+     *
+     * @param <C>         the type parameter
+     * @param configClass the config class
+     * @return the c
+     */
+    default <C extends ConfigInterface> C transformConfig(
             Class<C> configClass) {
-        return transformConfig(configInterface.extractConfigMap(), configClass);
+        return transformConfig(extractConfigMap(), configClass);
     }
 
+    /**
+     * Transform config c.
+     *
+     * @param <C>         the type parameter
+     * @param configMap   the config map
+     * @param configClass the config class
+     * @return the c
+     */
     static <C extends ConfigInterface> C transformConfig(
             Map<String, Object> configMap, Class<C> configClass) {
         return JMJson.transform(configMap, configClass);

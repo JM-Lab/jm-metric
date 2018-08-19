@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * The type Abstract output properties.
+ * The type Abstract output config.
  */
 @Getter
 @ToString(callSuper = true)
@@ -15,8 +15,16 @@ import lombok.ToString;
 public abstract class AbstractOutputConfig extends
         AbstractPropertiesConfig implements
         OutputConfigInterface {
+    /**
+     * The Output id.
+     */
     protected String outputId;
 
+    /**
+     * Instantiates a new Abstract output config.
+     *
+     * @param outputId the output id
+     */
     public AbstractOutputConfig(String outputId) {
         this.outputId = outputId;
     }

@@ -12,7 +12,7 @@ public class InputConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.inputConfigManager = new InputConfigManager("InputConfig.json");
+        this.inputConfigManager = new InputConfigManager("Input.json");
     }
 
     @Test
@@ -22,6 +22,6 @@ public class InputConfigManagerTest {
         InputInterface stdInput =
                 this.inputConfigManager.getConfig("StdIn").buildInput();
         Assert.assertEquals("StdIn", stdInput.getInputId());
-        Assert.assertEquals(2, inputConfigManager.getConfigMap().size());
+        Assert.assertEquals(3, inputConfigManager.getConfigMap().size());
     }
 }

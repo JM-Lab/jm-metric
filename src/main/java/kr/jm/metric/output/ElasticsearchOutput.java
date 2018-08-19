@@ -1,18 +1,22 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
-import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.data.Transfer;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
+import lombok.ToString;
 import org.elasticsearch.common.settings.Settings;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+/**
+ * The type Elasticsearch output.
+ */
+@ToString(callSuper = true)
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
 
@@ -22,6 +26,9 @@ public class ElasticsearchOutput extends AbstractOutput {
     private String indexSuffixDate;
     private String index;
 
+    /**
+     * The Elasticsearch client.
+     */
     protected JMElasticsearchClient elasticsearchClient;
 
     /**
@@ -34,119 +41,15 @@ public class ElasticsearchOutput extends AbstractOutput {
     /**
      * Instantiates a new Elasticsearch output.
      *
-     * @param elasticsearchConnect the elasticsearch connect
+     * @param outputConfig the output config
      */
-    public ElasticsearchOutput(String elasticsearchConnect) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     */
-    public ElasticsearchOutput(String elasticsearchConnect,
-            String nodeName) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect, nodeName));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param clientTransportSniff the client transport sniff
-     */
-    public ElasticsearchOutput(String elasticsearchConnect,
-            boolean clientTransportSniff) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect,
-                clientTransportSniff));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     * @param clientTransportSniff the client transport sniff
-     */
-    public ElasticsearchOutput(String elasticsearchConnect,
-            String nodeName, boolean clientTransportSniff) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect, nodeName,
-                clientTransportSniff));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     * @param clientTransportSniff the client transport sniff
-     * @param clusterName          the cluster name
-     */
-    public ElasticsearchOutput(String elasticsearchConnect,
-            String nodeName, boolean clientTransportSniff, String clusterName) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect, nodeName,
-                clientTransportSniff, clusterName));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect  the elasticsearch connect
-     * @param nodeName              the node name
-     * @param clientTransportSniff  the client transport sniff
-     * @param clusterName           the cluster name
-     * @param indexPrefix           the index prefix
-     * @param indexSuffixDateFormat the index suffix date format
-     * @param zoneId                the zone id
-     */
-    public ElasticsearchOutput(String elasticsearchConnect,
-            String nodeName, boolean clientTransportSniff, String clusterName,
-            String indexPrefix, String indexSuffixDateFormat, String zoneId) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect, nodeName,
-                clientTransportSniff, clusterName, indexPrefix,
-                indexSuffixDateFormat, zoneId));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param elasticsearchConnect  the elasticsearch connect
-     * @param nodeName              the node name
-     * @param clientTransportSniff  the client transport sniff
-     * @param clusterName           the cluster name
-     * @param indexPrefix           the index prefix
-     * @param indexSuffixDateFormat the index suffix date format
-     * @param zoneId                the zone id
-     * @param bulkActions           the bulk actions
-     * @param bulkSizeKB            the bulk size kb
-     * @param flushIntervalSeconds  the flush interval seconds
-     */
-    public ElasticsearchOutput(
-            String elasticsearchConnect, String nodeName,
-            boolean clientTransportSniff, String clusterName,
-            String indexPrefix, String indexSuffixDateFormat, String zoneId,
-            int bulkActions, long bulkSizeKB, int flushIntervalSeconds) {
-        this(new ElasticsearchOutputConfig(elasticsearchConnect, nodeName,
-                clientTransportSniff, clusterName, indexPrefix,
-                indexSuffixDateFormat, zoneId, bulkActions, bulkSizeKB,
-                flushIntervalSeconds));
-    }
-
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param outputConfig the output properties
-     */
-    public ElasticsearchOutput(
-            ElasticsearchOutputConfig outputConfig) {
+    public ElasticsearchOutput(ElasticsearchOutputConfig outputConfig) {
         super(outputConfig);
-        this.index = JMString.EMPTY;
-        this.indexPrefix = Optional.ofNullable(outputConfig.getIndexPrefix())
-                .orElse("jm-metric");
+        this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
         this.zoneId = outputConfig.getZoneId();
+        this.indexSuffixDate = buildInputSuffixDate(System.currentTimeMillis());
+        this.index = buildIndex(this.indexSuffixDate);
         this.elasticsearchClient = new JMElasticsearchClient(
                 outputConfig.getElasticsearchConnect(), buildSettings(
                 JMElasticsearchClient
@@ -167,18 +70,26 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private String buildIndex(long timestamp) {
-        return getIndex(JMTimeUtil
-                .getTime(timestamp, this.indexSuffixDateFormat, this.zoneId));
+        return getIndex(buildInputSuffixDate(timestamp));
+    }
+
+    private String buildInputSuffixDate(long timestamp) {
+        return JMTimeUtil
+                .getTime(timestamp, this.indexSuffixDateFormat, this.zoneId);
     }
 
     private String getIndex(String indexSuffixDate) {
-        if (!indexSuffixDate.equals(this.indexSuffixDate))
-            synchronized (this.index) {
-                this.indexSuffixDate = indexSuffixDate;
-                return this.index =
-                        this.indexPrefix + JMString.HYPHEN + indexSuffixDate;
-            }
-        return this.index;
+        return indexSuffixDate
+                .equals(this.indexSuffixDate) ? this.index : buildIndex(
+                indexSuffixDate);
+    }
+
+    private String buildIndex(String indexSuffixDate) {
+        synchronized (this.indexSuffixDate) {
+            this.indexSuffixDate = indexSuffixDate;
+            return this.index =
+                    this.indexPrefix + JMString.HYPHEN + indexSuffixDate;
+        }
     }
 
     @Override
@@ -187,16 +98,12 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     @Override
-    public void writeData(List<ConfigIdTransfer<FieldMap>> data) {
-        for (ConfigIdTransfer<FieldMap> configIdTransfer : data)
-            writeConfigIdTransfer(configIdTransfer.getData(),
-                    configIdTransfer.getTimestamp());
-    }
-
-    private void writeConfigIdTransfer(FieldMap fieldMap, long timestamp) {
-        this.elasticsearchClient
-                .sendWithBulkProcessor(fieldMap, buildIndex(timestamp),
-                        this.indexPrefix);
+    public void writeData(List<Transfer<FieldMap>> transferList) {
+        for (Transfer<FieldMap> inputIdTransfer : transferList)
+            this.elasticsearchClient
+                    .sendWithBulkProcessor(inputIdTransfer.getData(),
+                            buildIndex(inputIdTransfer.getTimestamp()),
+                            inputIdTransfer.getInputId());
     }
 
 }

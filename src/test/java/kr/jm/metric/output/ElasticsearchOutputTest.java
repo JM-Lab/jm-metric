@@ -1,8 +1,9 @@
 package kr.jm.metric.output;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import kr.jm.metric.data.ConfigIdTransfer;
+import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.data.Transfer;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
 import kr.jm.utils.elasticsearch.JMEmbeddedElasticsearch;
@@ -40,8 +41,8 @@ public class ElasticsearchOutputTest {
 
         // JMElasticsearchClient Init
         this.elasticsearchOutput =
-                new ElasticsearchOutput(
-                        this.jmEmbeddedElasticsearch.getTransportIpPortPair());
+                new ElasticsearchOutput(new ElasticsearchOutputConfig(
+                        this.jmEmbeddedElasticsearch.getTransportIpPortPair()));
         System.out.println(JMJson.toJsonString(
                 this.elasticsearchOutput.getConfig()));
     }
@@ -66,14 +67,14 @@ public class ElasticsearchOutputTest {
 
     @Test
     public void writeData() {
-        List<ConfigIdTransfer<List<FieldMap>>> dataList =
-                JMResources.readLines("testConfigIdTransferData.txt").stream()
+        List<Transfer<List<FieldMap>>> dataList =
+                JMResources.readLines("testTransferData.txt").stream()
                         .map(line -> JMJson.withJsonString(line,
-                                new TypeReference<ConfigIdTransfer<List<FieldMap>>>() {}))
+                                new TypeReference<Transfer<List<FieldMap>>>() {}))
                         .collect(Collectors.toList());
-        elasticsearchOutput.writeData(
-                dataList.stream().flatMap(configIdTransfer -> configIdTransfer
-                        .newStreamWith(configIdTransfer.getData()))
+        elasticsearchOutput
+                .writeData(dataList.stream().flatMap(
+                        transfer -> transfer.newStreamWith(transfer.getData()))
                         .collect(Collectors.toList()));
         JMThread.sleep(3000);
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();

@@ -1,15 +1,20 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.KafkaOutputConfig;
-import kr.jm.metric.data.ConfigIdTransfer;
 import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.kafka.client.JMKafkaProducer;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * The type Kafka output.
+ */
+@ToString(callSuper = true)
 public class KafkaOutput extends AbstractOutput {
 
     private JMKafkaProducer kafkaProducer;
@@ -19,9 +24,9 @@ public class KafkaOutput extends AbstractOutput {
     private String keyField;
 
     /**
-     * Instantiates a new Abstract output.
+     * Instantiates a new Kafka output.
      *
-     * @param outputConfig the output properties
+     * @param outputConfig the output config
      */
     public KafkaOutput(KafkaOutputConfig outputConfig) {
         super(outputConfig);
@@ -48,20 +53,14 @@ public class KafkaOutput extends AbstractOutput {
     }
 
     @Override
-    public void writeData(List<ConfigIdTransfer<FieldMap>> data) {
-        data.stream().map(ConfigIdTransfer::getData).forEach(this::writeData);
+    public void writeData(List<Transfer<FieldMap>> transferList) {
+        transferList.stream().map(Transfer::getData).forEach(this::writeData);
     }
 
     private void writeData(FieldMap fieldMap) {
-        this.kafkaProducer.sendJsonString(
-                JMOptional.getOptional(fieldMap, keyField).map(Object::toString)
-                        .orElseGet(() -> logNoKeyFieldAndNull(fieldMap)),
-                fieldMap);
-    }
-
-    private String logNoKeyFieldAndNull(FieldMap fieldMap) {
-        log.warn("No KeyField !!! - keyField = {}, " +
-                "fieldMap = {}", keyField, fieldMap);
-        return null;
+        JMOptional.getOptional(fieldMap, keyField).map(Object::toString)
+                .ifPresentOrElse(this.kafkaProducer::sendJsonString, () -> log
+                        .warn("No KeyField !!! - keyField = {}, fieldMap = {}",
+                                keyField, fieldMap));
     }
 }

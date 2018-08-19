@@ -2,23 +2,41 @@ package kr.jm.metric.config.output;
 
 import kr.jm.metric.config.ConfigTypeInterface;
 
+/**
+ * The enum Output config type.
+ */
 public enum OutputConfigType implements ConfigTypeInterface {
+    /**
+     * The Stdout.
+     */
     STDOUT {
         @Override
         public Class<StdOutputConfig> getConfigClass() {
             return StdOutputConfig.class;
         }
-    }, FILE {
+    },
+    /**
+     * The File.
+     */
+    FILE {
         @Override
         public Class<FileOutputConfig> getConfigClass() {
             return FileOutputConfig.class;
         }
-    }, ELASTICSEARCH {
+    },
+    /**
+     * The Elasticsearch.
+     */
+    ELASTICSEARCH {
         @Override
         public Class<ElasticsearchOutputConfig> getConfigClass() {
             return ElasticsearchOutputConfig.class;
         }
-    }, KAFKA {
+    },
+    /**
+     * The Kafka.
+     */
+    KAFKA {
         @Override
         public Class<KafkaOutputConfig> getConfigClass() {
             return KafkaOutputConfig.class;

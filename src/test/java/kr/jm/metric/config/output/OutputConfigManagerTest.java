@@ -12,7 +12,7 @@ public class OutputConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.outputConfigManager = new OutputConfigManager("OutputConfig.json");
+        this.outputConfigManager = new OutputConfigManager("Output.json");
     }
 
     @Test
@@ -29,7 +29,6 @@ public class OutputConfigManagerTest {
                 fileConfigMap.get("enableJsonString").toString());
         Assert.assertEquals("STDOUT", fileConfigMap.get("outputConfigType"));
         System.out.println(outputConfigManager.getConfigMap());
-        Assert.assertEquals(4, outputConfigManager.getConfigMap().size());
-
+        Assert.assertEquals(6, outputConfigManager.getConfigMap().size());
     }
 }

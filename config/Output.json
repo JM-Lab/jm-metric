@@ -1,0 +1,39 @@
+[
+  //  {
+  //    "outputId": "StdOut",
+  //    "outputConfigType": "STDOUT",
+  //    "enableJsonString": true
+  //  },
+  {
+    "outputId": "File",
+    "outputConfigType": "FILE",
+    "filePath": "outTest.txt",
+    "enableJsonString": true
+  },
+  {
+    "outputId": "LocalKafkaOutput",
+    "bootstrapServers": "localhost:9092",
+    "keyField": null,
+    "producerId": null,
+    "topic": "jm-metric-local",
+    "retries": null,
+    "batchSize": null,
+    "bufferMemory": null,
+    "lingerMs": null,
+    "outputConfigType": "KAFKA",
+    "properties": {}
+  },
+  {
+    "outputId": "LocalElasticsearch",
+    "outputConfigType": "ELASTICSEARCH",
+    "elasticsearchConnect": "localhost:9300",
+    "clientTransportSniff": false,
+    "indexPrefix": "jm-metric-local",
+    "indexSuffixDateFormat": "yyyy.MM.dd",
+    "zoneId": "UTC",
+    "bulkActions": 18,
+    "bulkSizeKB": 512,
+    "flushIntervalSeconds": 1,
+    "properties": {}
+  }
+]

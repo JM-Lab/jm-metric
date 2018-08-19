@@ -1,0 +1,30 @@
+[
+  //  {
+  //    "inputId": "StdIn",
+  //    "bulkSize": 16,
+  //    "flushIntervalSeconds": 1,
+  //    "inputConfigType": "STDIN",
+  //    "properties": {}
+  //  },
+  //  {
+  //    "inputId": "File",
+  //    "bulkSize": 16,
+  //    "flushIntervalSeconds": 1,
+  //    "filePath": "testSample.txt",
+  //    "inputConfigType": "FILE",
+  //    "properties": {}
+  //  },
+  {
+    "inputId": "LocalKafka",
+    "bulkSize": null,
+    "flushIntervalSeconds": null,
+    "waitingMillis": null,
+    "queueSizeLimit": null,
+    "bootstrapServers": "localhost:9092",
+    "groupId": "KafkaInputGroup",
+    "topics": ["testTopic"],
+    "latest": false,
+    "inputConfigType": "KAFKA",
+    "properties": {}
+  }
+]

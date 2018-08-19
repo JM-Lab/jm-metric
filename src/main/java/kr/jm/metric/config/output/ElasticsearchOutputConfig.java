@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * The type Elasticsearch output properties.
+ * The type Elasticsearch output config.
  */
 @Getter
 @ToString(callSuper = true)
@@ -21,7 +21,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     /**
      * The constant DEFAULT_BULK_SIZE_KB.
      */
-    public static final long DEFAULT_BULK_SIZE_KB = 1 * 1024;
+    public static final long DEFAULT_BULK_SIZE_KB = 1024;
     /**
      * The constant DEFAULT_FLUSH_INTERVAL_SECONDS.
      */
@@ -59,14 +59,14 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     private int flushIntervalSeconds;
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      */
     public ElasticsearchOutputConfig() {
         this(DEFAULT_ELASTICSEARCH_CONNECT);
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect the elasticsearch connect
      */
@@ -75,7 +75,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect the elasticsearch connect
      * @param nodeName             the node name
@@ -86,7 +86,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect the elasticsearch connect
      * @param clientTransportSniff the client transport sniff
@@ -98,7 +98,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
 
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect the elasticsearch connect
      * @param nodeName             the node name
@@ -110,7 +110,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect the elasticsearch connect
      * @param nodeName             the node name
@@ -125,7 +125,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
      * @param elasticsearchConnect  the elasticsearch connect
      * @param nodeName              the node name
@@ -144,6 +144,20 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
                 DEFAULT_FLUSH_INTERVAL_SECONDS);
     }
 
+    /**
+     * Instantiates a new Elasticsearch output config.
+     *
+     * @param elasticsearchConnect  the elasticsearch connect
+     * @param nodeName              the node name
+     * @param clientTransportSniff  the client transport sniff
+     * @param clusterName           the cluster name
+     * @param indexPrefix           the index prefix
+     * @param indexSuffixDateFormat the index suffix date format
+     * @param zoneId                the zone id
+     * @param bulkActions           the bulk actions
+     * @param bulkSizeKB            the bulk size kb
+     * @param flushIntervalSeconds  the flush interval seconds
+     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName,
             boolean clientTransportSniff, String clusterName,
@@ -156,8 +170,9 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     }
 
     /**
-     * Instantiates a new Elasticsearch output properties.
+     * Instantiates a new Elasticsearch output config.
      *
+     * @param outputId              the output id
      * @param elasticsearchConnect  the elasticsearch connect
      * @param nodeName              the node name
      * @param clientTransportSniff  the client transport sniff

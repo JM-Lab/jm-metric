@@ -22,12 +22,17 @@ public class TransferSubmissionPublisher<T> implements
 
     private JMSubmissionPublisherInterface<Transfer<T>> jmSubmissionPublisher;
 
+    /**
+     * Instantiates a new Transfer submission publisher.
+     */
     public TransferSubmissionPublisher() {
         this(new JMSubmissionPublisher<>());
     }
 
     /**
      * Instantiates a new Transfer submission publisher.
+     *
+     * @param jmSubmissionPublisher the jm submission publisher
      */
     public TransferSubmissionPublisher(
             JMSubmissionPublisherInterface<Transfer<T>> jmSubmissionPublisher) {

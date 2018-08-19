@@ -1,0 +1,112 @@
+[
+  {
+    "mutatorId": "Raw",
+    "mutatorConfigType": "RAW"
+  },
+  {
+    "mutatorId": "Json",
+    "mutatorConfigType": "JSON"
+  },
+  {
+    "mutatorId": "Delimiter",
+    "mutatorConfigType": "DELIMITER",
+    "bindInputId": "testData",
+    "fields": ["field1", "field2"],
+    "delimiterRegex": null,
+    "discardRegex": "(){}[];\", "
+  },
+  {
+    "mutatorId": "KeyValueDelimiter",
+    "mutatorConfigType": "KEY_VALUE_DELIMITER",
+    "fields": ["remoteHost", "remoteLogName", "remoteUser", "timestamp", "request", "httpStatusCode", "sizeByte", "referer", "userAgent"],
+    "delimiterRegex": ":",
+    "discardRegex": "{}\", ",
+    "keyValueDELIMITERRegex": "="
+  },
+  {
+    "mutatorId": "Formatted",
+    "mutatorConfigType": "FORMATTED",
+    "format": "$ip - - $url",
+    "fieldNameMap": {
+      "$ip": "ip",
+      "$url": "url"
+    }
+  },
+  {
+    "mutatorId": "ApacheAccessLog",
+    "mutatorConfigType": "APACHE_ACCESS_LOG",
+    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" %D"
+  },
+  {
+    "mutatorId": "CombinedLogFormat",
+    "mutatorConfigType": "APACHE_ACCESS_LOG",
+    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
+    "fieldConfig": {
+      "rawData": false,
+      "dateFormat": {
+        "receivedTimestamp": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "changeDateConfig": {
+            "dateFormatType": "ISO"
+          }
+        }
+      }
+    }
+  },
+  {
+    "mutatorId": "NginxAccessLog",
+    "mutatorConfigType": "NGINX_ACCESS_LOG",
+    "format": "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"",
+    "fieldNameMap": {
+      "$remote_addr": "remoteHost",
+      "$remote_user": "remoteUser",
+      "$time_local": "timeLocal",
+      "$request": "request",
+      "$status": "statusCode",
+      "$body_bytes_sent": "sizeByte",
+      "$http_referer": "referer",
+      "$http_user_agent": "userAgent"
+    },
+    "fieldConfig": {
+      "format": {
+        "request": {
+          "fields": ["requestMethod", "requestUrl", "requestProtocol"],
+          "mutatorConfigType": "DELIMITER"
+        }
+      },
+      "rawData": false,
+      "dateFormat": {
+        "timeLocal": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "changeDateConfig": {
+            "dateFormatType": "CUSTOM",
+            "format": "yyyy-MM-dd'T'HH:mm:ssZ",
+            "zoneOffset": "+1000"
+          }
+        }
+      },
+      "combinedField": ["remoteHost", "requestUrl"],
+      "dataType": {
+        "statusCode": "WORD",
+        "userAgent": "WORD",
+        "sizeByte": "NUMBER",
+        "timeLocal": "NUMBER"
+      },
+      "unit": {
+        "timeLocal": "MicroSecond"
+      },
+      "ignore": ["remoteUser", "remoteLogName"],
+      "custom": {
+        "customKey": "customValue",
+        "customObject": {
+          "bool": false
+        },
+        "customList": ["hello", "world"]
+      }
+    }
+  }
+]

@@ -17,8 +17,8 @@ public interface TransferSubmissionPublisherInterface<T> extends
     /**
      * Submit int.
      *
-     * @param inputId the data id
-     * @param data   the data
+     * @param inputId the input id
+     * @param data    the data
      * @return the int
      */
     default int submit(String inputId, T data) {
@@ -28,9 +28,9 @@ public interface TransferSubmissionPublisherInterface<T> extends
     /**
      * Submit int.
      *
-     * @param inputId the data id
-     * @param data   the data
-     * @param meta   the meta
+     * @param inputId the input id
+     * @param data    the data
+     * @param meta    the meta
      * @return the int
      */
     default int submit(String inputId, T data, Map<String, Object> meta) {
@@ -40,7 +40,7 @@ public interface TransferSubmissionPublisherInterface<T> extends
     /**
      * Submit int.
      *
-     * @param inputId    the data id
+     * @param inputId   the input id
      * @param data      the data
      * @param timestamp the timestamp
      * @return the int
@@ -52,7 +52,7 @@ public interface TransferSubmissionPublisherInterface<T> extends
     /**
      * Submit int.
      *
-     * @param inputId    the data id
+     * @param inputId   the input id
      * @param data      the data
      * @param timestamp the timestamp
      * @param meta      the meta

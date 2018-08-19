@@ -26,6 +26,7 @@ public class StringTransferBulkWaitingSubmissionPublisherTest {
 
     @After
     public void tearDown() {
+        this.stringTransferBulkWaitingSubmissionPublisher.close();
     }
 
     @Test
@@ -37,11 +38,13 @@ public class StringTransferBulkWaitingSubmissionPublisherTest {
                         .map(String::getBytes).map(bytes -> bytes.length)
                         .forEach(
                                 countBytesSizeAccumulator::increaseCountAccumulateBytes));
-        InputPublisherBuilder.buildResourceInput("webAccessLogSample.txt")
+        InputPublisher inputPublisher = InputPublisherBuilder
+                .buildResourceInput("webAccessLogSample.txt")
                 .consumeWith(
                         stringTransferBulkWaitingSubmissionPublisher::submit)
                 .start();
         JMThread.sleep(4000);
+        inputPublisher.close();
         Assert.assertEquals(1024, countBytesSizeAccumulator.getCount());
         System.out.println(countBytesSizeAccumulator.getBytesSize());
     }

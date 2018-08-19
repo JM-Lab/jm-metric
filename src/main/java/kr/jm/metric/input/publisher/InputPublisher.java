@@ -4,56 +4,76 @@ import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.flow.publisher.WaitingSubmissionPublisher;
+import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
+import kr.jm.utils.flow.publisher.JMSubmissionPublisherInterface;
 import kr.jm.utils.helper.JMLog;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static kr.jm.utils.flow.publisher.WaitingSubmissionPublisher.getDefaultQueueSizeLimit;
+/**
+ * The type Input publisher.
+ */
+@Slf4j
+public class InputPublisher implements
+        JMSubmissionPublisherInterface<List<Transfer<String>>>, AutoCloseable {
 
-public class InputPublisher extends
-        StringTransferWaitingBulkSubmissionPublisher implements AutoCloseable {
+    private BulkSubmissionPublisher<Transfer<String>> submissionPublisher;
 
+    /**
+     * The Input id.
+     */
     @Getter
     protected String inputId;
+    /**
+     * The Input.
+     */
     protected InputInterface input;
 
+    /**
+     * Instantiates a new Input publisher.
+     *
+     * @param inputConfig the input config
+     */
     public InputPublisher(InputConfigInterface inputConfig) {
-        this(inputConfig.getInputId(), inputConfig.getBulkSize(),
-                inputConfig.getFlushIntervalSeconds(),
-                inputConfig.getWaitingMillis(), inputConfig.getQueueSizeLimit(),
-                inputConfig.buildInput());
+        this(new StringTransferWaitingBulkSubmissionPublisher(
+                        new StringTransferWaitingSubmissionPublisher(
+                                inputConfig.getWaitingMillis(),
+                                inputConfig.getQueueSizeLimit()),
+                        inputConfig.getBulkSize(),
+                        inputConfig.getFlushIntervalSeconds()),
+                inputConfig.getInputId(), inputConfig.buildInput());
     }
 
-    public InputPublisher(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds, InputInterface input) {
-        this(inputId, bulkSize, flushIntervalSeconds,
-                null, null, input);
-    }
-
-    public InputPublisher(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds, Long waitingMillis,
-            Integer queueSizeLimit, InputInterface input) {
-        super(new StringTransferWaitingSubmissionPublisher(
-                        Optional.ofNullable(waitingMillis).orElseGet(
-                                () -> Long.valueOf(getDefaultQueueSizeLimit())),
-                        Optional.ofNullable(queueSizeLimit).orElseGet(
-                                WaitingSubmissionPublisher::getDefaultQueueSizeLimit)),
-                Optional.ofNullable(bulkSize).orElse(DEFAULT_BULK_SIZE),
-                Optional.ofNullable(flushIntervalSeconds)
-                        .orElse(DEFAULT_FLUSH_INTERVAL_SECONDS));
+    /**
+     * Instantiates a new Input publisher.
+     *
+     * @param submissionPublisher the submission publisher
+     * @param inputId             the input id
+     * @param input               the input
+     */
+    public InputPublisher(
+            BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
+            String inputId, InputInterface input) {
+        this.submissionPublisher = submissionPublisher;
         this.inputId = inputId;
         this.input = input;
+        JMLog.info(log, "InputPublisher", inputId, input);
     }
 
-    public void start() {
+    /**
+     * Start input publisher.
+     *
+     * @return the input publisher
+     */
+    public InputPublisher start() {
         JMLog.info(log, "start", inputId);
-        input.start(this::submitSingle);
+        input.start(this.submissionPublisher::submitSingle);
+        return this;
     }
 
 
@@ -62,6 +82,7 @@ public class InputPublisher extends
         JMLog.info(log, "close", inputId);
         try {
             input.close();
+            this.submissionPublisher.close();
         } catch (Exception e) {
             JMExceptionManager.logException(log, e, "close");
         }
@@ -70,21 +91,54 @@ public class InputPublisher extends
     @Override
     public InputPublisher subscribeWith(
             Flow.Subscriber<List<Transfer<String>>>... subscribers) {
-        return (InputPublisher) super.subscribeWith(subscribers);
+        this.submissionPublisher.subscribeWith(subscribers);
+        return this;
     }
 
     @Override
     public InputPublisher consumeWith(
             Consumer<List<Transfer<String>>>... consumers) {
-        return (InputPublisher) super.consumeWith(consumers);
+        this.submissionPublisher.consumeWith(consumers);
+        return this;
     }
 
+    /**
+     * Test input.
+     *
+     * @param data the data
+     */
     public void testInput(String data) {
-        submitSingle(new Transfer<>(this.inputId, data));
+        testInput(Stream.of(data));
     }
 
+    /**
+     * Test input.
+     *
+     * @param dataList the data list
+     */
+    public void testInput(List<String> dataList) {
+        testInput(dataList.stream());
+    }
+
+    /**
+     * Test input.
+     *
+     * @param dataStream the data stream
+     */
     public void testInput(Stream<String> dataStream) {
-        dataStream.forEach(this::testInput);
+        dataStream.map(data -> new Transfer<>(this.inputId, data))
+                .forEach(this.submissionPublisher::submitSingle);
+        this.submissionPublisher.flush();
     }
 
+    @Override
+    public int submit(List<Transfer<String>> item) {
+        return this.submissionPublisher.submit(item);
+    }
+
+    @Override
+    public void subscribe(
+            Flow.Subscriber<? super List<Transfer<String>>> subscriber) {
+        this.submissionPublisher.subscribe(subscriber);
+    }
 }
