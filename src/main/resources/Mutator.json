@@ -34,6 +34,7 @@
           "dateFormatType": "CUSTOM",
           "format": "dd/MMM/yyyy:HH:mm:ss Z",
           "zoneOffset": "",
+          "newFieldName": "@timestamp",
           "changeDateConfig": {
             "dateFormatType": "ISO"
           }

@@ -1,5 +1,8 @@
-package kr.jm.metric.config.mutator.field;
+package kr.jm.metric.mutator;
 
+import kr.jm.metric.config.mutator.field.DateFormatConfig;
+import kr.jm.metric.config.mutator.field.DateFormatType;
+import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.utils.helper.JMJson;
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,19 +10,21 @@ import org.junit.Test;
 
 import java.util.Map;
 
-public class FieldConfigTest {
+public class FieldConfigHandlerTest {
 
     private FieldConfig fieldConfig;
+    private FieldConfigHandler fieldConfigHandler;
 
     @Before
     public void setUp() {
         this.fieldConfig =
                 JMJson.withJsonResource("fieldConfigTest.json",
                         FieldConfig.class);
+        this.fieldConfigHandler = new FieldConfigHandler(this.fieldConfig);
     }
 
     @Test
-    public void testFieldConfig() {
+    public void testApplyFieldConfig() {
         System.out.println(fieldConfig.isRawData());
         Assert.assertFalse(fieldConfig.isRawData());
         Map<String, Object> fieldObjectMap = JMJson.withJsonString(
@@ -38,9 +43,9 @@ public class FieldConfigTest {
                         "      }", JMJson.getMapOrListTypeReference());
 
         Map<String, Object> stringObjectMap =
-                this.fieldConfig.applyConfig(fieldObjectMap);
+                this.fieldConfigHandler.applyFieldConfig(fieldObjectMap);
         System.out.println(stringObjectMap);
-        Assert.assertFalse(fieldObjectMap.containsKey("remoteUser"));
+        Assert.assertFalse(stringObjectMap.containsKey("remoteUser"));
         Assert.assertEquals("172.22.206.86|/app/5104", stringObjectMap.get
                 ("remoteHost|requestUrl"));
         Assert.assertEquals("2015-06-08T18:00:00+1000", stringObjectMap.get
@@ -62,15 +67,18 @@ public class FieldConfigTest {
         this.fieldConfig = new FieldConfig(null, false, null, null, null, Map
                 .of("receivedTimestamp",
                         new DateFormatConfig(DateFormatType.CUSTOM, null,
-                                "dd/MMM/yyyy:HH:mm:ss Z", "",
-                                new DateFormatConfig
-                                        (DateFormatType.ISO, null,
-                                                "yyyy-MM-dd'T'HH:mm:ssZ",
-                                                "+1000", null))),
+                                "dd/MMM/yyyy:HH:mm:ss Z", "", "@timestamp",
+                                new DateFormatConfig(DateFormatType.ISO, null,
+                                        "yyyy-MM-dd'T'HH:mm:ssZ", "+1000", null,
+                                        null))),
                 null, null);
 
-        stringObjectMap = this.fieldConfig.applyConfig(fieldObjectMap);
+        stringObjectMap = new FieldConfigHandler(this.fieldConfig)
+                .applyFieldConfig(fieldObjectMap);
         System.out.println(stringObjectMap);
-
+        Assert.assertEquals("08/Jun/2015:17:00:00 +0900",
+                stringObjectMap.get("receivedTimestamp"));
+        Assert.assertEquals("2015-06-08T08:00:00.000Z",
+                stringObjectMap.get("@timestamp"));
     }
 }

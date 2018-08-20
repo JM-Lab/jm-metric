@@ -18,6 +18,7 @@ public class DateFormatConfig {
     private TimeUnit timeUnit;
     private String format;
     private String zoneOffset;
+    private String newFieldName;
     private DateFormatConfig changeDateConfig;
 
     /**

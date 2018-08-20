@@ -4,6 +4,7 @@ import kr.jm.metric.config.mutator.AbstractMutatorConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.helper.JMLambda;
 import lombok.Getter;
 import org.slf4j.Logger;
 
@@ -25,6 +26,7 @@ public abstract class AbstractFieldMapMutator<C extends AbstractMutatorConfig> i
      * The Log.
      */
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+
     /**
      * The Mutator id.
      */
@@ -43,6 +45,8 @@ public abstract class AbstractFieldMapMutator<C extends AbstractMutatorConfig> i
      */
     @Getter
     protected Map<String, Object> fieldMeta;
+
+    private FieldConfigHandler fieldConfigHandler;
 
     /**
      * Instantiates a new Abstract field map mutator.
@@ -83,7 +87,10 @@ public abstract class AbstractFieldMapMutator<C extends AbstractMutatorConfig> i
             Map<String, Object> fieldObjectMap, String targetString) {
         if (Objects.nonNull(this.fieldConfig)) {
             fieldObjectMap.put(RAW_DATA, targetString);
-            fieldObjectMap = this.fieldConfig.applyConfig(fieldObjectMap);
+            fieldObjectMap = JMLambda.supplierIfNull(this.fieldConfigHandler,
+                    () -> this.fieldConfigHandler =
+                            new FieldConfigHandler(this.fieldConfig))
+                    .applyFieldConfig(fieldObjectMap);
         }
         return new FieldMap(fieldObjectMap);
     }
