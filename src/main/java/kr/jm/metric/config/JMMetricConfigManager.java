@@ -1,6 +1,5 @@
-package kr.jm.metric;
+package kr.jm.metric.config;
 
-import kr.jm.metric.config.AbstractConfigManager;
 import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.mutator.MutatorConfigInterface;
@@ -19,21 +18,29 @@ import java.util.Map;
  */
 @Slf4j
 public class JMMetricConfigManager {
+
     private static final String INPUT_CONFIG_FILENAME = "Input.json";
     private static final String MUTATING_CONFIG_FILENAME =
             "Mutator.json";
     private static final String OUTPUT_CONFIG_FILENAME = "Output.json";
+    private static final String RUNNING_CONFIG_FILENAME =
+            "JMMetricConfig.json";
 
     private InputConfigManager inputConfigManager;
     private MutatorConfigManager mutatorConfigManager;
     private OutputConfigManager outputConfigManager;
+    private RunningConfigManager runningConfigManager;
 
     /**
      * Instantiates a new Jm metric config manager.
      */
     public JMMetricConfigManager() {
+        this(RUNNING_CONFIG_FILENAME);
+    }
+
+    public JMMetricConfigManager(String runningConfigFilename) {
         this(INPUT_CONFIG_FILENAME, MUTATING_CONFIG_FILENAME,
-                OUTPUT_CONFIG_FILENAME);
+                OUTPUT_CONFIG_FILENAME, runningConfigFilename);
     }
 
     /**
@@ -42,14 +49,21 @@ public class JMMetricConfigManager {
      * @param inputConfigFileName   the input config file name
      * @param mutatorConfigFileName the mutator config file name
      * @param outputConfigFileName  the output config file name
+     * @param runningConfigFilename
      */
     public JMMetricConfigManager(String inputConfigFileName, String
-            mutatorConfigFileName, String outputConfigFileName) {
-        this.inputConfigManager = new InputConfigManager(inputConfigFileName);
+            mutatorConfigFileName, String outputConfigFileName,
+            String runningConfigFilename) {
+        this.inputConfigManager =
+                new InputConfigManager(inputConfigFileName);
         this.mutatorConfigManager =
                 new MutatorConfigManager(mutatorConfigFileName);
         this.outputConfigManager =
                 new OutputConfigManager(outputConfigFileName);
+        this.runningConfigManager =
+                new RunningConfigManager(runningConfigFilename,
+                        this.inputConfigManager, this.mutatorConfigManager,
+                        this.outputConfigManager);
     }
 
     /**
@@ -99,7 +113,7 @@ public class JMMetricConfigManager {
      * @param configList the config list
      * @return the abstract config manager
      */
-    public AbstractConfigManager<InputConfigInterface> insertConfigList(
+    public AbstractListConfigManager insertConfigList(
             List<InputConfigInterface> configList) {
         return inputConfigManager.insertConfigList(configList);
     }
@@ -153,7 +167,8 @@ public class JMMetricConfigManager {
      * @param mutatorConfigId the mutator config id
      * @return the mutator config interface
      */
-    public MutatorConfigInterface removeMutatorConfig(String mutatorConfigId) {
+    public MutatorConfigInterface removeMutatorConfig(String
+            mutatorConfigId) {
         return mutatorConfigManager.removeConfig(mutatorConfigId);
     }
 
@@ -218,14 +233,29 @@ public class JMMetricConfigManager {
      */
     public JMMetricConfigManager printAllConfig() {
         loggingConfigInfo("==== Input Config Map ====", inputConfigManager);
-        loggingConfigInfo("==== Mutator Config Map ====", mutatorConfigManager);
-        loggingConfigInfo("==== Output Config Map ====", outputConfigManager);
+        loggingConfigInfo("==== Mutator Config Map ====",
+                mutatorConfigManager);
+        loggingConfigInfo("==== Output Config Map ====",
+                outputConfigManager);
         return this;
     }
 
     private void loggingConfigInfo(String infoHead,
-            AbstractConfigManager configManager) {
-        log.info(JMString.LINE_SEPARATOR + infoHead + JMString.LINE_SEPARATOR +
+            AbstractListConfigManager configManager) {
+        log.info(JMString.LINE_SEPARATOR + infoHead +
+                JMString.LINE_SEPARATOR +
                 JMJson.toPrettyJsonString(configManager.getConfigMap()));
+    }
+
+    public InputConfigInterface getInputConfig() {
+        return runningConfigManager.getInputConfig();
+    }
+
+    public MutatorConfigInterface getMutatorConfig() {
+        return runningConfigManager.getMutatorConfig();
+    }
+
+    public OutputConfigInterface getOutputConfig() {
+        return runningConfigManager.getOutputConfig();
     }
 }

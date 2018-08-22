@@ -29,6 +29,6 @@ public class OutputConfigManagerTest {
                 fileConfigMap.get("enableJsonString").toString());
         Assert.assertEquals("STDOUT", fileConfigMap.get("outputConfigType"));
         System.out.println(outputConfigManager.getConfigMap());
-        Assert.assertEquals(6, outputConfigManager.getConfigMap().size());
+        Assert.assertEquals(4, outputConfigManager.getConfigMap().size());
     }
 }

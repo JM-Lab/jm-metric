@@ -1,6 +1,6 @@
 package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.JMMetricConfigManager;
+import kr.jm.metric.config.JMMetricConfigManager;
 import kr.jm.metric.config.input.KafkaInputConfig;
 import kr.jm.metric.config.output.KafkaOutputConfig;
 import kr.jm.metric.input.publisher.InputPublisher;

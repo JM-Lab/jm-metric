@@ -10,8 +10,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.status.StatusLogger;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -22,10 +20,6 @@ import java.util.Optional;
 @Getter
 @Slf4j
 public class JMMetricMain {
-
-    static {
-        StatusLogger.getLogger().setLevel(Level.OFF);
-    }
 
     private JMMetric jmMetric;
     private String inputId;

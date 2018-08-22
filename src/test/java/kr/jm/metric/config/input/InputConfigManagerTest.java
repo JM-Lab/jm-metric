@@ -22,6 +22,6 @@ public class InputConfigManagerTest {
         InputInterface stdInput =
                 this.inputConfigManager.getConfig("StdIn").buildInput();
         Assert.assertEquals("StdIn", stdInput.getInputId());
-        Assert.assertEquals(3, inputConfigManager.getConfigMap().size());
+        Assert.assertEquals(2, inputConfigManager.getConfigMap().size());
     }
 }

@@ -1,0 +1,11 @@
+{
+  "input": {
+    "inputId": "StdIn"
+  },
+  "mutator": {
+    "mutatorId": "Raw"
+  },
+  "output": {
+    "outputId": "StdOut"
+  }
+}

@@ -1,12 +1,12 @@
 package kr.jm.metric.config.input;
 
-import kr.jm.metric.config.AbstractConfigManager;
+import kr.jm.metric.config.AbstractListConfigManager;
 
 /**
  * The type Input config manager.
  */
 public class InputConfigManager extends
-        AbstractConfigManager<InputConfigInterface> {
+        AbstractListConfigManager<InputConfigInterface> {
     private static final String INPUT_CONFIG_TYPE = "inputConfigType";
 
     /**
@@ -30,7 +30,7 @@ public class InputConfigManager extends
     }
 
     @Override
-    protected String extractMutatorId(InputConfigInterface inputConfig) {
+    protected String extractConfigId(InputConfigInterface inputConfig) {
         return inputConfig.getInputId();
     }
 

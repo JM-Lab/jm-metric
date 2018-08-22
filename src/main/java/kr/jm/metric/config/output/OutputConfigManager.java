@@ -1,12 +1,12 @@
 package kr.jm.metric.config.output;
 
-import kr.jm.metric.config.AbstractConfigManager;
+import kr.jm.metric.config.AbstractListConfigManager;
 
 /**
  * The type Output config manager.
  */
 public class OutputConfigManager extends
-        AbstractConfigManager<OutputConfigInterface> {
+        AbstractListConfigManager<OutputConfigInterface> {
     private static final String OUTPUT_CONFIG_TYPE = "outputConfigType";
 
     /**
@@ -30,7 +30,7 @@ public class OutputConfigManager extends
     }
 
     @Override
-    protected String extractMutatorId(OutputConfigInterface inputConfig) {
+    protected String extractConfigId(OutputConfigInterface inputConfig) {
         return inputConfig.getOutputId();
     }
 

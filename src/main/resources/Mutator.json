@@ -21,7 +21,24 @@
   {
     "mutatorId": "CommonLogFormat",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
-    "format": "%h %l %u %t \"%r\" %>s %b"
+    "format": "%h %l %u %t \"%r\" %>s %b",
+    "fieldConfig": {
+      "rawData": true,
+      "dateFormat": {
+        "receivedTimestamp": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "newFieldName": "@timestamp",
+          "changeDateConfig": {
+            "dateFormatType": "ISO"
+          }
+        }
+      },
+      "dataType": {
+        "sizeByte": "NUMBER"
+      }
+    }
   },
   {
     "mutatorId": "CombinedLogFormat",
@@ -72,6 +89,7 @@
           "dateFormatType": "CUSTOM",
           "format": "dd/MMM/yyyy:HH:mm:ss Z",
           "zoneOffset": "",
+          "newFieldName": "@timestamp",
           "changeDateConfig": {
             "dateFormatType": "ISO"
           }
@@ -91,13 +109,6 @@
           "delimiter": "",
           "formula": "requestTime / 1000",
           "defaultResult": null
-        },
-        {
-          "targetFields": ["requestTime", "sizeByte"],
-          "combinedFieldName": "",
-          "delimiter": null,
-          "formula": "requestTime * sizeByte * requestTime + 1024",
-          "defaultResult": null
         }
       ],
       "dataType": {
@@ -108,14 +119,7 @@
       "unit": {
         "timeLocal": "Second"
       },
-      "ignore": ["remoteUser", "remoteLogName"],
-      "custom": {
-        "customKey": "customValue",
-        "customObject": {
-          "bool": false
-        },
-        "customList": ["hello", "world"]
-      }
+      "ignore": ["remoteUser", "remoteLogName"]
     }
   }
 ]

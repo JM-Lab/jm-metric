@@ -1,6 +1,6 @@
 package kr.jm.metric.config.mutator;
 
-import kr.jm.metric.config.AbstractConfigManager;
+import kr.jm.metric.config.AbstractListConfigManager;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * The type Mutator config manager.
  */
 public class MutatorConfigManager extends
-        AbstractConfigManager<MutatorConfigInterface> {
+        AbstractListConfigManager<MutatorConfigInterface> {
 
     /**
      * The constant MUTATING_CONFIG_TYPE.
@@ -45,7 +45,7 @@ public class MutatorConfigManager extends
     }
 
     @Override
-    protected String extractMutatorId(MutatorConfigInterface mutatorConfig) {
+    protected String extractConfigId(MutatorConfigInterface mutatorConfig) {
         return mutatorConfig.getMutatorId();
     }
 

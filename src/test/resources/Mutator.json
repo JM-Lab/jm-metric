@@ -83,21 +83,40 @@
           "format": "dd/MMM/yyyy:HH:mm:ss Z",
           "zoneOffset": "",
           "changeDateConfig": {
-            "dateFormatType": "CUSTOM",
-            "format": "yyyy-MM-dd'T'HH:mm:ssZ",
-            "zoneOffset": "+1000"
+            "dateFormatType": "ISO"
           }
         }
       },
-      "combinedField": ["remoteHost", "requestUrl"],
+      "combinedFields": [
+        {
+          "targetFields": ["remoteHost", "requestUrl"],
+          "combinedFieldName": "",
+          "delimiter": "|"
+        }
+      ],
+      "formulaFields": [
+        {
+          "targetFields": ["requestTime"],
+          "combinedFieldName": "requestTimeInMicro",
+          "delimiter": "",
+          "formula": "requestTime / 1000",
+          "defaultResult": null
+        },
+        {
+          "targetFields": ["requestTime", "sizeByte"],
+          "combinedFieldName": "",
+          "delimiter": null,
+          "formula": "requestTime * sizeByte * requestTime + 1024",
+          "defaultResult": null
+        }
+      ],
       "dataType": {
         "statusCode": "WORD",
         "userAgent": "WORD",
-        "sizeByte": "NUMBER",
-        "timeLocal": "NUMBER"
+        "sizeByte": "NUMBER"
       },
       "unit": {
-        "timeLocal": "MicroSecond"
+        "timeLocal": "Second"
       },
       "ignore": ["remoteUser", "remoteLogName"],
       "custom": {

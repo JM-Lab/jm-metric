@@ -1,0 +1,86 @@
+{
+  "input": {
+    //  **** File Input Example ****
+    //    "inputId": "File",
+    //    "bulkSize": 16,
+    //    "flushIntervalSeconds": 1,
+    //    "filePath": "testSample.txt",
+    //    "inputConfigType": "FILE",
+    //    "properties": {}
+    //  ****************************
+
+    //  **** Kafka Input Example ****
+    //    "inputId": "LocalKafka",
+    //    "bulkSize": null,
+    //    "flushIntervalSeconds": null,
+    //    "waitingMillis": null,
+    //    "queueSizeLimit": null,
+    //    "bootstrapServers": "localhost:9092",
+    //    "groupId": "KafkaInputGroup",
+    //    "topics": ["testTopic"],
+    //    "latest": false,
+    //    "inputConfigType": "KAFKA",
+    //    "properties": {}
+    //  ****************************
+  },
+  "mutator": {
+    //  **** Apache Access Log Mutator Example ****
+    //    "mutatorId": "CombinedLogFormat",
+    //    "mutatorConfigType": "APACHE_ACCESS_LOG",
+    //    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
+    //    "fieldConfig": {
+    //      "rawData": false,
+    //      "dateFormat": {
+    //        "receivedTimestamp": {
+    //          "dateFormatType": "CUSTOM",
+    //          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+    //          "zoneOffset": "",
+    //          "newFieldName": "@timestamp",
+    //          "changeDateConfig": {
+    //            "dateFormatType": "ISO"
+    //          }
+    //        }
+    //      },
+    //      "dataType": {
+    //        "sizeByte": "NUMBER"
+    //      }
+    //    }
+    //  ****************************
+  },
+  "output": {
+    //  **** File Output Example ****
+    //    "outputId": "File",
+    //    "outputConfigType": "FILE",
+    //    "filePath": "outTest.txt",
+    //    "enableJsonString": true
+    //  ****************************
+
+    //  **** Kafka Output Example ****
+    //    "outputId": "LocalKafkaOutput",
+    //    "bootstrapServers": "localhost:9092",
+    //    "keyField": null,
+    //    "producerId": null,
+    //    "topic": "jm-metric-local",
+    //    "retries": null,
+    //    "batchSize": null,
+    //    "bufferMemory": null,
+    //    "lingerMs": null,
+    //    "outputConfigType": "KAFKA",
+    //    "properties": {}
+    //  ****************************
+
+    //  **** Elasticsearch Output Example ****
+    //    "outputId": "LocalElasticsearch",
+    //    "outputConfigType": "ELASTICSEARCH",
+    //    "elasticsearchConnect": "localhost:9300",
+    //    "clientTransportSniff": false,
+    //    "indexPrefix": "jm-metric-local",
+    //    "indexSuffixDateFormat": "yyyy.MM.dd",
+    //    "zoneId": "UTC",
+    //    "bulkActions": 18,
+    //    "bulkSizeKB": 512,
+    //    "flushIntervalSeconds": 1,
+    //    "properties": {}
+    //  ****************************
+  }
+}
