@@ -107,9 +107,9 @@ public class OutputSubscriberBuilder {
      */
     public static OutputSubscriber buildStdOut(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
-        return build(
-                new StdOutLineOutput(enableJsonString,
-                        transformOutputObjectFunction));
+        return build(new StdOutLineOutput(enableJsonString,
+                transformOutputObjectFunction));
+
     }
 
 
@@ -122,7 +122,7 @@ public class OutputSubscriberBuilder {
      */
     public static OutputSubscriber build(String outputId,
             Consumer<List<Transfer<FieldMap>>> outputConsumer) {
-        return new OutputSubscriber(new OutputInterface() {
+        return build(new OutputInterface() {
             @Override
             public String getOutputId() {
                 return outputId;

@@ -24,11 +24,6 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
     protected String outputId;
     private OutputInterface output;
 
-    /**
-     * Instantiates a new Output subscriber.
-     *
-     * @param output the output
-     */
     public OutputSubscriber(OutputInterface output) {
         super();
         this.outputId = output.getOutputId();

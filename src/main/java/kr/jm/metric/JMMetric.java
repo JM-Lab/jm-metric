@@ -16,7 +16,10 @@ import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.flow.processor.JMTransformProcessor;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
 import kr.jm.utils.flow.processor.JMTransformProcessorInterface;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMLambda;
+import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.helper.JMStream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,11 +38,8 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class JMMetric implements
-        JMTransformProcessorInterface<List<Transfer<String>>,
-                List<Transfer<FieldMap>>>, AutoCloseable {
-
-    private ExecutorService executor;
-    private int maxBufferCapacity;
+        JMTransformProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>>,
+        AutoCloseable {
 
     @Getter
     private JMMetricConfigManager jmMetricConfigManager;
@@ -104,88 +103,22 @@ public class JMMetric implements
      */
     public JMMetric(String inputId, String mutatorConfigId,
             String... outputIds) {
-        this(null, null, inputId, mutatorConfigId, outputIds);
+        this(null, inputId, mutatorConfigId, outputIds);
     }
 
     /**
      * Instantiates a new Jm metric.
      *
      * @param jmMetricConfigManager the jm metric config manager
-     * @param inputId               the input id
-     * @param mutatorConfigId       the mutator config id
-     * @param outputIds             the output ids
-     */
-    public JMMetric(JMMetricConfigManager jmMetricConfigManager, String
-            inputId, String mutatorConfigId,
-            String... outputIds) {
-        this(jmMetricConfigManager, null, inputId, mutatorConfigId, outputIds);
-    }
-
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param executor        the executor
-     * @param inputId         the input id
-     * @param mutatorConfigId the mutator config id
-     * @param outputIds       the output ids
-     */
-    public JMMetric(ExecutorService executor, String inputId,
-            String mutatorConfigId, String... outputIds) {
-        this(null, executor, inputId, mutatorConfigId,
-                outputIds);
-    }
-
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param jmMetricConfigManager the jm metric config manager
-     * @param executor              the executor
      * @param inputId               the input id
      * @param mutatorConfigId       the mutator config id
      * @param outputIds             the output ids
      */
     public JMMetric(JMMetricConfigManager jmMetricConfigManager,
-            ExecutorService executor, String inputId,
-            String mutatorConfigId, String... outputIds) {
-        this(jmMetricConfigManager, executor, null, inputId, mutatorConfigId,
-                outputIds);
-    }
-
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param executor          the executor
-     * @param maxBufferCapacity the max buffer capacity
-     * @param inputId           the input id
-     * @param mutatorConfigId   the mutator config id
-     * @param outputIds         the output ids
-     */
-    public JMMetric(ExecutorService executor, int maxBufferCapacity,
-            String inputId, String mutatorConfigId, String... outputIds) {
-        this(null, executor, maxBufferCapacity, inputId, mutatorConfigId,
-                outputIds);
-    }
-
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param jmMetricConfigManager the jm metric config manager
-     * @param executor              the executor
-     * @param maxBufferCapacity     the max buffer capacity
-     * @param inputId               the input id
-     * @param mutatorConfigId       the mutator config id
-     * @param outputIds             the output ids
-     */
-    public JMMetric(JMMetricConfigManager jmMetricConfigManager,
-            ExecutorService executor, Integer maxBufferCapacity,
             String inputId, String mutatorConfigId, String... outputIds) {
         this.jmMetricConfigManager =
                 JMLambda.supplierIfNull(jmMetricConfigManager,
                         JMMetricConfigManager::new);
-        this.executor = JMLambda.supplierIfNull(executor,
-                JMThread::newThreadPoolWithAvailableProcessors);
-        this.maxBufferCapacity = JMLambda.supplierIfNull(maxBufferCapacity,
-                Flow::defaultBufferSize);
         withInputId(inputId).withMutatorId(mutatorConfigId)
                 .withOutputIds(outputIds).build();
     }
@@ -212,16 +145,13 @@ public class JMMetric implements
 
     private JMMetric withMutatorId(String mutatorConfigId) {
         this.mutatorProcessor = this.inputPublisher.subscribeAndReturnSubcriber(
-                MutatorProcessorBuilder
-                        .build(this.executor, this.maxBufferCapacity,
-                                this.jmMetricConfigManager.getMutatorConfig(
-                                        Optional.ofNullable(mutatorConfigId)
-                                                .orElseGet(() -> Optional
-                                                        .ofNullable(
-                                                                this.jmMetricConfigManager
-                                                                        .getMutatorConfig())
-                                                        .map(MutatorConfigInterface::getMutatorId)
-                                                        .orElse("Raw")))));
+                MutatorProcessorBuilder.build(this.jmMetricConfigManager
+                        .getMutatorConfig(Optional.ofNullable(mutatorConfigId)
+                                .orElseGet(() -> Optional.ofNullable(
+                                        this.jmMetricConfigManager
+                                                .getMutatorConfig())
+                                        .map(MutatorConfigInterface::getMutatorId)
+                                        .orElse("Raw")))));
         return this;
     }
 

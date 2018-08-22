@@ -50,4 +50,6 @@ public interface MutatorConfigInterface extends ConfigInterface {
      * @return the chunk type
      */
     ChunkType getChunkType();
+
+    int getWorkers();
 }

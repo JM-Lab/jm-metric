@@ -43,7 +43,7 @@ public class StringTransferBulkWaitingSubmissionPublisherTest {
                 .consumeWith(
                         stringTransferBulkWaitingSubmissionPublisher::submit)
                 .start();
-        JMThread.sleep(4000);
+        JMThread.sleep(5000);
         inputPublisher.close();
         Assert.assertEquals(1024, countBytesSizeAccumulator.getCount());
         System.out.println(countBytesSizeAccumulator.getBytesSize());

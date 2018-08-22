@@ -43,6 +43,9 @@ public abstract class AbstractMutatorConfig extends AbstractConfig implements
     @Getter
     protected ChunkType chunkType;
 
+    @Getter
+    protected int workers;
+
     /**
      * Instantiates a new Abstract mutator config.
      *

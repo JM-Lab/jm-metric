@@ -69,7 +69,14 @@ public class InputPublisherBuilder {
      * @return the input publisher
      */
     public static InputPublisher build(InputConfigInterface inputConfig) {
-        return new InputPublisher(inputConfig);
+        return new InputPublisher(
+                new StringTransferWaitingBulkSubmissionPublisher(
+                        new StringTransferWaitingSubmissionPublisher(
+                                inputConfig.getWaitingMillis(),
+                                inputConfig.getQueueSizeLimit()),
+                        inputConfig.getBulkSize(),
+                        inputConfig.getFlushIntervalSeconds()),
+                inputConfig.buildInput());
     }
 
 
@@ -103,7 +110,7 @@ public class InputPublisherBuilder {
      * @return the input publisher
      */
     public static InputPublisher buildTestInput(String inputId) {
-        return build(inputId, new InputInterface() {
+        return build(new InputInterface() {
             @Override
             public void close() {
             }
@@ -123,13 +130,11 @@ public class InputPublisherBuilder {
     /**
      * Build input publisher.
      *
-     * @param inputId the input id
-     * @param input   the input
+     * @param input the input
      * @return the input publisher
      */
-    public static InputPublisher build(String inputId, InputInterface input) {
-        return new InputPublisher(new BulkSubmissionPublisher<>(), inputId,
-                input);
+    public static InputPublisher build(InputInterface input) {
+        return new InputPublisher(new BulkSubmissionPublisher<>(), input);
     }
 
     /**
@@ -143,7 +148,7 @@ public class InputPublisherBuilder {
      */
     public static <T> InputPublisher build(String inputId, List<T>
             dataList, Function<T, Transfer<String>> transformFunction) {
-        return build(inputId, new InputInterface() {
+        return build(new InputInterface() {
             @Override
             public String getInputId() {
                 return inputId;

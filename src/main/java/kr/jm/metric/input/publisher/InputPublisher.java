@@ -1,6 +1,5 @@
 package kr.jm.metric.input.publisher;
 
-import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
@@ -37,30 +36,14 @@ public class InputPublisher implements
     /**
      * Instantiates a new Input publisher.
      *
-     * @param inputConfig the input config
-     */
-    public InputPublisher(InputConfigInterface inputConfig) {
-        this(new StringTransferWaitingBulkSubmissionPublisher(
-                        new StringTransferWaitingSubmissionPublisher(
-                                inputConfig.getWaitingMillis(),
-                                inputConfig.getQueueSizeLimit()),
-                        inputConfig.getBulkSize(),
-                        inputConfig.getFlushIntervalSeconds()),
-                inputConfig.getInputId(), inputConfig.buildInput());
-    }
-
-    /**
-     * Instantiates a new Input publisher.
-     *
      * @param submissionPublisher the submission publisher
-     * @param inputId             the input id
      * @param input               the input
      */
     public InputPublisher(
             BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
-            String inputId, InputInterface input) {
+            InputInterface input) {
         this.submissionPublisher = submissionPublisher;
-        this.inputId = inputId;
+        this.inputId = input.getInputId();
         this.input = input;
         JMLog.info(log, "InputPublisher", inputId, input);
     }
