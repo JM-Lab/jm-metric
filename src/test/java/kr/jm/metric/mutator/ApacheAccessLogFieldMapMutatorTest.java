@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class ApacheAccessLogFieldMapMutatorTest {
 
-    private ApacheAccessLogFieldMapMutator apacheAccessLogFieldMapMutator;
+    private ApacheAccessLogMutator apacheAccessLogFieldMapMutator;
     private String mutatorId;
 
     @Before
     public void setUp() {
         this.apacheAccessLogFieldMapMutator =
-                new ApacheAccessLogFieldMapMutator();
+                new ApacheAccessLogMutator();
         this.mutatorId = "testApacheAccessLog";
     }
 

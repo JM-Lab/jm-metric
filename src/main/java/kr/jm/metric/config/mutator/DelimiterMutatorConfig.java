@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.DelimiterFieldMapMutator;
+import kr.jm.metric.mutator.DelimiterMutator;
 import lombok.ToString;
 
 /**
@@ -168,7 +168,7 @@ public class DelimiterMutatorConfig extends AbstractMutatorConfig {
     public String getDiscardRegex() {return this.discardRegex;}
 
     @Override
-    public DelimiterFieldMapMutator buildMutator() {
-        return new DelimiterFieldMapMutator(this);
+    public DelimiterMutator buildMutator() {
+        return new DelimiterMutator(this);
     }
 }

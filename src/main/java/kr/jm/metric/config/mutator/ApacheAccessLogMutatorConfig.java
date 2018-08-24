@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.ApacheAccessLogFieldMapMutator;
+import kr.jm.metric.mutator.ApacheAccessLogMutator;
 import lombok.ToString;
 
 import java.util.Map;
@@ -57,7 +57,7 @@ public class ApacheAccessLogMutatorConfig extends FormattedMutatorConfig {
     }
 
     @Override
-    public ApacheAccessLogFieldMapMutator buildMutator() {
-        return new ApacheAccessLogFieldMapMutator(this);
+    public ApacheAccessLogMutator buildMutator() {
+        return new ApacheAccessLogMutator(this);
     }
 }

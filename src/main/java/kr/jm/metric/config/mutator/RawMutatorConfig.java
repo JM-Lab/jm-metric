@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.RawFieldMapMutator;
+import kr.jm.metric.mutator.RawMutator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -25,7 +25,7 @@ public class RawMutatorConfig extends AbstractMutatorConfig {
 
 
     @Override
-    public RawFieldMapMutator buildMutator() {
-        return new RawFieldMapMutator();
+    public RawMutator buildMutator() {
+        return new RawMutator();
     }
 }

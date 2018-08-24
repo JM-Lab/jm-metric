@@ -4,7 +4,7 @@ import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.config.mutator.field.FilterConfig;
 import kr.jm.metric.mutator.MutatorInterface;
-import kr.jm.metric.mutator.RawFieldMapMutator;
+import kr.jm.metric.mutator.RawMutator;
 import kr.jm.utils.helper.JMOptional;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ public class MutatorProcessorBuilder {
      * @return the mutator processor
      */
     public static MutatorProcessor buildRaw() {
-        return build(new RawFieldMapMutator());
+        return build(new RawMutator());
     }
 
     /**

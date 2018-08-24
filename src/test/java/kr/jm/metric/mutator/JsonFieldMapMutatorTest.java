@@ -8,7 +8,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 public class JsonFieldMapMutatorTest {
-    JsonFieldMapMutator jsonMetricBuilder = new JsonFieldMapMutator();
+    JsonMutator jsonMetricBuilder = new JsonMutator();
 
     @Test
     public void testBuildFieldMap() {

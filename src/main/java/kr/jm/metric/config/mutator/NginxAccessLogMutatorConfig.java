@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.NginxAccessLogFieldMapMutator;
+import kr.jm.metric.mutator.NginxAccessLogMutator;
 import lombok.ToString;
 
 import java.util.Map;
@@ -58,7 +58,7 @@ public class NginxAccessLogMutatorConfig extends FormattedMutatorConfig {
     }
 
     @Override
-    public NginxAccessLogFieldMapMutator buildMutator() {
-        return new NginxAccessLogFieldMapMutator(this);
+    public NginxAccessLogMutator buildMutator() {
+        return new NginxAccessLogMutator(this);
     }
 }

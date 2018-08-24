@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class NginxAccessLogFieldMapMutatorTest {
 
-    private NginxAccessLogFieldMapMutator parser;
+    private NginxAccessLogMutator parser;
     private String mutatorId;
 
     @Before
     public void setUp() {
         this.parser =
-                new NginxAccessLogFieldMapMutator();
+                new NginxAccessLogMutator();
         this.mutatorId = "testNginxAccessLog";
     }
 

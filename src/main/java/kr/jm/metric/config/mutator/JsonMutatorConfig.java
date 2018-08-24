@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.JsonFieldMapMutator;
+import kr.jm.metric.mutator.JsonMutator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -48,7 +48,7 @@ public class JsonMutatorConfig extends AbstractMutatorConfig {
 
 
     @Override
-    public JsonFieldMapMutator buildMutator() {
-        return new JsonFieldMapMutator(this);
+    public JsonMutator buildMutator() {
+        return new JsonMutator(this);
     }
 }

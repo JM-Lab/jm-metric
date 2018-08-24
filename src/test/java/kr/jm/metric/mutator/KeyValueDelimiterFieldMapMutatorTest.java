@@ -9,15 +9,15 @@ import java.util.Map;
 
 public class KeyValueDelimiterFieldMapMutatorTest {
 
-    private KeyValueDelimiterFieldMapMutator keyValueDelimiterParser;
+    private KeyValueDelimiterMutator keyValueDelimiterParser;
 
     @Test
     public void buildFieldStringMap() {
         String targetString =
                 "{remoteUser=frank, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, sizeByte=2326, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), remoteLogName=-, timestamp=10/Oct/2000:13:55:36 -0700, httpStatusCode=200}";
         Assert.assertEquals(Collections.emptyMap(),
-                new KeyValueDelimiterFieldMapMutator().mutate(targetString));
-        this.keyValueDelimiterParser = new KeyValueDelimiterFieldMapMutator(
+                new KeyValueDelimiterMutator().mutate(targetString));
+        this.keyValueDelimiterParser = new KeyValueDelimiterMutator(
                 new KeyValueDelimiterMutatorConfig("keyValueDelimiterTest",
                         null, "=", ", ", "[{}]"));
         Map<String, Object> fieldObjectMap =

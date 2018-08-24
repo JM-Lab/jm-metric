@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.mutator.FormattedFieldMapMutator;
+import kr.jm.metric.mutator.FormattedMutator;
 import kr.jm.utils.datastructure.JMArrays;
 import lombok.Getter;
 import lombok.ToString;
@@ -136,8 +136,8 @@ public class FormattedMutatorConfig extends AbstractMutatorConfig {
     }
 
     @Override
-    public FormattedFieldMapMutator buildMutator() {
-        return new FormattedFieldMapMutator(this);
+    public FormattedMutator buildMutator() {
+        return new FormattedMutator(this);
     }
 
     @Override

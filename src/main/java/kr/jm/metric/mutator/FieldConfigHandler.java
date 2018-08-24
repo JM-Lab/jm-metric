@@ -18,12 +18,12 @@ import java.util.Optional;
 
 import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
-public class FieldConfigHandler {
+class FieldConfigHandler {
 
     private Map<String, MutatorConfigInterface> formatMutatorConfigMap;
     private FieldConfig fieldConfig;
 
-    public FieldConfigHandler(FieldConfig fieldConfig) {
+    FieldConfigHandler(FieldConfig fieldConfig) {
         this.fieldConfig = fieldConfig;
         this.formatMutatorConfigMap = new HashMap<>();
     }
