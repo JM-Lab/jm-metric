@@ -51,6 +51,13 @@ public interface InputConfigInterface extends PropertiesConfigInterface {
     InputConfigType getInputConfigType();
 
     /**
+     * Gets chunk type.
+     *
+     * @return the chunk type
+     */
+    ChunkType getChunkType();
+
+    /**
      * Build input o.
      *
      * @param <O> the type parameter

@@ -37,12 +37,6 @@ public abstract class AbstractMutatorConfig extends AbstractConfig implements
      */
     protected String[] fields;
 
-    /**
-     * The Chunk type.
-     */
-    @Getter
-    protected ChunkType chunkType;
-
     @Getter
     protected int workers;
 

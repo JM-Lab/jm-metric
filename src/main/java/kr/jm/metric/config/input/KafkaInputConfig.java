@@ -42,7 +42,8 @@ public class KafkaInputConfig extends AbstractInputConfig {
      */
     public KafkaInputConfig(String inputId, String bootstrapServers,
             boolean isLatest, String... topics) {
-        this(inputId, bootstrapServers, "KafkaInputGroup", isLatest, topics);
+        this(inputId, null, bootstrapServers, "KafkaInputGroup", isLatest,
+                topics);
     }
 
 
@@ -55,9 +56,10 @@ public class KafkaInputConfig extends AbstractInputConfig {
      * @param isLatest         the is latest
      * @param topics           the topics
      */
-    public KafkaInputConfig(String inputId, String bootstrapServers,
+    public KafkaInputConfig(String inputId, ChunkType chunkType, String
+            bootstrapServers,
             String groupId, boolean isLatest, String... topics) {
-        super(inputId);
+        super(inputId, chunkType);
         this.bootstrapServers = bootstrapServers;
         this.groupId = groupId;
         this.isLatest = isLatest;

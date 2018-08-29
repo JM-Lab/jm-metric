@@ -29,21 +29,7 @@ public class JsonMutatorConfig extends AbstractMutatorConfig {
      * @param fieldConfig the field config
      */
     public JsonMutatorConfig(String mutatorId, FieldConfig fieldConfig) {
-        this(mutatorId, fieldConfig, false);
-    }
-
-    /**
-     * Instantiates a new Json mutator config.
-     *
-     * @param mutatorId   the mutator id
-     * @param fieldConfig the field config
-     * @param isJsonList  the is json list
-     */
-    public JsonMutatorConfig(String mutatorId, FieldConfig fieldConfig,
-            boolean isJsonList) {
         super(mutatorId, MutatorConfigType.JSON, fieldConfig);
-        if (isJsonList)
-            this.chunkType = ChunkType.JSON_LIST;
     }
 
 

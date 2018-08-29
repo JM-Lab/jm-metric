@@ -21,6 +21,10 @@ public class StdInLineInputConfig extends AbstractInputConfig {
         super(inputId);
     }
 
+    public StdInLineInputConfig(String inputId, ChunkType chunkType) {
+        super(inputId, chunkType);
+    }
+
     /**
      * Instantiates a new Std in line input config.
      *
@@ -31,6 +35,13 @@ public class StdInLineInputConfig extends AbstractInputConfig {
     public StdInLineInputConfig(String inputId, Integer bulkSize,
             Integer flushIntervalSeconds) {
         super(inputId, bulkSize, flushIntervalSeconds);
+    }
+
+    public StdInLineInputConfig(String inputId, Integer bulkSize,
+            Integer flushIntervalSeconds, Long waitingMillis,
+            Integer queueSizeLimit, ChunkType chunkType) {
+        super(inputId, bulkSize, flushIntervalSeconds, waitingMillis,
+                queueSizeLimit, chunkType);
     }
 
     @Override

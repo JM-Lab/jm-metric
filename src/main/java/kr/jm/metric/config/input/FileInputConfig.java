@@ -25,6 +25,10 @@ public class FileInputConfig extends AbstractInputConfig {
         this(filePath, null, null, filePath);
     }
 
+    public FileInputConfig(ChunkType chunkType, String filePath) {
+        this(filePath, null, null, null, null, chunkType, filePath);
+    }
+
     /**
      * Instantiates a new File input config.
      *
@@ -45,7 +49,15 @@ public class FileInputConfig extends AbstractInputConfig {
      */
     public FileInputConfig(String inputId, Integer bulkSize,
             Integer flushIntervalSeconds, String filePath) {
-        super(inputId, bulkSize, flushIntervalSeconds);
+        this(inputId, bulkSize, flushIntervalSeconds, null, null, null,
+                filePath);
+    }
+
+    public FileInputConfig(String inputId, Integer bulkSize,
+            Integer flushIntervalSeconds, Long waitingMillis,
+            Integer queueSizeLimit, ChunkType chunkType, String filePath) {
+        super(inputId, bulkSize, flushIntervalSeconds, waitingMillis,
+                queueSizeLimit, chunkType);
         this.filePath = filePath;
     }
 

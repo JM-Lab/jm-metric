@@ -44,12 +44,5 @@ public interface MutatorConfigInterface extends ConfigInterface {
      */
     FieldConfig getFieldConfig();
 
-    /**
-     * Gets chunk type.
-     *
-     * @return the chunk type
-     */
-    ChunkType getChunkType();
-
     int getWorkers();
 }

@@ -1,17 +1,23 @@
 package kr.jm.metric.input.publisher;
 
+import kr.jm.metric.config.input.ChunkType;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
 import kr.jm.utils.flow.publisher.JMSubmissionPublisherInterface;
+import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMString;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -33,6 +39,14 @@ public class InputPublisher implements
      */
     protected InputInterface input;
 
+    private Consumer<Transfer<String>> submitSingleConsumer;
+
+    public InputPublisher(
+            BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
+            InputInterface input) {
+        this(submissionPublisher, input, ChunkType.NONE);
+    }
+
     /**
      * Instantiates a new Input publisher.
      *
@@ -41,11 +55,31 @@ public class InputPublisher implements
      */
     public InputPublisher(
             BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
-            InputInterface input) {
+            InputInterface input, ChunkType chunkType) {
         this.submissionPublisher = submissionPublisher;
         this.inputId = input.getInputId();
         this.input = input;
-        JMLog.info(log, "InputPublisher", inputId, input);
+        this.submitSingleConsumer =
+                initSubmitSingleConsumer(
+                        Optional.ofNullable(chunkType).orElse(ChunkType.NONE));
+        JMLog.info(log, "InputPublisher", inputId, input, chunkType);
+    }
+
+    private Consumer<Transfer<String>> initSubmitSingleConsumer(
+            ChunkType chunkType) {
+        switch (chunkType) {
+            case LINES:
+                return data -> Arrays
+                        .asList(data.getData().split(JMString.LINE_SEPARATOR))
+                        .stream().map(data::newWith)
+                        .forEach(this.submissionPublisher::submitSingle);
+            case JSON_LIST:
+                return data -> JMJson.toList(data.getData()).stream()
+                        .map(JMJson::toJsonString).map(data::newWith)
+                        .forEach(this.submissionPublisher::submitSingle);
+            default:
+                return this.submissionPublisher::submitSingle;
+        }
     }
 
     /**
@@ -55,10 +89,9 @@ public class InputPublisher implements
      */
     public InputPublisher start() {
         JMLog.info(log, "start", inputId);
-        input.start(this.submissionPublisher::submitSingle);
+        input.start(this.submitSingleConsumer);
         return this;
     }
-
 
     @Override
     public void close() {
@@ -109,14 +142,15 @@ public class InputPublisher implements
      * @param dataStream the data stream
      */
     public void testInput(Stream<String> dataStream) {
-        dataStream.map(data -> new Transfer<>(this.inputId, data))
-                .forEach(this.submissionPublisher::submitSingle);
+        submit(dataStream.map(data -> new Transfer<>(this.inputId, data))
+                .collect(Collectors.toList()));
         this.submissionPublisher.flush();
     }
 
     @Override
     public int submit(List<Transfer<String>> item) {
-        return this.submissionPublisher.submit(item);
+        item.stream().forEach(submitSingleConsumer);
+        return item.size();
     }
 
     @Override

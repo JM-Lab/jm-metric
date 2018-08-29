@@ -11,14 +11,6 @@
     }
   },
   {
-    "mutatorId": "JsonList",
-    "mutatorConfigType": "JSON",
-    "chunkType": "JSON_LIST",
-    "fieldConfig": {
-      "rawData": false
-    }
-  },
-  {
     "mutatorId": "CommonLogFormat",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b",

@@ -5,5 +5,13 @@
     "flushIntervalSeconds": 1,
     "inputConfigType": "STDIN",
     "properties": {}
+  },
+  {
+    "inputId": "StdInJsonList",
+    "bulkSize": 16,
+    "flushIntervalSeconds": 1,
+    "inputConfigType": "STDIN",
+    "chunkType": "JSON_LIST",
+    "properties": {}
   }
 ]

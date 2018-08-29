@@ -40,13 +40,20 @@ public abstract class AbstractInputConfig extends
      */
     protected Integer queueSizeLimit;
 
+    @Getter
+    protected ChunkType chunkType;
+
     /**
      * Instantiates a new Abstract input config.
      *
      * @param inputId the input id
      */
     public AbstractInputConfig(String inputId) {
-        this(inputId, null, null);
+        this(inputId, null);
+    }
+
+    public AbstractInputConfig(String inputId, ChunkType chunkType) {
+        this(inputId, null, null, null, null, chunkType);
     }
 
     /**
@@ -58,7 +65,7 @@ public abstract class AbstractInputConfig extends
      */
     public AbstractInputConfig(String inputId, Integer bulkSize,
             Integer flushIntervalSeconds) {
-        this(inputId, bulkSize, flushIntervalSeconds, null, null);
+        this(inputId, bulkSize, flushIntervalSeconds, null, null, null);
     }
 
     @Override

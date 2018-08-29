@@ -76,7 +76,7 @@ public class InputPublisherBuilder {
                                 inputConfig.getQueueSizeLimit()),
                         inputConfig.getBulkSize(),
                         inputConfig.getFlushIntervalSeconds()),
-                inputConfig.buildInput());
+                inputConfig.buildInput(), inputConfig.getChunkType());
     }
 
 
