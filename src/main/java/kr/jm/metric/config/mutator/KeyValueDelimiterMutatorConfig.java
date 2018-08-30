@@ -1,6 +1,7 @@
 package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
+import kr.jm.metric.mutator.KeyValueDelimiterMutator;
 import kr.jm.utils.helper.JMOptional;
 import lombok.ToString;
 
@@ -38,7 +39,7 @@ public class KeyValueDelimiterMutatorConfig extends DelimiterMutatorConfig {
      */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
             FieldConfig fieldConfig) {
-        this(mutatorId, fieldConfig, DefaultKeyValueDelimiterRegex);
+        this(mutatorId, DefaultKeyValueDelimiterRegex, fieldConfig);
     }
 
     /**
@@ -49,60 +50,53 @@ public class KeyValueDelimiterMutatorConfig extends DelimiterMutatorConfig {
      */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
             String keyValueDelimiterRegex) {
-        this(mutatorId, null, keyValueDelimiterRegex, null);
+        this(mutatorId, keyValueDelimiterRegex, null, null);
     }
 
     /**
      * Instantiates a new Key value delimiter mutator config.
      *
      * @param mutatorId              the mutator id
-     * @param fieldConfig            the field config
      * @param keyValueDelimiterRegex the key value delimiter regex
+     * @param fieldConfig            the field config
      */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
-            FieldConfig fieldConfig, String keyValueDelimiterRegex) {
-        this(mutatorId, fieldConfig, keyValueDelimiterRegex, null);
+            String keyValueDelimiterRegex, FieldConfig fieldConfig) {
+        this(mutatorId, keyValueDelimiterRegex, null, null, fieldConfig);
     }
 
     /**
-     * Instantiates a new Key value delimiter mutator config.
+     * Instantiates a new Key value delimiterRegex mutator config.
      *
      * @param mutatorId              the mutator id
-     * @param keyValueDelimiterRegex the key value delimiter regex
-     * @param delimiter              the delimiter
+     * @param keyValueDelimiterRegex the key value delimiterRegex regex
+     * @param delimiterRegex         the delimiterRegex
      */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
-            String keyValueDelimiterRegex, String delimiter) {
-        this(mutatorId, null, keyValueDelimiterRegex, delimiter);
+            String keyValueDelimiterRegex, String delimiterRegex) {
+        this(mutatorId, keyValueDelimiterRegex, delimiterRegex, null);
     }
 
-    /**
-     * Instantiates a new Key value delimiter mutator config.
-     *
-     * @param mutatorId              the mutator id
-     * @param fieldConfig            the field config
-     * @param keyValueDelimiterRegex the key value delimiter regex
-     * @param delimiter              the delimiter
-     */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
-            FieldConfig fieldConfig, String keyValueDelimiterRegex,
-            String delimiter) {
-        this(mutatorId, fieldConfig, keyValueDelimiterRegex, delimiter, null);
+            String keyValueDelimiterRegex, String delimiterRegex,
+            String discardRegex) {
+        this(mutatorId, keyValueDelimiterRegex, delimiterRegex, discardRegex,
+                null);
     }
 
     /**
-     * Instantiates a new Key value delimiter mutator config.
+     * Instantiates a new Key value delimiterRegex mutator config.
      *
      * @param mutatorId              the mutator id
-     * @param fieldConfig            the field config
-     * @param keyValueDelimiterRegex the key value delimiter regex
-     * @param delimiter              the delimiter
+     * @param keyValueDelimiterRegex the key value delimiterRegex regex
+     * @param delimiterRegex         the delimiterRegex
      * @param discardRegex           the discard regex
+     * @param fieldConfig            the field config
      */
     public KeyValueDelimiterMutatorConfig(String mutatorId,
-            FieldConfig fieldConfig, String keyValueDelimiterRegex,
-            String delimiter, String discardRegex) {
-        super(mutatorId, MutatorConfigType.KEY_VALUE_DELIMITER, delimiter,
+            String keyValueDelimiterRegex, String delimiterRegex,
+            String discardRegex, FieldConfig fieldConfig) {
+        super(mutatorId, MutatorConfigType.KEY_VALUE_DELIMITER, delimiterRegex,
                 discardRegex, fieldConfig);
         this.keyValueDelimiterRegex =
                 JMOptional.getOptional(keyValueDelimiterRegex)
@@ -116,4 +110,8 @@ public class KeyValueDelimiterMutatorConfig extends DelimiterMutatorConfig {
      */
     public String getKeyValueDelimiterRegex() {return this.keyValueDelimiterRegex;}
 
+    @Override
+    public KeyValueDelimiterMutator buildMutator() {
+        return new KeyValueDelimiterMutator(this);
+    }
 }

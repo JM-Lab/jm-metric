@@ -19,8 +19,7 @@ public class RawMutatorConfig extends AbstractMutatorConfig {
      * @param mutatorId the mutator id
      */
     public RawMutatorConfig(String mutatorId) {
-        super(mutatorId, MutatorConfigType.RAW, new FieldConfig(null, true,
-                null, null, null, null, null, null));
+        super(mutatorId, MutatorConfigType.RAW, new FieldConfig(true));
     }
 
 

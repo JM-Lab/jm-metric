@@ -54,29 +54,28 @@ public class FieldConfig extends FieldMeta {
 
     protected Map<String, FilterConfig> filter;
 
-    /**
-     * Instantiates a new Field config.
-     *
-     * @param format         the format
-     * @param rawData        the raw data
-     * @param ignore         the ignore
-     * @param combinedFields the combined fields
-     * @param dataType       the data type
-     * @param dateFormat     the date format
-     * @param unit           the unit
-     * @param custom         the custom
-     */
-    public FieldConfig(Map<String, Map<String, Object>> format, boolean rawData,
-            List<String> ignore, CombinedFieldConfig[] combinedFields,
+    public FieldConfig(boolean rawData) {
+        super(null, null);
+        this.rawData = rawData;
+    }
+
+    public FieldConfig(Map<String, String> unit,
+            Map<String, Object> custom,
+            Map<String, Map<String, Object>> format, boolean rawData,
+            List<String> ignore,
+            CombinedFieldConfig[] combinedFields,
+            FormulaFieldConfig[] formulaFields,
             Map<String, DataType> dataType,
             Map<String, DateFormatConfig> dateFormat,
-            Map<String, String> unit, Map<String, Object> custom) {
+            Map<String, FilterConfig> filter) {
         super(unit, custom);
-        this.dateFormat = dateFormat;
-        this.rawData = rawData;
         this.format = format;
+        this.rawData = rawData;
         this.ignore = ignore;
-        this.dataType = dataType;
         this.combinedFields = combinedFields;
+        this.formulaFields = formulaFields;
+        this.dataType = dataType;
+        this.dateFormat = dateFormat;
+        this.filter = filter;
     }
 }

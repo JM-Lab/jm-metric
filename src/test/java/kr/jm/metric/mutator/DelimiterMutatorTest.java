@@ -9,9 +9,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Map;
 
-public class DelimiterFieldMapMutatorTest {
+public class DelimiterMutatorTest {
 
-    private DelimiterMutator delimiterParser;
+    private DelimiterMutator delimiterMutator;
 
     @Before
     public void setUp() {
@@ -27,36 +27,36 @@ public class DelimiterFieldMapMutatorTest {
         String testString = "172.22.206.86 - - [08/Jun/2015:16:59:59 +0900] " +
                 "\"POST /app/5104 HTTP/1.1\" 200 448 \"-\" \"Jakarta Commons-HttpClient/3.1\" 184977";
 
-        this.delimiterParser = new DelimiterMutator(inputConfig);
-        Assert.assertEquals(3, delimiterParser.mutate(testString).size());
+        this.delimiterMutator = new DelimiterMutator(inputConfig);
+        Assert.assertEquals(3, delimiterMutator.mutate(testString).size());
         Assert.assertEquals("172.22.206.86",
-                delimiterParser.mutate(testString).get("field1"));
+                delimiterMutator.mutate(testString).get("field1"));
 
         inputConfig = new DelimiterMutatorConfig("delimiterTest1");
-        this.delimiterParser = new DelimiterMutator(inputConfig);
+        this.delimiterMutator = new DelimiterMutator(inputConfig);
         System.out.println(Arrays.toString(inputConfig.getFields()));
         Map<String, Object> fieldObjectMap1 =
-                delimiterParser.mutate(testString);
+                delimiterMutator.mutate(testString);
         System.out.println(fieldObjectMap1);
         System.out.println(Arrays.toString(inputConfig.getFields()));
 
         inputConfig = new DelimiterMutatorConfig("delimiterTest2",
                 " \\[|\\] \"|\" \"| \"|\" | ");
-        this.delimiterParser = new DelimiterMutator(inputConfig);
+        this.delimiterMutator = new DelimiterMutator(inputConfig);
         System.out.println(Arrays.toString(inputConfig.getFields()));
         Map<String, Object> fieldObjectMap2 =
-                delimiterParser.mutate(testString);
+                delimiterMutator.mutate(testString);
         System.out.println(fieldObjectMap2);
         System.out.println(Arrays.toString(inputConfig.getFields()));
         Assert.assertEquals(fieldObjectMap1.size(), fieldObjectMap2.size());
 
         inputConfig = new DelimiterMutatorConfig("delimiterTest3",
                 " ", "[\\\"\\[\\]]");
-        this.delimiterParser = new DelimiterMutator(inputConfig);
+        this.delimiterMutator = new DelimiterMutator(inputConfig);
         System.out.println(Arrays.toString(inputConfig.getFields()));
         Assert.assertEquals(0, inputConfig.getFields().length);
         Map<String, Object> fieldObjectMap3 =
-                delimiterParser.mutate(testString);
+                delimiterMutator.mutate(testString);
         System.out.println(fieldObjectMap3);
         System.out.println(Arrays.toString(inputConfig.getFields()));
         Assert.assertEquals(fieldObjectMap2.size(), fieldObjectMap3.size());

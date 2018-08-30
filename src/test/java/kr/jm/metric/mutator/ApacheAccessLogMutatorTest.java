@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
-public class ApacheAccessLogFieldMapMutatorTest {
+public class ApacheAccessLogMutatorTest {
 
     private ApacheAccessLogMutator apacheAccessLogFieldMapMutator;
     private String mutatorId;

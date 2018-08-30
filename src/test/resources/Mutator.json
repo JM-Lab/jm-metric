@@ -10,17 +10,15 @@
   {
     "mutatorId": "Delimiter",
     "mutatorConfigType": "DELIMITER",
-    "bindInputId": "testData",
-    "fields": ["field1", "field2"],
     "delimiterRegex": null,
-    "discardRegex": "(){}[];\", "
+    "discardRegex": "[(){}[];\", ]"
   },
   {
     "mutatorId": "KeyValueDelimiter",
     "mutatorConfigType": "KEY_VALUE_DELIMITER",
     "fields": ["remoteHost", "remoteLogName", "remoteUser", "timestamp", "request", "httpStatusCode", "sizeByte", "referer", "userAgent"],
     "delimiterRegex": ":",
-    "discardRegex": "{}\", ",
+    "discardRegex": "[{}\", ]",
     "keyValueDELIMITERRegex": "="
   },
   {

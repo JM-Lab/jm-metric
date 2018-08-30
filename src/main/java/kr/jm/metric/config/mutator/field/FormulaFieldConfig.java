@@ -4,7 +4,10 @@ import kr.jm.utils.JavascriptEvaluator;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -14,14 +17,20 @@ import java.util.Map;
  */
 @Getter
 @ToString(callSuper = true)
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class FormulaFieldConfig extends CombinedFieldConfig {
 
-    private String numberType;
     private String formula;
     private Number defaultResult;
+
+    public FormulaFieldConfig(String[] targetFields,
+            String combinedFieldName, String delimiter, String formula,
+            Number defaultResult) {
+        super(targetFields, combinedFieldName, delimiter);
+        this.formula = formula;
+        this.defaultResult = defaultResult;
+    }
 
     @Override
     public Object buildValue(Map<String, Object> fieldObjectMap) {

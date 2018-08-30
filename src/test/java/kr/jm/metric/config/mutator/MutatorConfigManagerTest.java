@@ -47,8 +47,9 @@ public class MutatorConfigManagerTest {
     public void insertConfigKeyValueDelimiter() {
         String mutatorId = "keyValueDelimiterSample2";
         AbstractMutatorConfig config =
-                new KeyValueDelimiterMutatorConfig(mutatorId, null, "=", ":",
-                        "[{}\", ]");
+                new KeyValueDelimiterMutatorConfig(mutatorId, "=", ":",
+                        "[{}\", ]", null
+                );
         insertConfig(config);
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));

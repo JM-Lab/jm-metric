@@ -64,14 +64,13 @@ public class FieldConfigHandlerTest {
                 "custom={customKey=customValue, customObject={bool=false}, " +
                 "customList=[hello, world]}}", fieldMetaMap.toString());
 
-        this.fieldConfig = new FieldConfig(null, false, null, null, null, Map
-                .of("receivedTimestamp",
-                        new DateFormatConfig(DateFormatType.CUSTOM, null,
-                                "dd/MMM/yyyy:HH:mm:ss Z", "", "@timestamp",
-                                new DateFormatConfig(DateFormatType.ISO, null,
-                                        "yyyy-MM-dd'T'HH:mm:ssZ", "+1000", null,
-                                        null))),
-                null, null);
+        this.fieldConfig = new FieldConfig(null, null, null, false, null, null,
+                null, null, Map.of("receivedTimestamp",
+                new DateFormatConfig(DateFormatType.CUSTOM, null,
+                        "dd/MMM/yyyy:HH:mm:ss Z", "", "@timestamp",
+                        new DateFormatConfig(DateFormatType.ISO, null,
+                                "yyyy-MM-dd'T'HH:mm:ssZ", "+1000", null,
+                                null))), null);
 
         stringObjectMap = new FieldConfigHandler(this.fieldConfig)
                 .applyFieldConfig(fieldObjectMap);

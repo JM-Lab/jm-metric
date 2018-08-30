@@ -8,7 +8,9 @@ import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMFiles;
+import kr.jm.utils.helper.JMPathOperation;
+import kr.jm.utils.helper.JMThread;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,14 +38,6 @@ public class MutatorProcessorTest {
         String configFilePathOrClasspath = "Mutator.json";
         this.mutatorConfigManager =
                 new MutatorConfigManager(configFilePathOrClasspath);
-
-        String stringFromClasspathOrFilePath = JMResources
-                .getStringWithClasspathOrFilePath(configFilePathOrClasspath);
-        System.out.println(stringFromClasspathOrFilePath);
-        this.mutatorConfigManager
-                .insertConfigMapList(JMJson.withRestOrFilePathOrClasspath(
-                        configFilePathOrClasspath,
-                        JMJson.LIST_MAP_TYPE_REFERENCE));
     }
 
     @After
