@@ -74,8 +74,10 @@ public class InputPublisher implements
                         .stream().map(data::newWith)
                         .forEach(this.submissionPublisher::submitSingle);
             case JSON_LIST:
-                return data -> JMJson.toList(data.getData()).stream()
-                        .map(JMJson::toJsonString).map(data::newWith)
+                return data -> Optional
+                        .ofNullable(JMJson.toList(data.getData())).stream()
+                        .flatMap(List::stream).map(JMJson::toJsonString)
+                        .map(data::newWith)
                         .forEach(this.submissionPublisher::submitSingle);
             default:
                 return this.submissionPublisher::submitSingle;
