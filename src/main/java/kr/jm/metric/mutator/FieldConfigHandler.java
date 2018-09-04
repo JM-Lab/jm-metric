@@ -3,13 +3,11 @@ package kr.jm.metric.mutator;
 import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigType;
-import kr.jm.metric.config.mutator.field.DataType;
 import kr.jm.metric.config.mutator.field.DateFormatConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMStream;
-import kr.jm.utils.helper.JMString;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,7 +43,7 @@ class FieldConfigHandler {
         JMStream.buildEntryStream(this.fieldConfig.getDataType())
                 .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
                 .forEach(entry -> fieldObjectMap.put(entry.getKey(),
-                        transformWithDataType(entry.getValue(),
+                        entry.getValue().transform(
                                 fieldObjectMap.get(entry.getKey())
                                         .toString())));
     }
@@ -125,11 +123,6 @@ class FieldConfigHandler {
     private Map<String, Object> buildNestedFieldStringMap(
             MutatorConfigInterface mutatorConfig, String targetString) {
         return mutatorConfig.buildMutator().mutate(targetString);
-    }
-
-    private Object transformWithDataType(DataType dataType, String data) {
-        return DataType.NUMBER.equals(dataType) &&
-                JMString.isNumber(data) ? Double.valueOf(data) : data;
     }
 
 }

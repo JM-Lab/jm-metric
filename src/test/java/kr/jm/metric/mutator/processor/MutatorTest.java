@@ -1,7 +1,9 @@
 package kr.jm.metric.mutator.processor;
 
 import kr.jm.metric.config.mutator.*;
-import kr.jm.metric.config.mutator.field.*;
+import kr.jm.metric.config.mutator.field.DataType;
+import kr.jm.metric.config.mutator.field.FieldConfigBuilder;
+import kr.jm.metric.config.mutator.field.FormulaFieldConfig;
 import kr.jm.metric.mutator.MutatorInterface;
 import kr.jm.utils.helper.JMJson;
 import org.junit.Assert;
@@ -108,12 +110,8 @@ public class MutatorTest {
                                 "%typeInstance", "typeInstance", "%value",
                                 "value", "%timestamp", "timestamp"),
                         new FieldConfigBuilder()
-                                .setDataType(Map.of("value", DataType.NUMBER))
-                                .setDateFormat(Map.of("timestamp",
-                                        new DateFormatConfigBuilder()
-                                                .setDateFormatType(
-                                                        DateFormatType.EPOCH)
-                                                .createDateFormatConfig()))
+                                .setDataType(Map.of("value", DataType.NUMBER,
+                                        "timestamp", DataType.LONG))
                                 .createFieldConfig());
 
         MutatorInterface mutator = mutatorConfig.buildMutator();
@@ -123,7 +121,7 @@ public class MutatorTest {
         System.out.println(result);
         System.out.println(JMJson.toJsonString(mutatorConfig));
         Assert.assertEquals(
-                "{\"hostname\":\"myhost_example_com\",\"pluginInstance\":\"2\",\"plugin\":\"cpu\",\"typeInstance\":\"idle\",\"value\":98.6103,\"timestamp\":\"1329168255\"}",
+                "{\"hostname\":\"myhost_example_com\",\"pluginInstance\":\"2\",\"plugin\":\"cpu\",\"typeInstance\":\"idle\",\"value\":98.6103,\"timestamp\":1329168255}",
                 result);
     }
 }
