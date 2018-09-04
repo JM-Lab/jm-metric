@@ -2,15 +2,13 @@ package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.FormattedMutatorConfig;
 import kr.jm.utils.JMRegex;
-import kr.jm.utils.collections.JMNestedMap;
 import kr.jm.utils.datastructure.JMMap;
+import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import lombok.ToString;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The type Formatted field map mutator.
@@ -18,12 +16,9 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class FormattedMutator extends
         AbstractMutator<FormattedMutatorConfig> {
-    private static Map<String, JMRegex> jmRegexCache = new HashMap<>();
-    private static Map<String, String> namePartGroupRegexCache =
-            new HashMap<>();
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private static JMNestedMap<String, String, String> fieldGroupRegexMapCache =
-            new JMNestedMap<>();
+    private Map<String, String> namePartGroupRegexMap;
+    private Map<String, String> fieldGroupRegexMap;
+    private JMRegex jmRegex;
     private String valueRegex;
     private Map<String, String> fieldNameMap;
 
@@ -34,9 +29,7 @@ public class FormattedMutator extends
      */
     public FormattedMutator(
             FormattedMutatorConfig formattedMutatorConfig) {
-        this(formattedMutatorConfig,
-                JMOptional.getOptional(formattedMutatorConfig.getFieldNameMap())
-                        .orElseGet(Collections::emptyMap));
+        this(formattedMutatorConfig, formattedMutatorConfig.getFieldNameMap());
     }
 
     /**
@@ -55,6 +48,14 @@ public class FormattedMutator extends
                         JMOptional.getOptional(defaultFieldNameMap)
                                 .orElseGet(Collections::emptyMap)),
                 formattedMutatorConfig.getFieldNameMap());
+        this.namePartGroupRegexMap = new HashMap<>();
+        this.fieldGroupRegexMap =
+                JMMap.newChangedKeyValueWithEntryMap(this.fieldNameMap,
+                        Map.Entry::getKey,
+                        entry -> getPartGroupRegex(entry.getKey(),
+                                entry.getValue()));
+        this.jmRegex = new JMRegex(
+                buildGroupRegexString(formattedMutatorConfig.getFormat()));
     }
 
     private Map<String, String> initFieldNameMap(
@@ -71,7 +72,7 @@ public class FormattedMutator extends
      * @return the value regex
      */
     public String getValueRegex() {
-        return valueRegex;
+        return this.valueRegex;
     }
 
     /**
@@ -80,90 +81,37 @@ public class FormattedMutator extends
      * @return the field name map
      */
     public Map<String, String> getFieldNameMap() {
-        return Collections.unmodifiableMap(fieldNameMap);
-    }
-
-    /**
-     * Gets field list.
-     *
-     * @param mutatorId the mutator id
-     * @return the field list
-     */
-    public List<String> getFieldList(String mutatorId) {
-        return JMOptional.getOptional(jmRegexCache, mutatorId)
-                .map(JMRegex::getGroupNameList)
-                .orElseGet(Collections::emptyList);
+        return Collections.unmodifiableMap(this.fieldNameMap);
     }
 
     @Override
     public Map<String, Object> buildFieldObjectMap(String targetString) {
-        return new HashMap<>(
-                getJMRegex(buildGroupRegexString(getMutatorId(),
-                        mutatorConfig.getFormat(),
-                        mutatorConfig.getFieldNameMap()))
-                        .getGroupNameValueMap(targetString));
+        return JMOptional
+                .getOptional(this.jmRegex.getGroupNameValueMap(targetString))
+                .map(map -> JMMap.newChangedValueMap(map, s -> (Object) s))
+                .orElseGet(
+                        () -> JMExceptionManager.handleExceptionAndReturn(log,
+                                new RuntimeException("Parsing Error Occur !!!"),
+                                "buildFieldObjectMap", Collections::emptyMap,
+                                getMutatorId(), jmRegex, targetString));
     }
 
-    private JMRegex getJMRegex(String groupRegexString) {
-        return JMMap.getOrPutGetNew(jmRegexCache, groupRegexString,
-                () -> new JMRegex(groupRegexString));
-    }
-
-    /**
-     * Build group regex string string.
-     *
-     * @param fieldGroupRegexMap the field group regex map
-     * @param formatString       the format string
-     * @return the string
-     */
-    protected String buildGroupRegexString(
-            Map<String, String> fieldGroupRegexMap, String formatString) {
-        for (String field : fieldGroupRegexMap.keySet())
-            if (fieldGroupRegexMap.containsKey(field))
-                formatString = formatString
-                        .replace(field, fieldGroupRegexMap.get(field));
+    protected String buildGroupRegexString(String formatString) {
+        for (String field : this.fieldGroupRegexMap.keySet().stream()
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList()))
+            formatString =
+                    formatString.replace(field, fieldGroupRegexMap.get(field));
         return formatString;
     }
 
-    /**
-     * Build group regex string string.
-     *
-     * @param mutatorId    the mutator id
-     * @param formatString the format string
-     * @param fieldNameMap the field name map
-     * @return the string
-     */
-    public String buildGroupRegexString(String mutatorId, String formatString,
-            Map<String, String> fieldNameMap) {
-        return buildGroupRegexString(
-                getFieldGroupRegexMap(mutatorId, fieldNameMap), formatString);
-    }
-
-    private Map<String, String> getFieldGroupRegexMap(String mutatorId,
-            Map<String, String> fieldNameMap) {
-        return fieldGroupRegexMapCache.getOrPutGetNew(mutatorId,
-                () -> buildGroupRegexMap(fieldNameMap));
-    }
-
-    private Map<String, String> buildGroupRegexMap(
-            Map<String, String> fieldNameMap) {
-        return JMMap.newChangedKeyValueWithEntryMap(
-                buildFinalFieldNameMap(fieldNameMap), Map.Entry::getKey,
-                entry -> getPartGroupRegex(entry.getKey(), entry.getValue()));
-    }
-
-    private Map<String, String> buildFinalFieldNameMap(
-            Map<String, String> fieldNameMap) {
-        Map<String, String> newFieldNameMap =
-                new HashMap<>(this.fieldNameMap);
-        JMOptional.getOptional(fieldNameMap).ifPresent(newFieldNameMap::putAll);
-        return newFieldNameMap;
-    }
-
-
     private String getPartGroupRegex(String field, String name) {
-        return JMMap.getOrPutGetNew(namePartGroupRegexCache, field + name,
+        return JMMap.getOrPutGetNew(this.namePartGroupRegexMap, field + name,
                 () -> buildPartGroupRegex(field, name));
+    }
+
+    public List<String> getFieldList() {
+        return jmRegex.getGroupNameList();
     }
 
     /**
@@ -174,6 +122,6 @@ public class FormattedMutator extends
      * @return the string
      */
     protected String buildPartGroupRegex(String field, String name) {
-        return "(?<" + name + ">" + valueRegex + ")";
+        return "(?<" + name + ">" + this.valueRegex + ")";
     }
 }

@@ -142,7 +142,7 @@ public class FormattedMutatorConfig extends AbstractMutatorConfig {
 
     @Override
     public String[] getFields() {
-        return JMArrays.toArray(buildMutator().getFieldList(getMutatorId()));
+        return JMArrays.toArray(buildMutator().getFieldList());
     }
 
 }

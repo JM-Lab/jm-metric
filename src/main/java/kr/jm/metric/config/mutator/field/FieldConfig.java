@@ -1,9 +1,6 @@
 package kr.jm.metric.config.mutator.field;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +10,7 @@ import java.util.Map;
  */
 @Getter
 @ToString(callSuper = true)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FieldConfig extends FieldMeta {
     /**
@@ -54,28 +52,4 @@ public class FieldConfig extends FieldMeta {
 
     protected Map<String, FilterConfig> filter;
 
-    public FieldConfig(boolean rawData) {
-        super(null, null);
-        this.rawData = rawData;
-    }
-
-    public FieldConfig(Map<String, String> unit,
-            Map<String, Object> custom,
-            Map<String, Map<String, Object>> format, boolean rawData,
-            List<String> ignore,
-            CombinedFieldConfig[] combinedFields,
-            FormulaFieldConfig[] formulaFields,
-            Map<String, DataType> dataType,
-            Map<String, DateFormatConfig> dateFormat,
-            Map<String, FilterConfig> filter) {
-        super(unit, custom);
-        this.format = format;
-        this.rawData = rawData;
-        this.ignore = ignore;
-        this.combinedFields = combinedFields;
-        this.formulaFields = formulaFields;
-        this.dataType = dataType;
-        this.dateFormat = dateFormat;
-        this.filter = filter;
-    }
 }

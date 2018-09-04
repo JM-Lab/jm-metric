@@ -5,8 +5,6 @@ import kr.jm.metric.config.mutator.NginxAccessLogMutatorConfig;
 import kr.jm.utils.helper.JMJson;
 import lombok.ToString;
 
-import java.util.Map;
-
 /**
  * The type Nginx access log field map mutator.
  */
@@ -34,10 +32,8 @@ public class NginxAccessLogMutator extends FormattedMutator {
     }
 
     @Override
-    protected String buildGroupRegexString(
-            Map<String, String> fieldGroupRegexMap,
-            String formatString) {
-        return super.buildGroupRegexString(fieldGroupRegexMap, formatString)
+    protected String buildGroupRegexString(String formatString) {
+        return super.buildGroupRegexString(formatString)
                 .replaceAll("[\\[\\]]", "\\\\$0");
     }
 }

@@ -1,6 +1,6 @@
 package kr.jm.metric.config.mutator;
 
-import kr.jm.metric.config.mutator.field.FieldConfig;
+import kr.jm.metric.config.mutator.field.FieldConfigBuilder;
 import kr.jm.metric.mutator.RawMutator;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,8 @@ public class RawMutatorConfig extends AbstractMutatorConfig {
      * @param mutatorId the mutator id
      */
     public RawMutatorConfig(String mutatorId) {
-        super(mutatorId, MutatorConfigType.RAW, new FieldConfig(true));
+        super(mutatorId, MutatorConfigType.RAW,
+                new FieldConfigBuilder().setRawData(true).createFieldConfig());
     }
 
 

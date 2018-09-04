@@ -1,8 +1,9 @@
 package kr.jm.metric.mutator;
 
-import kr.jm.metric.config.mutator.field.DateFormatConfig;
+import kr.jm.metric.config.mutator.field.DateFormatConfigBuilder;
 import kr.jm.metric.config.mutator.field.DateFormatType;
 import kr.jm.metric.config.mutator.field.FieldConfig;
+import kr.jm.metric.config.mutator.field.FieldConfigBuilder;
 import kr.jm.utils.helper.JMJson;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,13 +65,28 @@ public class FieldConfigHandlerTest {
                 "custom={customKey=customValue, customObject={bool=false}, " +
                 "customList=[hello, world]}}", fieldMetaMap.toString());
 
-        this.fieldConfig = new FieldConfig(null, null, null, false, null, null,
-                null, null, Map.of("receivedTimestamp",
-                new DateFormatConfig(DateFormatType.CUSTOM, null,
-                        "dd/MMM/yyyy:HH:mm:ss Z", "", "@timestamp",
-                        new DateFormatConfig(DateFormatType.ISO, null,
-                                "yyyy-MM-dd'T'HH:mm:ssZ", "+1000", null,
-                                null))), null);
+        this.fieldConfig =
+                new FieldConfigBuilder().setRawData(false)
+                        .setDateFormat(Map.of("receivedTimestamp",
+                                new DateFormatConfigBuilder().setDateFormatType(
+                                        DateFormatType.CUSTOM).setTimeUnit(null)
+                                        .setFormat("dd/MMM/yyyy:HH:mm:ss Z")
+                                        .setZoneOffset("")
+                                        .setNewFieldName("@timestamp")
+                                        .setChangeDateConfig(
+                                                new DateFormatConfigBuilder()
+                                                        .setDateFormatType(
+                                                                DateFormatType.ISO)
+                                                        .setTimeUnit(null)
+                                                        .setFormat(
+                                                                "yyyy-MM-dd'T'HH:mm:ssZ")
+                                                        .setZoneOffset("+1000")
+                                                        .setNewFieldName(null)
+                                                        .setChangeDateConfig(
+                                                                null)
+                                                        .createDateFormatConfig())
+                                        .createDateFormatConfig())).setFilter(null)
+                        .createFieldConfig();
 
         stringObjectMap = new FieldConfigHandler(this.fieldConfig)
                 .applyFieldConfig(fieldObjectMap);
