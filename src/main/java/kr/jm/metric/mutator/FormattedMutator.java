@@ -5,7 +5,8 @@ import kr.jm.utils.JMRegex;
 import kr.jm.utils.datastructure.JMMap;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
-import lombok.ToString;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,14 +14,12 @@ import java.util.stream.Collectors;
 /**
  * The type Formatted field map mutator.
  */
-@ToString(callSuper = true)
+@Slf4j
 public class FormattedMutator extends
         AbstractMutator<FormattedMutatorConfig> {
-    private Map<String, String> namePartGroupRegexMap;
-    private Map<String, String> fieldGroupRegexMap;
-    private JMRegex jmRegex;
+    @Getter
     private String valueRegex;
-    private Map<String, String> fieldNameMap;
+    JMRegex jmRegex;
 
     /**
      * Instantiates a new Formatted field map mutator.
@@ -44,18 +43,17 @@ public class FormattedMutator extends
         super(formattedMutatorConfig);
         this.valueRegex =
                 formattedMutatorConfig.isWordValueRegex() ? "\\S+" : ".+";
-        this.fieldNameMap = initFieldNameMap(new HashMap<>(
+        Map<String, String> fieldNameMap = initFieldNameMap(new HashMap<>(
                         JMOptional.getOptional(defaultFieldNameMap)
                                 .orElseGet(Collections::emptyMap)),
                 formattedMutatorConfig.getFieldNameMap());
-        this.namePartGroupRegexMap = new HashMap<>();
-        this.fieldGroupRegexMap =
-                JMMap.newChangedKeyValueWithEntryMap(this.fieldNameMap,
+        Map<String, String> fieldGroupRegexMap =
+                JMMap.newChangedKeyValueWithEntryMap(fieldNameMap,
                         Map.Entry::getKey,
-                        entry -> getPartGroupRegex(entry.getKey(),
+                        entry -> buildPartGroupRegex(entry.getKey(),
                                 entry.getValue()));
-        this.jmRegex = new JMRegex(
-                buildGroupRegexString(formattedMutatorConfig.getFormat()));
+        this.jmRegex = new JMRegex(initGroupRegexString(fieldGroupRegexMap,
+                formattedMutatorConfig.getFormat()));
     }
 
     private Map<String, String> initFieldNameMap(
@@ -64,24 +62,6 @@ public class FormattedMutator extends
         JMOptional.getOptional(fieldNameMap)
                 .ifPresent(defaultFieldNameMap::putAll);
         return defaultFieldNameMap;
-    }
-
-    /**
-     * Gets value regex.
-     *
-     * @return the value regex
-     */
-    public String getValueRegex() {
-        return this.valueRegex;
-    }
-
-    /**
-     * Gets field name map.
-     *
-     * @return the field name map
-     */
-    public Map<String, String> getFieldNameMap() {
-        return Collections.unmodifiableMap(this.fieldNameMap);
     }
 
     @Override
@@ -96,18 +76,14 @@ public class FormattedMutator extends
                                 getMutatorId(), jmRegex, targetString));
     }
 
-    protected String buildGroupRegexString(String formatString) {
-        for (String field : this.fieldGroupRegexMap.keySet().stream()
+    protected String initGroupRegexString(
+            Map<String, String> fieldGroupRegexMap, String formatString) {
+        for (String field : fieldGroupRegexMap.keySet().stream()
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList()))
-            formatString =
-                    formatString.replace(field, fieldGroupRegexMap.get(field));
+            formatString = formatString
+                    .replace(field, fieldGroupRegexMap.get(field));
         return formatString;
-    }
-
-    private String getPartGroupRegex(String field, String name) {
-        return JMMap.getOrPutGetNew(this.namePartGroupRegexMap, field + name,
-                () -> buildPartGroupRegex(field, name));
     }
 
     public List<String> getFieldList() {
@@ -124,4 +100,5 @@ public class FormattedMutator extends
     protected String buildPartGroupRegex(String field, String name) {
         return "(?<" + name + ">" + this.valueRegex + ")";
     }
+
 }
