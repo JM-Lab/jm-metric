@@ -2,21 +2,17 @@ package kr.jm.metric;
 
 import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.JMMetricConfigManager;
+import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.metric.config.mutator.*;
 import kr.jm.metric.config.mutator.field.DateFormatType;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
-import kr.jm.metric.input.publisher.InputPublisher;
-import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.JMWordSplitter;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
-import kr.jm.utils.helper.JMFiles;
-import kr.jm.utils.helper.JMJson;
-import kr.jm.utils.helper.JMPathOperation;
-import kr.jm.utils.helper.JMThread;
+import kr.jm.utils.helper.*;
 import kr.jm.utils.stats.generator.WordCountGenerator;
 import org.junit.After;
 import org.junit.Assert;
@@ -38,7 +34,6 @@ public class JMMetricTest {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
     }
 
-    private static final String FileName = "webAccessLogSample.txt";
     private JMMetric jmMetric;
 
     @After
@@ -89,9 +84,8 @@ public class JMMetricTest {
         LongAdder count = new LongAdder();
         LongAdder lineCount = new LongAdder();
 
-        jmMetric = new JMMetric();
         JMMetricConfigManager jmMetricConfigManager =
-                jmMetric.getJmMetricConfigManager();
+                new JMMetricConfigManager();
         ApacheAccessLogMutatorConfig apacheAccessLogSample =
                 (ApacheAccessLogMutatorConfig) jmMetricConfigManager
                         .getMutatorConfig("ApacheAccessLog");
@@ -106,6 +100,10 @@ public class JMMetricTest {
                 new ApacheAccessLogMutatorConfig("apache2", fieldConfig,
                         apacheAccessLogSample.getFormat());
         jmMetricConfigManager.insertMutatorConfig(mutatorConfig2);
+
+        String fileName =
+                JMResources.getURL("webAccessLogSample.txt").getPath();
+        jmMetricConfigManager.insertInputConfig(new FileInputConfig(fileName));
         Optional<Path> pathAsOpt1 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
@@ -114,17 +112,15 @@ public class JMMetricTest {
                 .buildFileOutput(path1.toAbsolutePath().toString());
 
 
-        jmMetric = new JMMetric(jmMetricConfigManager, "apache")
+        jmMetric = new JMMetric(jmMetricConfigManager, fileName, "apache")
                 .subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
                 .subscribeWith(fileOutputSubscriber1)
                 .consumeWith(mutatorIdTransferList -> count.increment())
                 .consumeWith(mutatorIdTransferList -> lineCount
-                        .add(mutatorIdTransferList.size()));
-        InputPublisher inputPublisher =
-                InputPublisherBuilder.buildResourceInput(FileName)
-                        .subscribeWith(jmMetric).start();
+                        .add(mutatorIdTransferList.size()))
+                .start();
         JMThread.sleep(3000);
-        inputPublisher.close();
+
         fileOutputSubscriber1.close();
 
         System.out.println(count);

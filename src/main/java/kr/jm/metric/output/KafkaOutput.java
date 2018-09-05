@@ -31,7 +31,8 @@ public class KafkaOutput extends AbstractOutput {
     public KafkaOutput(KafkaOutputConfig outputConfig) {
         super(outputConfig);
         this.topic = outputConfig.getTopic();
-        this.keyField = outputConfig.getKeyField();
+        this.keyField = JMOptional.getOptional(outputConfig.getKeyField())
+                .orElse(null);
         this.kafkaProducer = new JMKafkaProducer(buildProperties(outputConfig))
                 .withDefaultTopic(topic);
     }
@@ -58,9 +59,8 @@ public class KafkaOutput extends AbstractOutput {
     }
 
     private void writeData(FieldMap fieldMap) {
-        JMOptional.getOptional(fieldMap, keyField).map(Object::toString)
-                .ifPresentOrElse(this.kafkaProducer::sendJsonString, () -> log
-                        .warn("No KeyField !!! - keyField = {}, fieldMap = {}",
-                                keyField, fieldMap));
+        this.kafkaProducer.sendJsonString(
+                JMOptional.getOptional(keyField).map(fieldMap::get)
+                        .map(Object::toString).orElse(null), fieldMap);
     }
 }

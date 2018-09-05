@@ -168,10 +168,11 @@ public class JMMetric implements
     /**
      * Start.
      */
-    public void start() {
+    public JMMetric start() {
         JMLog.info(log, "start", getInputId(), getMutatorId(),
                 getOutputIdList());
         this.inputPublisher.start();
+        return this;
     }
 
     /**
