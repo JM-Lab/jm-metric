@@ -18,8 +18,9 @@ public interface MutatorInterface extends
     @Override
     default Transfer<FieldMap> apply(Transfer<String> inputTransfer) {
         return inputTransfer.newWith(
-                buildFinalFieldMap(mutate(inputTransfer.getData()),
-                        buildMeta(inputTransfer)));
+                JMOptional.getOptional(mutate(inputTransfer.getData()))
+                        .map(map -> buildFinalFieldMap(map,
+                                buildMeta(inputTransfer))).orElse(null));
     }
 
     private FieldMap buildFinalFieldMap(Map<String, Object> fieldObjectMap,
