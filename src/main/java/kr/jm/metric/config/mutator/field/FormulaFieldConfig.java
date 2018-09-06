@@ -2,6 +2,7 @@ package kr.jm.metric.config.mutator.field;
 
 import kr.jm.utils.JavascriptEvaluator;
 import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.helper.JMLambda;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import lombok.AccessLevel;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -23,6 +26,7 @@ public class FormulaFieldConfig extends CombinedFieldConfig {
 
     private String formula;
     private Number defaultResult;
+    private String[] sortedTargetFields;
 
     public FormulaFieldConfig(String[] targetFields,
             String combinedFieldName, String delimiter, String formula,
@@ -44,7 +48,7 @@ public class FormulaFieldConfig extends CombinedFieldConfig {
 
     private String buildFormula(Map<String, Object> fieldObjectMap) {
         String formula = this.formula;
-        for (String field : getTargetFields())
+        for (String field : getSortedTargetFields())
             formula = buildFormula(fieldObjectMap, formula, field);
         return formula;
     }
@@ -58,5 +62,14 @@ public class FormulaFieldConfig extends CombinedFieldConfig {
                         "Fail To Build Formula !!!"));
     }
 
+    public String[] getSortedTargetFields() {
+        return JMLambda.supplierIfNull(this.sortedTargetFields, () -> this
+                .sortedTargetFields = buildSortedTargetFields());
+    }
 
+    private String[] buildSortedTargetFields() {
+        return JMOptional.getOptional(getTargetFields()).stream()
+                .flatMap(Arrays::stream).sorted(Comparator.reverseOrder())
+                .toArray(String[]::new);
+    }
 }
