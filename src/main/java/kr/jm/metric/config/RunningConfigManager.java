@@ -8,56 +8,58 @@ import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMRestfulResource;
+import kr.jm.utils.helper.JMResources;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
-public class RunningConfigManager extends AbstractConfigManager<RunningConfig> {
+public class RunningConfigManager extends AbstractConfigManager {
 
     private RunningConfig runningConfig;
     private InputConfigInterface inputConfig;
     private MutatorConfigInterface mutatorConfig;
-    private OutputConfigInterface outputConfig;
+    private List<OutputConfigInterface> outputConfigs;
 
     public RunningConfigManager(String runningConfigFilename,
             InputConfigManager inputConfigManager,
             MutatorConfigManager mutatorConfigManager,
             OutputConfigManager outputConfigManager) {
-        loadConfigRunningConfig(runningConfigFilename);
+
+        this.runningConfig = transformRunningConfig(runningConfigFilename);
         if (Objects.nonNull(this.runningConfig)) {
-            buildCombinedConfigAsOpt(inputConfigManager,
-                    this.runningConfig.getInput())
+            this.runningConfig.getInputIdAsOpt().flatMap(inputId ->
+                    buildCombinedConfigAsOpt(inputConfigManager, inputId,
+                            this.runningConfig.getInput()))
                     .ifPresent(inputConfig -> inputConfigManager
-                            .insertConfig(this.inputConfig = inputConfig));
-            buildCombinedConfigAsOpt(mutatorConfigManager,
-                    this.runningConfig.getMutator())
+                            .insertConfig(
+                                    this.inputConfig = inputConfig));
+            this.runningConfig.getMutatorIdAsOpt().flatMap(mutatorId
+                    -> buildCombinedConfigAsOpt(mutatorConfigManager, mutatorId,
+                    this.runningConfig.getMutator()))
                     .ifPresent(mutatorConfig -> mutatorConfigManager
                             .insertConfig(this.mutatorConfig = mutatorConfig));
-            buildCombinedConfigAsOpt(outputConfigManager,
-                    this.runningConfig.getOutput())
-                    .ifPresent(outputConfig -> outputConfigManager
-                            .insertConfig(this.outputConfig = outputConfig));
+            this.outputConfigs =
+                    runningConfig.getOutputIdMap().entrySet().stream()
+                            .map(entry -> buildCombinedConfigAsOpt(
+                                    outputConfigManager, entry.getKey(),
+                                    entry.getValue()))
+                            .filter(Optional::isPresent).map(Optional::get)
+                            .peek(outputConfigManager::insertConfig)
+                            .collect(Collectors.toList());
         }
-    }
-
-    private void loadConfigRunningConfig(String runningConfigFilename) {
-        Optional.ofNullable(Optional.ofNullable(transformRunningConfig(
-                buildDefaultConfigPath(runningConfigFilename))).orElseGet(()
-                -> transformRunningConfig(runningConfigFilename)))
-                .ifPresent(runningConfig -> this.runningConfig = runningConfig);
     }
 
     private RunningConfig transformRunningConfig(String jmMetricConfigUrl) {
         try {
-            return ConfigObjectMapper.readValue(JMOptional.getOptional(
-                    JMRestfulResource.getStringWithRestOrFilePathOrClasspath(
-                            jmMetricConfigUrl))
+            return ConfigObjectMapper.readValue(
+                    JMResources.getStringAsOptWithFilePath(jmMetricConfigUrl)
                             .orElseThrow(NullPointerException::new),
                     RunningConfig.class);
         } catch (Exception e) {
@@ -67,15 +69,19 @@ public class RunningConfigManager extends AbstractConfigManager<RunningConfig> {
     }
 
     private <C extends ConfigInterface> Optional<C> buildCombinedConfigAsOpt(
-            AbstractListConfigManager<C> configManager,
+            AbstractListConfigManager<C> configManager, String configId,
             Map<String, Object> configMap) {
-        return Optional.ofNullable(configManager.transform(configMap))
-                .flatMap(config -> Optional.ofNullable(configManager
-                        .getConfig(configManager.extractConfigId(config)))
-                        .map(ConfigInterface::extractConfigMap)
-                        .map(oldConfigMap -> buildCombinedConfigMap(
-                                configMap, oldConfigMap))
-                        .map(configManager::transform));
+        try {
+            return JMOptional.getOptional(configId)
+                    .map(configManager::getConfig)
+                    .map(ConfigInterface::extractConfigMap)
+                    .map(oldConfigMap -> buildCombinedConfigMap(configMap,
+                            oldConfigMap))
+                    .map(configManager::transform);
+        } catch (Exception e) {
+            throw JMExceptionManager.handleExceptionAndReturnRuntimeEx(log, e,
+                    "buildCombinedConfigAsOpt", configManager, configMap);
+        }
     }
 
     private Map<String, Object> buildCombinedConfigMap(

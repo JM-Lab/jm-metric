@@ -19,7 +19,7 @@ public class InputPublisherTest {
 
     @Before
     public void setUp() {
-        String configFilePathOrClasspath = "Input.json";
+        String configFilePathOrClasspath = "config/Input.json";
         this.inputConfigManager =
                 new InputConfigManager(configFilePathOrClasspath);
     }

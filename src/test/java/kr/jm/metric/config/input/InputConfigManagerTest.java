@@ -12,7 +12,7 @@ public class InputConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.inputConfigManager = new InputConfigManager("Input.json");
+        this.inputConfigManager = new InputConfigManager("config/Input.json");
     }
 
     @Test

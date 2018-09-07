@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StdOutputConfig extends AbstractOutputConfig {
+public class StdOutLineOutputConfig extends AbstractOutputConfig {
 
     private boolean enableJsonString;
 
@@ -21,7 +21,7 @@ public class StdOutputConfig extends AbstractOutputConfig {
      *
      * @param enableJsonString the enable json string
      */
-    public StdOutputConfig(boolean enableJsonString) {
+    public StdOutLineOutputConfig(boolean enableJsonString) {
         this("StdOutLineOutput-Json-" + enableJsonString, enableJsonString);
     }
 
@@ -31,7 +31,7 @@ public class StdOutputConfig extends AbstractOutputConfig {
      * @param outputId         the output id
      * @param enableJsonString the enable json string
      */
-    public StdOutputConfig(String outputId, boolean enableJsonString) {
+    public StdOutLineOutputConfig(String outputId, boolean enableJsonString) {
         super(outputId);
         this.enableJsonString = enableJsonString;
     }

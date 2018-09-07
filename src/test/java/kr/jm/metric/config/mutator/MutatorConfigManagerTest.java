@@ -17,7 +17,7 @@ public class MutatorConfigManagerTest {
     @Before
     public void setUp() {
         this.mutatorConfigManager =
-                new MutatorConfigManager("Mutator.json");
+                new MutatorConfigManager("config/Mutator.json");
     }
 
     @Test

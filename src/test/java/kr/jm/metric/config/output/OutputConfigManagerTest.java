@@ -12,7 +12,7 @@ public class OutputConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.outputConfigManager = new OutputConfigManager("Output.json");
+        this.outputConfigManager = new OutputConfigManager("config/Output.json");
     }
 
     @Test

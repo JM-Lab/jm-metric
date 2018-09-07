@@ -1,6 +1,6 @@
 package kr.jm.metric.output;
 
-import kr.jm.metric.config.output.StdOutputConfig;
+import kr.jm.metric.config.output.StdOutLineOutputConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMJson;
@@ -48,7 +48,7 @@ public class StdOutLineOutput extends AbstractOutput {
      */
     public StdOutLineOutput(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
-        this(new StdOutputConfig(enableJsonString),
+        this(new StdOutLineOutputConfig(enableJsonString),
                 transformOutputObjectFunction);
     }
 
@@ -57,7 +57,7 @@ public class StdOutLineOutput extends AbstractOutput {
      *
      * @param outputConfig the output config
      */
-    public StdOutLineOutput(StdOutputConfig outputConfig) {
+    public StdOutLineOutput(StdOutLineOutputConfig outputConfig) {
         this(outputConfig, null);
     }
 
@@ -67,7 +67,7 @@ public class StdOutLineOutput extends AbstractOutput {
      * @param outputConfig                  the output config
      * @param transformOutputObjectFunction the transform output object function
      */
-    public StdOutLineOutput(StdOutputConfig outputConfig,
+    public StdOutLineOutput(StdOutLineOutputConfig outputConfig,
             Function<List<Transfer<FieldMap>>, List<Object>>
                     transformOutputObjectFunction) {
         super(outputConfig);

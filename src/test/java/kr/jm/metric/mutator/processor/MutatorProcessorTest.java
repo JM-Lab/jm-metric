@@ -35,7 +35,7 @@ public class MutatorProcessorTest {
 
     @Before
     public void setUp() {
-        String configFilePathOrClasspath = "Mutator.json";
+        String configFilePathOrClasspath = "config/Mutator.json";
         this.mutatorConfigManager =
                 new MutatorConfigManager(configFilePathOrClasspath);
     }

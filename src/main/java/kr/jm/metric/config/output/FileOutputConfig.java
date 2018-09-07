@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FileOutputConfig extends StdOutputConfig {
+public class FileOutputConfig extends StdOutLineOutputConfig {
 
     private String filePath;
 

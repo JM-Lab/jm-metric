@@ -1,14 +1,12 @@
 package kr.jm.metric.config;
 
-import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMLog;
 import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMRestfulResource;
+import kr.jm.utils.helper.JMResources;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
@@ -17,7 +15,7 @@ import java.util.stream.Stream;
  * @param <C> the type parameter
  */
 public abstract class AbstractListConfigManager<C extends ConfigInterface>
-        extends AbstractConfigManager<C> {
+        extends AbstractConfigManager {
 
     /**
      * The Config map.
@@ -28,7 +26,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
      * Instantiates a new Abstract config manager.
      */
     public AbstractListConfigManager() {
-        this.configMap = new ConcurrentHashMap<>();
+        this.configMap = new HashMap<>();
     }
 
     /**
@@ -64,12 +62,12 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
     /**
      * Load config abstract config manager.
      *
-     * @param configFilename the config filename
+     * @param configFilePath the config filename
      * @return the abstract config manager
      */
-    public AbstractListConfigManager<C> loadConfig(String configFilename) {
+    public AbstractListConfigManager<C> loadConfig(String configFilePath) {
         return loadConfig(
-                buildConfigStream(buildAllConfigMapList(configFilename)));
+                buildConfigStream(buildConfigMapList(configFilePath)));
     }
 
     private AbstractListConfigManager<C> loadConfig(Stream<C> configStream) {
@@ -108,8 +106,8 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
         try {
             return getConfigTypeStringAsOpt(configMap)
                     .map(this::extractConfigClass)
-                    .map(typeReference -> ConfigInterface
-                            .transformConfig(configMap, typeReference))
+                    .map(configClass -> ConfigInterface
+                            .transformConfig(configMap, configClass))
                     .orElseGet(() -> JMExceptionManager
                             .handleExceptionAndReturnNull(log,
                                     JMExceptionManager.newRunTimeException(
@@ -169,21 +167,12 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
      */
     protected abstract String extractConfigId(C inputConfig);
 
-    private List<Map<String, Object>> buildAllConfigMapList(
-            String configFilename) {
-        return JMCollections
-                .buildMergedList(buildConfigMapList(configFilename),
-                        buildConfigMapList(
-                                buildDefaultConfigPath(configFilename)));
-    }
-
     private List<Map<String, Object>> buildConfigMapList(
             String jmMetricConfigUrl) {
         try {
             return ConfigObjectMapper.readValue(JMOptional.getOptional(
-                    JMRestfulResource
-                            .getStringWithRestOrFilePathOrClasspath(
-                                    jmMetricConfigUrl))
+                    JMResources.getStringWithFilePathOrClasspath(
+                            jmMetricConfigUrl))
                             .orElseThrow(NullPointerException::new),
                     JMJson.LIST_MAP_TYPE_REFERENCE);
         } catch (Exception e) {

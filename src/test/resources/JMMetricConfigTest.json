@@ -3,6 +3,7 @@
     "inputId": "StdIn"
   },
   "mutator": {
+    //  **** Apache Access Log Mutator Example ****
     "mutatorId": "CombinedLogFormat",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
@@ -20,8 +21,14 @@
         }
       }
     }
+    //  ****************************
   },
-  "output": {
-    "outputId": "StdOut"
-  }
+  "outputs": [
+    {
+      //  **** File Output Example ****
+      "outputId": "StdOut",
+      "enableJsonString": false
+      //  ****************************
+    }
+  ]
 }

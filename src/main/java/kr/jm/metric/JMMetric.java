@@ -1,8 +1,6 @@
 package kr.jm.metric;
 
 import kr.jm.metric.config.JMMetricConfigManager;
-import kr.jm.metric.config.mutator.MutatorConfigInterface;
-import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.publisher.InputPublisher;
@@ -11,7 +9,6 @@ import kr.jm.metric.mutator.processor.MutatorProcessor;
 import kr.jm.metric.mutator.processor.MutatorProcessorBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
-import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.datastructure.JMCollections;
 import kr.jm.utils.flow.processor.JMTransformProcessor;
 import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
@@ -131,12 +128,8 @@ public class JMMetric implements
      */
     public JMMetric withOutputIds(String... outputIds) {
         this.outputSubscriberList = JMStream.buildStream(
-                JMOptional.getOptional(outputIds).orElseGet(
-                        () -> Optional.ofNullable(
-                                this.jmMetricConfigManager.getOutputConfig())
-                                .map(OutputConfigInterface::getOutputId)
-                                .map(JMArrays::buildArray)
-                                .orElseGet(() -> new String[]{"StdOut"})))
+                JMOptional.getOptional(outputIds)
+                        .orElseGet(() -> new String[]{"StdOut"}))
                 .map(this.jmMetricConfigManager::getOutputConfig)
                 .map(OutputSubscriberBuilder::build)
                 .collect(Collectors.toList());
@@ -146,19 +139,15 @@ public class JMMetric implements
     private JMMetric withMutatorId(String mutatorConfigId) {
         this.mutatorProcessor = this.inputPublisher.subscribeAndReturnSubcriber(
                 MutatorProcessorBuilder.build(this.jmMetricConfigManager
-                        .getMutatorConfig(Optional.ofNullable(mutatorConfigId)
-                                .orElseGet(() -> Optional.ofNullable(
-                                        this.jmMetricConfigManager
-                                                .getMutatorConfig())
-                                        .map(MutatorConfigInterface::getMutatorId)
-                                        .orElse("Raw")))));
+                        .getMutatorConfig(
+                                JMOptional.getOptional(mutatorConfigId)
+                                        .orElse("Raw"))));
         return this;
     }
 
     private JMMetric withInputId(String inputId) {
-        this.inputPublisher = Optional.ofNullable(Optional.ofNullable(inputId)
+        this.inputPublisher = Optional.ofNullable(inputId)
                 .map(this.jmMetricConfigManager::getInputConfig)
-                .orElseGet(this.jmMetricConfigManager::getInputConfig))
                 .map(InputPublisherBuilder::build)
                 .orElseGet(() -> InputPublisherBuilder
                         .buildTestInput("TestInput"));

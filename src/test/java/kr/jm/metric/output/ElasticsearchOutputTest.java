@@ -33,6 +33,7 @@ public class ElasticsearchOutputTest {
      */
     @Before
     public void setUp() {
+        JMPathOperation.deleteDirOnExist(JMPath.getPath("data"));
         // Embedded Elasticsearch Node Start
         this.jmEmbeddedElasticsearch = new JMEmbeddedElasticsearch();
         this.jmEmbeddedElasticsearch.start();
