@@ -1,6 +1,6 @@
 package kr.jm.metric.input;
 
-import kr.jm.metric.config.input.StdInLineInputConfig;
+import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.StdInLineConsumer;
 import lombok.ToString;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * The type Std in line input.
  */
 @ToString(callSuper = true)
-public class StdInLineInput extends AbstractInput<StdInLineInputConfig> {
+public class StdinLineInput extends AbstractInput<StdinLineInputConfig> {
     private StdInLineConsumer stdInLineConsumer;
 
     /**
@@ -20,8 +20,8 @@ public class StdInLineInput extends AbstractInput<StdInLineInputConfig> {
      *
      * @param inputId the input id
      */
-    public StdInLineInput(String inputId) {
-        this(new StdInLineInputConfig(inputId));
+    public StdinLineInput(String inputId) {
+        this(new StdinLineInputConfig(inputId));
     }
 
     /**
@@ -29,15 +29,15 @@ public class StdInLineInput extends AbstractInput<StdInLineInputConfig> {
      *
      * @param inputConfig the input config
      */
-    public StdInLineInput(StdInLineInputConfig inputConfig) {
+    public StdinLineInput(StdinLineInputConfig inputConfig) {
         super(inputConfig);
     }
 
     @Override
     protected void startImpl(Consumer<Transfer<String>> inputConsumer) {
         this.stdInLineConsumer =
-                new StdInLineConsumer(s -> inputConsumer.accept(newTransfer(s)))
-                        .consumeStdIn();
+                new StdInLineConsumer(s -> inputConsumer.accept(newTransfer
+                        (s))).consumeStdIn();
     }
 
     @Override

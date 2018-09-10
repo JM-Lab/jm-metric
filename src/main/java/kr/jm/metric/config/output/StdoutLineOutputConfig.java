@@ -1,6 +1,6 @@
 package kr.jm.metric.config.output;
 
-import kr.jm.metric.output.StdOutLineOutput;
+import kr.jm.metric.output.StdoutLineOutput;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StdOutLineOutputConfig extends AbstractOutputConfig {
+public class StdoutLineOutputConfig extends AbstractOutputConfig {
 
     private boolean enableJsonString;
 
@@ -21,8 +21,8 @@ public class StdOutLineOutputConfig extends AbstractOutputConfig {
      *
      * @param enableJsonString the enable json string
      */
-    public StdOutLineOutputConfig(boolean enableJsonString) {
-        this("StdOutLineOutput-Json-" + enableJsonString, enableJsonString);
+    public StdoutLineOutputConfig(boolean enableJsonString) {
+        this("StdoutLineOutput-Json-" + enableJsonString, enableJsonString);
     }
 
     /**
@@ -31,14 +31,14 @@ public class StdOutLineOutputConfig extends AbstractOutputConfig {
      * @param outputId         the output id
      * @param enableJsonString the enable json string
      */
-    public StdOutLineOutputConfig(String outputId, boolean enableJsonString) {
+    public StdoutLineOutputConfig(String outputId, boolean enableJsonString) {
         super(outputId);
         this.enableJsonString = enableJsonString;
     }
 
     @Override
-    public StdOutLineOutput buildOutput() {
-        return new StdOutLineOutput(this);
+    public StdoutLineOutput buildOutput() {
+        return new StdoutLineOutput(this);
     }
 
     @Override

@@ -5,7 +5,7 @@ import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
-import kr.jm.metric.output.StdOutLineOutput;
+import kr.jm.metric.output.StdoutLineOutput;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -72,8 +72,8 @@ public class OutputSubscriberBuilder {
      *
      * @return the output subscriber
      */
-    public static OutputSubscriber buildStdOut() {
-        return buildStdOut(true);
+    public static OutputSubscriber buildStdout() {
+        return buildStdout(true);
     }
 
     /**
@@ -82,8 +82,8 @@ public class OutputSubscriberBuilder {
      * @param enableJsonString the enable json string
      * @return the output subscriber
      */
-    public static OutputSubscriber buildStdOut(boolean enableJsonString) {
-        return buildStdOut(enableJsonString, null);
+    public static OutputSubscriber buildStdout(boolean enableJsonString) {
+        return buildStdout(enableJsonString, null);
     }
 
     /**
@@ -92,9 +92,9 @@ public class OutputSubscriberBuilder {
      * @param transformOutputObjectFunction the transform output object function
      * @return the output subscriber
      */
-    public static OutputSubscriber buildStdOut(
+    public static OutputSubscriber buildStdout(
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
-        return buildStdOut(true, transformOutputObjectFunction);
+        return buildStdout(true, transformOutputObjectFunction);
     }
 
 
@@ -105,9 +105,9 @@ public class OutputSubscriberBuilder {
      * @param transformOutputObjectFunction the transform output object function
      * @return the output subscriber
      */
-    public static OutputSubscriber buildStdOut(boolean enableJsonString,
+    public static OutputSubscriber buildStdout(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
-        return build(new StdOutLineOutput(enableJsonString,
+        return build(new StdoutLineOutput(enableJsonString,
                 transformOutputObjectFunction));
 
     }

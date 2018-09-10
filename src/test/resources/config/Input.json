@@ -1,13 +1,13 @@
 [
   {
-    "inputId": "StdIn",
+    "inputId": "Stdin",
     "bulkSize": 16,
     "flushIntervalSeconds": 1,
     "inputConfigType": "STDIN",
     "properties": {}
   },
   {
-    "inputId": "StdInJsonList",
+    "inputId": "StdinJsonList",
     "bulkSize": 16,
     "flushIntervalSeconds": 1,
     "inputConfigType": "STDIN",

@@ -1,6 +1,6 @@
 package kr.jm.metric.output;
 
-import kr.jm.metric.config.output.StdOutLineOutputConfig;
+import kr.jm.metric.config.output.StdoutLineOutputConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMJson;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * The type Std out line output.
  */
 @ToString(callSuper = true)
-public class StdOutLineOutput extends AbstractOutput {
+public class StdoutLineOutput extends AbstractOutput {
 
     @Getter
     private boolean enableJsonString;
@@ -27,7 +27,7 @@ public class StdOutLineOutput extends AbstractOutput {
     /**
      * Instantiates a new Std out line output.
      */
-    public StdOutLineOutput() {
+    public StdoutLineOutput() {
         this(false);
     }
 
@@ -36,7 +36,7 @@ public class StdOutLineOutput extends AbstractOutput {
      *
      * @param enableJsonString the enable json string
      */
-    public StdOutLineOutput(boolean enableJsonString) {
+    public StdoutLineOutput(boolean enableJsonString) {
         this(enableJsonString, null);
     }
 
@@ -46,9 +46,9 @@ public class StdOutLineOutput extends AbstractOutput {
      * @param enableJsonString              the enable json string
      * @param transformOutputObjectFunction the transform output object function
      */
-    public StdOutLineOutput(boolean enableJsonString,
+    public StdoutLineOutput(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
-        this(new StdOutLineOutputConfig(enableJsonString),
+        this(new StdoutLineOutputConfig(enableJsonString),
                 transformOutputObjectFunction);
     }
 
@@ -57,7 +57,7 @@ public class StdOutLineOutput extends AbstractOutput {
      *
      * @param outputConfig the output config
      */
-    public StdOutLineOutput(StdOutLineOutputConfig outputConfig) {
+    public StdoutLineOutput(StdoutLineOutputConfig outputConfig) {
         this(outputConfig, null);
     }
 
@@ -67,7 +67,7 @@ public class StdOutLineOutput extends AbstractOutput {
      * @param outputConfig                  the output config
      * @param transformOutputObjectFunction the transform output object function
      */
-    public StdOutLineOutput(StdOutLineOutputConfig outputConfig,
+    public StdoutLineOutput(StdoutLineOutputConfig outputConfig,
             Function<List<Transfer<FieldMap>>, List<Object>>
                     transformOutputObjectFunction) {
         super(outputConfig);

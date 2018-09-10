@@ -11,8 +11,8 @@ public enum OutputConfigType implements ConfigTypeInterface {
      */
     STDOUT {
         @Override
-        public Class<StdOutLineOutputConfig> getConfigClass() {
-            return StdOutLineOutputConfig.class;
+        public Class<StdoutLineOutputConfig> getConfigClass() {
+            return StdoutLineOutputConfig.class;
         }
     },
     /**

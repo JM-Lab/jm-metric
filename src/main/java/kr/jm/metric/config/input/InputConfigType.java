@@ -11,8 +11,8 @@ public enum InputConfigType implements ConfigTypeInterface {
      */
     STDIN {
         @Override
-        public Class<StdInLineInputConfig> getConfigClass() {
-            return StdInLineInputConfig.class;
+        public Class<StdinLineInputConfig> getConfigClass() {
+            return StdinLineInputConfig.class;
         }
     },
     /**

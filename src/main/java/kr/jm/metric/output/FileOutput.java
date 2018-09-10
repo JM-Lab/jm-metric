@@ -14,7 +14,7 @@ import java.util.function.Function;
  * The type File output.
  */
 @ToString(callSuper = true)
-public class FileOutput extends StdOutLineOutput {
+public class FileOutput extends StdoutLineOutput {
 
     private JMFileAppender fileAppender;
 

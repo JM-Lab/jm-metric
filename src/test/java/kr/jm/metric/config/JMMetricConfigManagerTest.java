@@ -24,17 +24,17 @@ public class JMMetricConfigManagerTest {
     public void testJMMetricConfigManager() {
         this.jmMetricConfigManager.printAllConfig();
 
-        Assert.assertEquals("StdIn", this
+        Assert.assertEquals("Stdin", this
                 .jmMetricConfigManager.getInputConfigId());
         Assert.assertEquals("CombinedLogFormat", this
                 .jmMetricConfigManager.getMutatorConfigId());
         Assert.assertEquals(1,
                 this.jmMetricConfigManager.getOutputConfigIds().length);
-        Assert.assertEquals("StdOut",
+        Assert.assertEquals("Stdout",
                 this.jmMetricConfigManager.getOutputConfigIds()[0]);
 
         OutputConfigInterface outputConfig = this.jmMetricConfigManager
-                .getOutputConfig("StdOut");
+                .getOutputConfig("Stdout");
         System.out.println(outputConfig);
         Assert.assertEquals(false,
                 outputConfig.extractConfigMap().get("enableJsonString"));

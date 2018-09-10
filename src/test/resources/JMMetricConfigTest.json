@@ -1,6 +1,6 @@
 {
   "input": {
-    "inputId": "StdIn"
+    "inputId": "Stdin"
   },
   "mutator": {
     //  **** Apache Access Log Mutator Example ****
@@ -26,7 +26,7 @@
   "outputs": [
     {
       //  **** File Output Example ****
-      "outputId": "StdOut",
+      "outputId": "Stdout",
       "enableJsonString": false
       //  ****************************
     }

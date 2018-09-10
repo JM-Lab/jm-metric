@@ -129,7 +129,7 @@ public class JMMetric implements
     public JMMetric withOutputIds(String... outputIds) {
         this.outputSubscriberList = JMStream.buildStream(
                 JMOptional.getOptional(outputIds)
-                        .orElseGet(() -> new String[]{"StdOut"}))
+                        .orElseGet(() -> new String[]{"Stdout"}))
                 .map(this.jmMetricConfigManager::getOutputConfig)
                 .map(OutputSubscriberBuilder::build)
                 .collect(Collectors.toList());

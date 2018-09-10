@@ -53,7 +53,7 @@ public class JMMetricMainTest {
     @Test
     public void testMain() {
         JMMetricMain jmMetricMain = new JMMetricMain();
-        jmMetricMain.main("-i", "StdIn", "-m", "CombinedLogFormat");
+        jmMetricMain.main("-i", "Stdin", "-m", "CombinedLogFormat");
         List<Transfer<FieldMap>> resultList = new ArrayList<>();
         JMMetric jmMetric = jmMetricMain.getJmMetric();
         jmMetric.subscribe(JMSubscriberBuilder.build(resultList::addAll));

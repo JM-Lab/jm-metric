@@ -20,8 +20,8 @@ public class InputConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(inputConfigManager.getConfigMap()));
         InputInterface stdInput =
-                this.inputConfigManager.getConfig("StdIn").buildInput();
-        Assert.assertEquals("StdIn", stdInput.getInputId());
+                this.inputConfigManager.getConfig("Stdin").buildInput();
+        Assert.assertEquals("Stdin", stdInput.getInputId());
         Assert.assertEquals(2, inputConfigManager.getConfigMap().size());
     }
 }

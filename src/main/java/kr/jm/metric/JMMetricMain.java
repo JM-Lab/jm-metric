@@ -78,11 +78,11 @@ public class JMMetricMain {
         options.addOption("c", "config", true,
                 "a file path of JMMetricConfig");
         options.addOption("i", "inputId", true,
-                "a inputId, default: StdIn");
+                "a inputId, default: Stdin");
         options.addOption("m", "mutatorId", true,
                 "a mutatorId, default: Raw");
         options.addOption("o", "outputIds", true,
-                "outputIds as CSV, default: StdOut");
+                "outputIds as CSV, default: Stdout");
         return options;
     }
 

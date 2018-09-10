@@ -21,7 +21,7 @@ public class OutputConfigManagerTest {
         System.out.println(
                 this.outputConfigManager.getConfigMap().get("ESClient"));
         OutputConfigInterface outputConfig =
-                this.outputConfigManager.getConfig("StdOut");
+                this.outputConfigManager.getConfig("Stdout");
         System.out.println(outputConfig.getOutputConfigType());
         Map<String, Object> fileConfigMap = outputConfig.extractConfigMap();
         System.out.println(fileConfigMap);

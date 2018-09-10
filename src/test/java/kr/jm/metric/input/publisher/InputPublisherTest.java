@@ -2,7 +2,7 @@ package kr.jm.metric.input.publisher;
 
 import kr.jm.metric.config.input.ChunkType;
 import kr.jm.metric.config.input.InputConfigManager;
-import kr.jm.metric.config.input.StdInLineInputConfig;
+import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMConsumer;
 import org.junit.After;
@@ -37,7 +37,7 @@ public class InputPublisherTest {
                         "\"interval\":5.000,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_packets\",\"type_instance\":\"\"}]";
         List<Transfer<String>> result = new ArrayList<>();
         this.inputPublisher = InputPublisherBuilder.build(this
-                .inputConfigManager.getConfig("StdInJsonList"))
+                .inputConfigManager.getConfig("StdinJsonList"))
                 .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
         this.inputPublisher.testInput(testString);
         Assert.assertEquals(
@@ -58,7 +58,7 @@ public class InputPublisherTest {
                         "\"type_instance\":\"\"}\n{\"values\":[427,430],\"dstypes\":[\"derive\",\"derive\"],\"dsnames\":[\"rx\",\"tx\"],\"time\":1.535336764687E9,\"interval\":5.0,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_packets\",\"type_instance\":\"\"}\n";
         result = new ArrayList<>();
         this.inputPublisher = InputPublisherBuilder.build(new
-                StdInLineInputConfig("MultilineTest", ChunkType.LINES))
+                StdinLineInputConfig("MultilineTest", ChunkType.LINES))
                 .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
         this.inputPublisher.testInput(testString);
         Assert.assertEquals(2, result.size());

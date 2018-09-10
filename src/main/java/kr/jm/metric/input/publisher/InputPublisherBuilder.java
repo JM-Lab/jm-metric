@@ -2,7 +2,7 @@ package kr.jm.metric.input.publisher;
 
 import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.metric.config.input.InputConfigInterface;
-import kr.jm.metric.config.input.StdInLineInputConfig;
+import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
@@ -58,8 +58,8 @@ public class InputPublisherBuilder {
      * @param inputId the input id
      * @return the input publisher
      */
-    public static InputPublisher buildStdInput(String inputId) {
-        return build(new StdInLineInputConfig(inputId));
+    public static InputPublisher buildStdinput(String inputId) {
+        return build(new StdinLineInputConfig(inputId));
     }
 
     /**
