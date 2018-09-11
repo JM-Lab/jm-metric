@@ -7,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static kr.jm.metric.config.mutator.field.DateFormatType.EPOCH;
 
 public class JMMetricConfigManagerTest {
@@ -28,10 +30,11 @@ public class JMMetricConfigManagerTest {
                 .jmMetricConfigManager.getInputConfigId());
         Assert.assertEquals("CombinedLogFormat", this
                 .jmMetricConfigManager.getMutatorConfigId());
-        Assert.assertEquals(1,
+        Assert.assertEquals(2,
                 this.jmMetricConfigManager.getOutputConfigIds().length);
         Assert.assertEquals("Stdout",
-                this.jmMetricConfigManager.getOutputConfigIds()[0]);
+                Arrays.stream(this.jmMetricConfigManager.getOutputConfigIds())
+                        .sorted().toArray()[0]);
 
         OutputConfigInterface outputConfig = this.jmMetricConfigManager
                 .getOutputConfig("Stdout");

@@ -29,6 +29,12 @@
       "outputId": "Stdout",
       "enableJsonString": false
       //  ****************************
+    },
+    {
+      //  **** File Output Example ****
+      "outputId": "Stdout2",
+      "outputConfigType": "STDOUT"
+      //  ****************************
     }
   ]
 }

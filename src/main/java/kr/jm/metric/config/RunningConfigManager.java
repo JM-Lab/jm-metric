@@ -15,7 +15,6 @@ import lombok.ToString;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -34,23 +33,21 @@ public class RunningConfigManager extends AbstractConfigManager {
 
         this.runningConfig = transformRunningConfig(runningConfigFilename);
         if (Objects.nonNull(this.runningConfig)) {
-            this.runningConfig.getInputIdAsOpt().flatMap(inputId ->
-                    buildCombinedConfigAsOpt(inputConfigManager, inputId,
-                            this.runningConfig.getInput()))
+            this.runningConfig.getInputIdAsOpt()
+                    .map(inputId -> buildCombinedConfig(inputConfigManager,
+                            inputId, this.runningConfig.getInput()))
                     .ifPresent(inputConfig -> inputConfigManager
-                            .insertConfig(
-                                    this.inputConfig = inputConfig));
-            this.runningConfig.getMutatorIdAsOpt().flatMap(mutatorId
-                    -> buildCombinedConfigAsOpt(mutatorConfigManager, mutatorId,
-                    this.runningConfig.getMutator()))
+                            .insertConfig(this.inputConfig = inputConfig));
+            this.runningConfig.getMutatorIdAsOpt()
+                    .map(mutatorId -> buildCombinedConfig(mutatorConfigManager,
+                            mutatorId, this.runningConfig.getMutator()))
                     .ifPresent(mutatorConfig -> mutatorConfigManager
                             .insertConfig(this.mutatorConfig = mutatorConfig));
             this.outputConfigs =
                     runningConfig.getOutputIdMap().entrySet().stream()
-                            .map(entry -> buildCombinedConfigAsOpt(
+                            .map(entry -> buildCombinedConfig(
                                     outputConfigManager, entry.getKey(),
                                     entry.getValue()))
-                            .filter(Optional::isPresent).map(Optional::get)
                             .peek(outputConfigManager::insertConfig)
                             .collect(Collectors.toList());
         }
@@ -68,19 +65,18 @@ public class RunningConfigManager extends AbstractConfigManager {
         }
     }
 
-    private <C extends ConfigInterface> Optional<C> buildCombinedConfigAsOpt(
+    private <C extends ConfigInterface> C buildCombinedConfig(
             AbstractListConfigManager<C> configManager, String configId,
             Map<String, Object> configMap) {
         try {
-            return JMOptional.getOptional(configId)
+            return configManager.transform(JMOptional.getOptional(configId)
                     .map(configManager::getConfig)
                     .map(ConfigInterface::extractConfigMap)
                     .map(oldConfigMap -> buildCombinedConfigMap(configMap,
-                            oldConfigMap))
-                    .map(configManager::transform);
+                            oldConfigMap)).orElse(configMap));
         } catch (Exception e) {
             throw JMExceptionManager.handleExceptionAndReturnRuntimeEx(log, e,
-                    "buildCombinedConfigAsOpt", configManager, configMap);
+                    "buildCombinedConfig", configManager, configMap);
         }
     }
 
