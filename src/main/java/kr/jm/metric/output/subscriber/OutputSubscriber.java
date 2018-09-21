@@ -38,7 +38,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
         try {
             output.close();
         } catch (Exception e) {
-            JMExceptionManager.logException(log, e, "close", outputId);
+            JMExceptionManager.handleException(log, e, "close", outputId);
         }
     }
 
@@ -49,7 +49,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
             this.output.writeData(dataList);
         } catch (Exception e) {
             JMExceptionManager
-                    .logException(log, e, "output", outputId, dataList);
+                    .handleException(log, e, "output", outputId, dataList);
         }
     }
 

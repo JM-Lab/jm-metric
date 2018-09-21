@@ -51,7 +51,7 @@ public class JMMetricMain {
                     true));
         } catch (Exception e) {
             JMExceptionManager
-                    .logException(log, e, "parseCLI", Arrays.toString(args));
+                    .handleException(log, e, "parseCLI", Arrays.toString(args));
             printHelp(options);
             return null;
         }

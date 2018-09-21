@@ -5,9 +5,9 @@ import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
-import kr.jm.utils.flow.publisher.JMSubmissionPublisherInterface;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMLog;
+import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -25,9 +25,10 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class InputPublisher implements
-        JMSubmissionPublisherInterface<List<Transfer<String>>>, AutoCloseable {
+        TransferSubmissionPublisherInterface<String>, AutoCloseable {
 
-    private BulkSubmissionPublisher<Transfer<String>> submissionPublisher;
+    private BulkSubmissionPublisher<Transfer<String>>
+            transferBulkSubmissionPublisher;
 
     /**
      * The Input id.
@@ -39,49 +40,52 @@ public class InputPublisher implements
      */
     protected InputInterface input;
 
-    private Consumer<Transfer<String>> submitSingleConsumer;
+    private Consumer<Transfer<String>> chunkConsumer;
 
     public InputPublisher(
-            BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
+            BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input) {
-        this(submissionPublisher, input, ChunkType.NONE);
+        this(transferBulkSubmissionPublisher, input, ChunkType.NONE);
     }
 
     /**
      * Instantiates a new Input publisher.
      *
-     * @param submissionPublisher the submission publisher
-     * @param input               the input
+     * @param transferBulkSubmissionPublisher the submission publisher
+     * @param input                           the input
      */
     public InputPublisher(
-            BulkSubmissionPublisher<Transfer<String>> submissionPublisher,
+            BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input, ChunkType chunkType) {
-        this.submissionPublisher = submissionPublisher;
+        this.transferBulkSubmissionPublisher = transferBulkSubmissionPublisher;
         this.inputId = input.getInputId();
         this.input = input;
-        this.submitSingleConsumer =
-                initSubmitSingleConsumer(
-                        Optional.ofNullable(chunkType).orElse(ChunkType.NONE));
+        this.chunkConsumer = buildChunkConsumer(
+                Optional.ofNullable(chunkType).orElse(ChunkType.NONE));
         JMLog.info(log, "InputPublisher", inputId, input, chunkType);
     }
 
-    private Consumer<Transfer<String>> initSubmitSingleConsumer(
+    private Consumer<Transfer<String>> buildChunkConsumer(
             ChunkType chunkType) {
         switch (chunkType) {
             case LINES:
-                return data -> Arrays
-                        .asList(data.getData().split(JMString.LINE_SEPARATOR))
-                        .stream().map(data::newWith)
-                        .forEach(this.submissionPublisher::submitSingle);
+                return buildTransferConsumer(data -> Arrays
+                        .stream(data.split(JMString.LINE_SEPARATOR)));
             case JSON_LIST:
-                return data -> Optional
-                        .ofNullable(JMJson.toList(data.getData())).stream()
-                        .flatMap(List::stream).map(JMJson::toJsonString)
-                        .map(data::newWith)
-                        .forEach(this.submissionPublisher::submitSingle);
+                return buildTransferConsumer(
+                        data -> JMJson.toList(data).stream()
+                                .map(JMJson::toJsonString));
             default:
-                return this.submissionPublisher::submitSingle;
+                return this.transferBulkSubmissionPublisher::submitSingle;
         }
+    }
+
+    private Consumer<Transfer<String>> buildTransferConsumer(
+            Function<String, Stream<String>> stringStreamFunction) {
+        return transfer -> this.transferBulkSubmissionPublisher
+                .submit(JMOptional.getOptional(transfer.getData()).stream()
+                        .flatMap(stringStreamFunction).map(transfer::newWith)
+                        .toArray(Transfer[]::new));
     }
 
     /**
@@ -91,7 +95,7 @@ public class InputPublisher implements
      */
     public InputPublisher start() {
         JMLog.info(log, "start", inputId);
-        input.start(this.submitSingleConsumer);
+        input.start(this.chunkConsumer);
         return this;
     }
 
@@ -100,23 +104,23 @@ public class InputPublisher implements
         JMLog.info(log, "close", inputId);
         try {
             input.close();
-            this.submissionPublisher.close();
+            this.transferBulkSubmissionPublisher.close();
         } catch (Exception e) {
-            JMExceptionManager.logException(log, e, "close");
+            JMExceptionManager.handleException(log, e, "close");
         }
     }
 
     @Override
     public InputPublisher subscribeWith(
             Flow.Subscriber<List<Transfer<String>>>... subscribers) {
-        this.submissionPublisher.subscribeWith(subscribers);
+        this.transferBulkSubmissionPublisher.subscribeWith(subscribers);
         return this;
     }
 
     @Override
     public InputPublisher consumeWith(
             Consumer<List<Transfer<String>>>... consumers) {
-        this.submissionPublisher.consumeWith(consumers);
+        this.transferBulkSubmissionPublisher.consumeWith(consumers);
         return this;
     }
 
@@ -126,7 +130,7 @@ public class InputPublisher implements
      * @param data the data
      */
     public void testInput(String data) {
-        testInput(Stream.of(data));
+        submit(this.inputId, List.of(data));
     }
 
     /**
@@ -135,29 +139,19 @@ public class InputPublisher implements
      * @param dataList the data list
      */
     public void testInput(List<String> dataList) {
-        testInput(dataList.stream());
-    }
-
-    /**
-     * Test input.
-     *
-     * @param dataStream the data stream
-     */
-    public void testInput(Stream<String> dataStream) {
-        submit(dataStream.map(data -> new Transfer<>(this.inputId, data))
-                .collect(Collectors.toList()));
-        this.submissionPublisher.flush();
-    }
-
-    @Override
-    public int submit(List<Transfer<String>> item) {
-        item.stream().forEach(submitSingleConsumer);
-        return item.size();
+        submit(this.inputId, dataList);
+        this.transferBulkSubmissionPublisher.flush();
     }
 
     @Override
     public void subscribe(
             Flow.Subscriber<? super List<Transfer<String>>> subscriber) {
-        this.submissionPublisher.subscribe(subscriber);
+        this.transferBulkSubmissionPublisher.subscribe(subscriber);
+    }
+
+    @Override
+    public int submit(List<Transfer<String>> transferList) {
+        transferList.forEach(this.chunkConsumer);
+        return transferList.size();
     }
 }

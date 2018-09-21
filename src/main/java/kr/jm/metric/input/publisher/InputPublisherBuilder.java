@@ -58,7 +58,7 @@ public class InputPublisherBuilder {
      * @param inputId the input id
      * @return the input publisher
      */
-    public static InputPublisher buildStdinput(String inputId) {
+    public static InputPublisher buildStdinLineInput(String inputId) {
         return build(new StdinLineInputConfig(inputId));
     }
 
@@ -70,12 +70,12 @@ public class InputPublisherBuilder {
      */
     public static InputPublisher build(InputConfigInterface inputConfig) {
         return new InputPublisher(
-                new StringTransferWaitingBulkSubmissionPublisher(
-                        new StringTransferWaitingSubmissionPublisher(
-                                inputConfig.getWaitingMillis(),
-                                inputConfig.getQueueSizeLimit()),
+                new StringTransferBulkSubmissionPublisher(
+                        new TransferSubmissionPublisher<>(1,
+                                inputConfig.getMaxBufferCapacity(),
+                                inputConfig.getWaitingMillis()),
                         inputConfig.getBulkSize(),
-                        inputConfig.getFlushIntervalSeconds()),
+                        inputConfig.getFlushIntervalMillis()),
                 inputConfig.buildInput(), inputConfig.getChunkType());
     }
 

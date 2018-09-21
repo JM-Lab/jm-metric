@@ -23,7 +23,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
      */
     public static final long DEFAULT_BULK_SIZE_KB = 1024;
     /**
-     * The constant DEFAULT_FLUSH_INTERVAL_SECONDS.
+     * The constant DEFAULT_FLUSH_INTERVAL_Millis.
      */
     public static final int DEFAULT_FLUSH_INTERVAL_SECONDS = 1;
     /**

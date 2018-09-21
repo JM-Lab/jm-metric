@@ -260,9 +260,18 @@ public class JMMetricConfigManager {
 
     private void loggingConfigInfo(String infoHead,
             AbstractListConfigManager configManager) {
-        log.info(JMString.LINE_SEPARATOR + infoHead +
-                JMString.LINE_SEPARATOR +
-                JMJson.toPrettyJsonString(configManager.getConfigMap()));
+        printInfo(buildInfo(infoHead,
+                JMJson.toPrettyJsonString(configManager.getConfigMap())));
+    }
+
+    private void printInfo(String info) {
+        log.info(info);
+        System.out.println(info);
+    }
+
+    private String buildInfo(String infoHead, String info) {
+        return JMString.LINE_SEPARATOR + infoHead + JMString.LINE_SEPARATOR +
+                info;
     }
 
     public String getInputConfigId() {

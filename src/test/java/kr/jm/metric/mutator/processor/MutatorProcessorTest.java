@@ -11,7 +11,6 @@ import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMFiles;
 import kr.jm.utils.helper.JMPathOperation;
 import kr.jm.utils.helper.JMThread;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,11 +37,6 @@ public class MutatorProcessorTest {
         String configFilePathOrClasspath = "config/Mutator.json";
         this.mutatorConfigManager =
                 new MutatorConfigManager(configFilePathOrClasspath);
-    }
-
-    @After
-    public void tearDown() {
-        this.mutatorProcessor.close();
     }
 
     @Test
@@ -90,16 +84,15 @@ public class MutatorProcessorTest {
         JMThread.sleep(3000);
         inputPublisher.close();
         fileOutputSubscriber1.close();
-        mutatorProcessor.close();
         System.out.println(count);
-        assertEquals(11, count.longValue());
+        assertEquals(4, count.longValue());
         System.out.println(lineCount);
         assertEquals(1024, lineCount.longValue());
 
         System.out.println(JMFiles.readString(path1));
         List<String> readLineList = JMFiles.readLines(path1);
         System.out.println(readLineList.size());
-        assertEquals(11, readLineList.size());
+        assertEquals(4, readLineList.size());
 
     }
 }

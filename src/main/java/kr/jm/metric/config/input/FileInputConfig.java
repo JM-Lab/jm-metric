@@ -25,10 +25,6 @@ public class FileInputConfig extends AbstractInputConfig {
         this(filePath, null, null, filePath);
     }
 
-    public FileInputConfig(ChunkType chunkType, String filePath) {
-        this(filePath, null, null, null, null, chunkType, filePath);
-    }
-
     /**
      * Instantiates a new File input config.
      *
@@ -36,28 +32,24 @@ public class FileInputConfig extends AbstractInputConfig {
      * @param filePath the file path
      */
     public FileInputConfig(String inputId, String filePath) {
-        this(inputId, null, null, filePath);
+        this(inputId, null, filePath);
     }
 
-    /**
-     * Instantiates a new File input config.
-     *
-     * @param inputId              the input id
-     * @param bulkSize             the bulk size
-     * @param flushIntervalSeconds the flush interval seconds
-     * @param filePath             the file path
-     */
+    public FileInputConfig(String inputId, Integer bulkSize, String filePath) {
+        this(inputId, bulkSize, null, filePath);
+    }
+
     public FileInputConfig(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds, String filePath) {
-        this(inputId, bulkSize, flushIntervalSeconds, null, null, null,
+            Long flushIntervalMillis, String filePath) {
+        this(inputId, bulkSize, flushIntervalMillis, null, null, null,
                 filePath);
     }
 
     public FileInputConfig(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds, Long waitingMillis,
-            Integer queueSizeLimit, ChunkType chunkType, String filePath) {
-        super(inputId, bulkSize, flushIntervalSeconds, waitingMillis,
-                queueSizeLimit, chunkType);
+            Long flushIntervalMillis, Long waitingMillis,
+            Integer maxBufferCapacity, ChunkType chunkType, String filePath) {
+        super(inputId, bulkSize, flushIntervalMillis, waitingMillis,
+                maxBufferCapacity, chunkType);
         this.filePath = filePath;
     }
 

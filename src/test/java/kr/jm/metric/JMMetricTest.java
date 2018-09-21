@@ -103,7 +103,9 @@ public class JMMetricTest {
 
         String fileName =
                 JMResources.getURL("webAccessLogSample.txt").getPath();
-        jmMetricConfigManager.insertInputConfig(new FileInputConfig(fileName));
+        jmMetricConfigManager
+                .insertInputConfig(
+                        new FileInputConfig(fileName, 100, fileName));
         Optional<Path> pathAsOpt1 =
                 JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
@@ -115,11 +117,11 @@ public class JMMetricTest {
         jmMetric = new JMMetric(jmMetricConfigManager, fileName, "apache")
                 .subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
                 .subscribeWith(fileOutputSubscriber1)
-                .consumeWith(mutatorIdTransferList -> count.increment())
-                .consumeWith(mutatorIdTransferList -> lineCount
-                        .add(mutatorIdTransferList.size()))
+                .consumeWith(transferList -> count.increment())
+                .consumeWith(transferList -> lineCount
+                        .add(transferList.size()))
                 .start();
-        JMThread.sleep(3000);
+        JMThread.sleep(5000);
 
         fileOutputSubscriber1.close();
 

@@ -25,23 +25,16 @@ public class StdinLineInputConfig extends AbstractInputConfig {
         super(inputId, chunkType);
     }
 
-    /**
-     * Instantiates a new Std in line input config.
-     *
-     * @param inputId              the input id
-     * @param bulkSize             the bulk size
-     * @param flushIntervalSeconds the flush interval seconds
-     */
     public StdinLineInputConfig(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds) {
-        super(inputId, bulkSize, flushIntervalSeconds);
+            Long flushIntervalMillis) {
+        super(inputId, bulkSize, flushIntervalMillis);
     }
 
     public StdinLineInputConfig(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds, Long waitingMillis,
-            Integer queueSizeLimit, ChunkType chunkType) {
-        super(inputId, bulkSize, flushIntervalSeconds, waitingMillis,
-                queueSizeLimit, chunkType);
+            Long flushIntervalMillis, Long waitingMillis,
+            Integer maxBufferCapacity, ChunkType chunkType) {
+        super(inputId, bulkSize, flushIntervalMillis, waitingMillis,
+                maxBufferCapacity, chunkType);
     }
 
     @Override

@@ -1,12 +1,14 @@
 package kr.jm.metric.config.input;
 
 import kr.jm.metric.config.AbstractPropertiesConfig;
-import kr.jm.utils.flow.publisher.WaitingSubmissionPublisher;
 import kr.jm.utils.helper.JMLambda;
+import kr.jm.utils.helper.JMThread;
 import lombok.*;
 
+import java.util.concurrent.Flow;
+
 import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_BULK_SIZE;
-import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_FLUSH_INTERVAL_SECONDS;
+import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_FLUSH_INTERVAL_Millis;
 
 /**
  * The type Abstract input config.
@@ -15,8 +17,7 @@ import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_FLUSH_I
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public abstract class AbstractInputConfig extends
-        AbstractPropertiesConfig implements
-        InputConfigInterface {
+        AbstractPropertiesConfig implements InputConfigInterface {
 
     /**
      * The Input id.
@@ -30,7 +31,8 @@ public abstract class AbstractInputConfig extends
     /**
      * The Flush interval seconds.
      */
-    protected Integer flushIntervalSeconds;
+    protected Long flushIntervalMillis;
+
     /**
      * The Waiting millis.
      */
@@ -38,10 +40,11 @@ public abstract class AbstractInputConfig extends
     /**
      * The Queue size limit.
      */
-    protected Integer queueSizeLimit;
+    protected Integer maxBufferCapacity;
 
     @Getter
     protected ChunkType chunkType;
+
 
     /**
      * Instantiates a new Abstract input config.
@@ -59,13 +62,13 @@ public abstract class AbstractInputConfig extends
     /**
      * Instantiates a new Abstract input config.
      *
-     * @param inputId              the input id
-     * @param bulkSize             the bulk size
-     * @param flushIntervalSeconds the flush interval seconds
+     * @param inputId             the input id
+     * @param bulkSize            the bulk size
+     * @param flushIntervalMillis the flush interval seconds
      */
     public AbstractInputConfig(String inputId, Integer bulkSize,
-            Integer flushIntervalSeconds) {
-        this(inputId, bulkSize, flushIntervalSeconds, null, null, null);
+            Long flushIntervalMillis) {
+        this(inputId, bulkSize, flushIntervalMillis, null, null, null);
     }
 
     @Override
@@ -75,24 +78,21 @@ public abstract class AbstractInputConfig extends
     }
 
     @Override
-    public Integer getFlushIntervalSeconds() {
-        return JMLambda.supplierIfNull(flushIntervalSeconds,
-                () -> this.flushIntervalSeconds =
-                        DEFAULT_FLUSH_INTERVAL_SECONDS);
+    public Long getFlushIntervalMillis() {
+        return JMLambda.supplierIfNull(this.flushIntervalMillis,
+                () -> this.flushIntervalMillis =
+                        DEFAULT_FLUSH_INTERVAL_Millis);
     }
 
     @Override
     public Long getWaitingMillis() {
         return JMLambda.supplierIfNull(waitingMillis,
-                () -> this.waitingMillis = (long) WaitingSubmissionPublisher
-                        .getDefaultQueueSizeLimit());
-
+                () -> this.waitingMillis = JMThread.DEFAULT_WAITING_MILLIS);
     }
 
     @Override
-    public Integer getQueueSizeLimit() {
-        return JMLambda.supplierIfNull(queueSizeLimit,
-                () -> this.queueSizeLimit =
-                        WaitingSubmissionPublisher.getDefaultQueueSizeLimit());
+    public Integer getMaxBufferCapacity() {
+        return JMLambda.supplierIfNull(maxBufferCapacity,
+                () -> this.maxBufferCapacity = Flow.defaultBufferSize());
     }
 }

@@ -5,6 +5,7 @@ import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.config.mutator.field.FilterConfig;
 import kr.jm.metric.mutator.MutatorInterface;
 import kr.jm.metric.mutator.RawMutator;
+import kr.jm.utils.enums.OS;
 import kr.jm.utils.helper.JMOptional;
 
 import java.util.Map;
@@ -36,11 +37,6 @@ public class MutatorProcessorBuilder {
                         .map(FieldConfig::getFilter).orElse(null));
     }
 
-    public static MutatorProcessor build(int workers,
-            MutatorInterface mutator) {
-        return new MutatorProcessor(workers, mutator);
-    }
-
     public static MutatorProcessor build(int workers, MutatorInterface mutator,
             Map<String, FilterConfig> filterConfigMap) {
         return new MutatorProcessor(workers, mutator,
@@ -49,14 +45,13 @@ public class MutatorProcessorBuilder {
                                 map)).orElse(null));
     }
 
-    /**
-     * Build mutator processor.
-     *
-     * @param mutator the mutator
-     * @return the mutator processor
-     */
+    public static MutatorProcessor build(int workers,
+            MutatorInterface mutator) {
+        return build(workers, mutator, null);
+    }
+
     public static MutatorProcessor build(MutatorInterface mutator) {
-        return new MutatorProcessor(mutator);
+        return build(OS.getAvailableProcessors(), mutator);
     }
 
 }

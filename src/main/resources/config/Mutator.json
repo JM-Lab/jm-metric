@@ -5,17 +5,13 @@
   },
   {
     "mutatorId": "Json",
-    "mutatorConfigType": "JSON",
-    "fieldConfig": {
-      "rawData": false
-    }
+    "mutatorConfigType": "JSON"
   },
   {
     "mutatorId": "CommonLogFormat",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b",
     "fieldConfig": {
-      "rawData": true,
       "dateFormat": {
         "receivedTimestamp": {
           "dateFormatType": "CUSTOM",
@@ -37,7 +33,6 @@
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
     "fieldConfig": {
-      "rawData": true,
       "dateFormat": {
         "receivedTimestamp": {
           "dateFormatType": "CUSTOM",

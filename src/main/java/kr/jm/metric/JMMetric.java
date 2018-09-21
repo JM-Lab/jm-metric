@@ -10,13 +10,10 @@ import kr.jm.metric.mutator.processor.MutatorProcessorBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.datastructure.JMCollections;
-import kr.jm.utils.flow.processor.JMTransformProcessor;
-import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
-import kr.jm.utils.flow.processor.JMTransformProcessorInterface;
-import kr.jm.utils.helper.JMLambda;
-import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMStream;
+import kr.jm.utils.flow.processor.JMProcessor;
+import kr.jm.utils.flow.processor.JMProcessorBuilder;
+import kr.jm.utils.flow.processor.JMProcessorInterface;
+import kr.jm.utils.helper.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,14 +25,13 @@ import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The type Jm metric.
  */
 @Slf4j
 public class JMMetric implements
-        JMTransformProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>>,
+        JMProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>>,
         AutoCloseable {
 
     @Getter
@@ -43,7 +39,7 @@ public class JMMetric implements
     private InputPublisher inputPublisher;
     private MutatorProcessor mutatorProcessor;
     private List<OutputSubscriber> outputSubscriberList;
-    private JMTransformProcessor<List<Transfer<FieldMap>>, List<Transfer<FieldMap>>>
+    private JMProcessor<List<Transfer<FieldMap>>, List<Transfer<FieldMap>>>
             customProcessor;
 
     /**
@@ -118,15 +114,17 @@ public class JMMetric implements
                         JMMetricConfigManager::new);
         withInputId(inputId).withMutatorId(mutatorConfigId)
                 .withOutputIds(outputIds).build();
+        String info =
+                "Running with InputId = " + inputPublisher.getInputId() +
+                        ", MutatorId = " + mutatorProcessor.getMutatorId() +
+                        ", OutputIds = " + outputSubscriberList.stream()
+                        .map(OutputSubscriber::getOutputId)
+                        .collect(Collectors.joining(JMString.COMMA));
+        log.info(info);
+        System.out.println(info);
     }
 
-    /**
-     * With output ids jm metric.
-     *
-     * @param outputIds the output ids
-     * @return the jm metric
-     */
-    public JMMetric withOutputIds(String... outputIds) {
+    private JMMetric withOutputIds(String... outputIds) {
         this.outputSubscriberList = JMStream.buildStream(
                 JMOptional.getOptional(outputIds)
                         .orElseGet(() -> new String[]{"Stdout"}))
@@ -186,7 +184,6 @@ public class JMMetric implements
         JMLog.info(log, "close", getInputId(), getMutatorId(),
                 getOutputIdList());
         this.inputPublisher.close();
-        this.mutatorProcessor.close();
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
@@ -199,7 +196,7 @@ public class JMMetric implements
     public JMMetric withCustomFunction(
             Function<Transfer<FieldMap>, Map<String, Object>> customFunction) {
         this.customProcessor = mutatorProcessor
-                .subscribeAndReturnProcessor(JMTransformProcessorBuilder
+                .subscribeAndReturnProcessor(JMProcessorBuilder
                         .build((List<Transfer<FieldMap>> list) -> list.stream()
                                 .map(mapTransfer -> mapTransfer.newWith(
                                         buildNewFieldMap(customFunction,
@@ -265,17 +262,6 @@ public class JMMetric implements
         return this;
     }
 
-    /**
-     * Test input jm metric.
-     *
-     * @param dataStream the data stream
-     * @return the jm metric
-     */
-    public JMMetric testInput(Stream<String> dataStream) {
-        inputPublisher.testInput(dataStream);
-        return this;
-    }
-
     @Override
     public void subscribe(
             Flow.Subscriber<? super List<Transfer<FieldMap>>> subscriber) {
@@ -305,14 +291,14 @@ public class JMMetric implements
     @Override
     public JMMetric subscribeWith(
             Flow.Subscriber<List<Transfer<FieldMap>>>... subscribers) {
-        JMTransformProcessorInterface.super.subscribeWith(subscribers);
+        JMProcessorInterface.super.subscribeWith(subscribers);
         return this;
     }
 
     @Override
     public JMMetric consumeWith(
             Consumer<List<Transfer<FieldMap>>>... consumers) {
-        JMTransformProcessorInterface.super.consumeWith(consumers);
+        JMProcessorInterface.super.consumeWith(consumers);
         return this;
     }
 

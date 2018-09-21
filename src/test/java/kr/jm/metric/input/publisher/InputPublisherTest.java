@@ -5,6 +5,7 @@ import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMConsumer;
+import kr.jm.utils.helper.JMThread;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,7 @@ public class InputPublisherTest {
                 .inputConfigManager.getConfig("StdinJsonList"))
                 .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
         this.inputPublisher.testInput(testString);
+        JMThread.sleep(1000);
         Assert.assertEquals(
                 "{\"values\":[427,430],\"dstypes\":[\"derive\",\"derive\"]," +
                         "\"dsnames\":[\"rx\",\"tx\"],\"time\":1.535336764687E9," +
@@ -61,6 +63,7 @@ public class InputPublisherTest {
                 StdinLineInputConfig("MultilineTest", ChunkType.LINES))
                 .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
         this.inputPublisher.testInput(testString);
+        JMThread.sleep(1000);
         Assert.assertEquals(2, result.size());
 
     }

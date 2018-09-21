@@ -1,15 +1,11 @@
 [
   {
     "inputId": "Stdin",
-    "bulkSize": 16,
-    "flushIntervalSeconds": 1,
     "inputConfigType": "STDIN",
     "properties": {}
   },
   {
     "inputId": "StdinJsonList",
-    "bulkSize": 16,
-    "flushIntervalSeconds": 1,
     "inputConfigType": "STDIN",
     "chunkType": "JSON_LIST",
     "properties": {}

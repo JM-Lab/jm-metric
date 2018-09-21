@@ -2,7 +2,6 @@ package kr.jm.metric.input.publisher;
 
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
-import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 
 /**
  * The type String transfer bulk submission publisher.
@@ -23,7 +22,7 @@ public class StringTransferBulkSubmissionPublisher extends
      * @param bulkSize the bulk size
      */
     public StringTransferBulkSubmissionPublisher(int bulkSize) {
-        this(bulkSize, DEFAULT_FLUSH_INTERVAL_SECONDS);
+        this(bulkSize, DEFAULT_FLUSH_INTERVAL_Millis);
     }
 
     /**
@@ -33,25 +32,22 @@ public class StringTransferBulkSubmissionPublisher extends
      * @param flushIntervalSeconds the flush interval seconds
      */
     public StringTransferBulkSubmissionPublisher(
-            int bulkSize, int flushIntervalSeconds) {
-        this(bulkSize, flushIntervalSeconds,
-                new TransferSubmissionPublisher<>());
+            int bulkSize, long flushIntervalSeconds) {
+        this(new TransferSubmissionPublisher<>(), bulkSize,
+                flushIntervalSeconds);
     }
 
     /**
      * Instantiates a new String transfer bulk submission publisher.
      *
+     * @param transferSubmissionPublisher the transfer submission publisher
      * @param bulkSize                    the bulk size
      * @param flushIntervalSeconds        the flush interval seconds
-     * @param transferSubmissionPublisher the transfer submission publisher
      */
-    public StringTransferBulkSubmissionPublisher(int bulkSize,
-            int flushIntervalSeconds,
-            TransferSubmissionPublisher<String> transferSubmissionPublisher) {
-        super(bulkSize, flushIntervalSeconds);
-        transferSubmissionPublisher
-                .subscribe(JMSubscriberBuilder.build(this::submitSingle));
+    public StringTransferBulkSubmissionPublisher(
+            TransferSubmissionPublisher<String> transferSubmissionPublisher,
+            int bulkSize, long flushIntervalSeconds) {
+        super(transferSubmissionPublisher, bulkSize, flushIntervalSeconds);
     }
-
 
 }

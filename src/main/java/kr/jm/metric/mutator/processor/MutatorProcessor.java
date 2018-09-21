@@ -3,18 +3,17 @@ package kr.jm.metric.mutator.processor;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.mutator.MutatorInterface;
-import kr.jm.utils.flow.processor.JMConcurrentTransformProcessor;
-import kr.jm.utils.flow.processor.JMTransformProcessorInterface;
+import kr.jm.utils.flow.processor.JMProcessor;
+import kr.jm.utils.flow.processor.JMProcessorBuilder;
+import kr.jm.utils.flow.processor.JMProcessorInterface;
 import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMPredicate;
 import kr.jm.utils.helper.JMString;
-import kr.jm.utils.helper.JMThread;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -23,42 +22,26 @@ import java.util.stream.Collectors;
  * The type Mutator processor.
  */
 @Slf4j
+@ToString
 public class MutatorProcessor implements
-        JMTransformProcessorInterface<List<Transfer<String>>,
-                List<Transfer<FieldMap>>>, AutoCloseable {
-
-    private JMConcurrentTransformProcessor<List<Transfer<String>>,
-            List<Transfer<FieldMap>>> jmConcurrentTransformProcessor;
+        JMProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>> {
 
     @Getter
     private String mutatorId;
+    private int workers;
     private MatchFilter matchFilter;
-
-    public MutatorProcessor(MutatorInterface mutator) {
-        this(0, mutator, null);
-    }
-
-    public MutatorProcessor(int workers, MutatorInterface mutator) {
-        this(workers, mutator, null);
-    }
+    private JMProcessor<List<Transfer<String>>, List<Transfer<FieldMap>>>
+            jmProcessor;
 
     public MutatorProcessor(int workers, MutatorInterface mutator,
             MatchFilter matchFilter) {
-        this(workers, Flow.defaultBufferSize(), mutator, matchFilter);
-    }
-
-    private MutatorProcessor(int workers, int maxBufferCapacity,
-            MutatorInterface mutator, MatchFilter matchFilter) {
-        this.jmConcurrentTransformProcessor =
-                new JMConcurrentTransformProcessor<>(
-                        Optional.ofNullable(workers)
-                                .filter(JMPredicate.getGreater(0))
-                                .map(JMThread::newThreadPool).orElseGet(
-                                JMThread::newThreadPoolWithAvailableProcessors),
-                        maxBufferCapacity, list -> process(list, mutator));
         this.mutatorId = mutator.getMutatorId();
+        this.workers = workers;
+        this.jmProcessor = JMProcessorBuilder
+                .buildWithThreadPool(workers, list -> process(list, mutator));
         this.matchFilter = matchFilter;
-        JMLog.info(log, "MutatorProcessor", maxBufferCapacity, mutator);
+        JMLog.info(log, "MutatorProcessor", this.mutatorId, this.workers,
+                mutator, matchFilter);
     }
 
 
@@ -88,44 +71,41 @@ public class MutatorProcessor implements
     @Override
     public MutatorProcessor subscribeWith(
             Flow.Subscriber<List<Transfer<FieldMap>>>... subscribers) {
-        jmConcurrentTransformProcessor.subscribeWith(subscribers);
+        this.jmProcessor.subscribeWith(subscribers);
         return this;
     }
 
     @Override
     public MutatorProcessor consumeWith(
             Consumer<List<Transfer<FieldMap>>>... consumers) {
-        jmConcurrentTransformProcessor.consumeWith(consumers);
+        this.jmProcessor.consumeWith(consumers);
         return this;
     }
 
     @Override
     public void subscribe(
             Flow.Subscriber<? super List<Transfer<FieldMap>>> subscriber) {
-        jmConcurrentTransformProcessor.subscribe(subscriber);
+        this.jmProcessor.subscribe(subscriber);
     }
 
     @Override
-    public void close() {jmConcurrentTransformProcessor.close();}
-
-    @Override
     public void onSubscribe(Flow.Subscription subscription) {
-        jmConcurrentTransformProcessor.onSubscribe(subscription);
+        this.jmProcessor.onSubscribe(subscription);
     }
 
     @Override
     public void onNext(
             List<Transfer<String>> item) {
-        jmConcurrentTransformProcessor.onNext(item);
+        this.jmProcessor.onNext(item);
     }
 
     @Override
     public void onError(Throwable throwable) {
-        jmConcurrentTransformProcessor.onError(throwable);
+        this.jmProcessor.onError(throwable);
     }
 
     @Override
-    public void onComplete() {jmConcurrentTransformProcessor.onComplete();}
+    public void onComplete() {this.jmProcessor.onComplete();}
 
 
 }

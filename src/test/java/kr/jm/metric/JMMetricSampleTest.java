@@ -3,8 +3,8 @@ package kr.jm.metric;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMWordSplitter;
-import kr.jm.utils.flow.processor.JMTransformProcessor;
-import kr.jm.utils.flow.processor.JMTransformProcessorBuilder;
+import kr.jm.utils.flow.processor.JMProcessor;
+import kr.jm.utils.flow.processor.JMProcessorBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMConsumer;
 import kr.jm.utils.helper.JMThread;
@@ -51,15 +51,15 @@ public class JMMetricSampleTest {
         jmMetric.testInput("Hello JMMetric !!!");
         JMThread.sleep(1000);
 
-        JMTransformProcessor<List<Transfer<FieldMap>>, Stream<String>>
+        JMProcessor<List<Transfer<FieldMap>>, Stream<String>>
                 wordStreamProcessor =
-                JMTransformProcessorBuilder
+                JMProcessorBuilder
                         .build(t -> t.stream().map(Transfer::getData)
                                 .map(fieldMap -> fieldMap.extractRawData())
                                 .flatMap(JMWordSplitter::splitAsStream));
         jmMetric.subscribeWith(wordStreamProcessor);
         wordStreamProcessor
-                .subscribeAndReturnProcessor(JMTransformProcessorBuilder
+                .subscribeAndReturnProcessor(JMProcessorBuilder
                         .build(WordCountGenerator::buildCountMap))
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.testInput("Hello JMMetric !!!");
