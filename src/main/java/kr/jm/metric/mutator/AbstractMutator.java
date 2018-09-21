@@ -89,7 +89,8 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
             fieldObjectMap.put(RAW_DATA, targetString);
             fieldObjectMap = JMLambda.supplierIfNull(this.fieldConfigHandler,
                     () -> this.fieldConfigHandler =
-                            new FieldConfigHandler(this.fieldConfig))
+                            new FieldConfigHandler(this.mutatorId,
+                                    this.fieldConfig))
                     .applyFieldConfig(fieldObjectMap);
         }
         return new FieldMap(fieldObjectMap);

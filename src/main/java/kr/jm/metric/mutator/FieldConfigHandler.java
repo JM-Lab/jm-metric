@@ -3,11 +3,15 @@ package kr.jm.metric.mutator;
 import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigType;
+import kr.jm.metric.config.mutator.field.DataType;
 import kr.jm.metric.config.mutator.field.DateFormatConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.utils.datastructure.JMMap;
+import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMStream;
+import kr.jm.utils.helper.JMString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,12 +20,15 @@ import java.util.Optional;
 
 import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
+@Slf4j
 class FieldConfigHandler {
 
+    private String mutatorId;
     private Map<String, MutatorConfigInterface> formatMutatorConfigMap;
     private FieldConfig fieldConfig;
 
-    FieldConfigHandler(FieldConfig fieldConfig) {
+    FieldConfigHandler(String mutatorId, FieldConfig fieldConfig) {
+        this.mutatorId = mutatorId;
         this.fieldConfig = fieldConfig;
         this.formatMutatorConfigMap = new HashMap<>();
     }
@@ -43,9 +50,28 @@ class FieldConfigHandler {
         JMStream.buildEntryStream(this.fieldConfig.getDataType())
                 .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
                 .forEach(entry -> fieldObjectMap.put(entry.getKey(),
-                        entry.getValue().transform(
+                        transformToNumber(entry.getValue(),
                                 fieldObjectMap.get(entry.getKey())
                                         .toString())));
+    }
+
+    private Object transformToNumber(DataType dataType, String data) {
+        switch (dataType) {
+            case NUMBER:
+                return transformToNumber(data);
+            case LONG:
+                return transformToNumber(data).longValue();
+            default:
+                return data;
+        }
+    }
+
+    private Double transformToNumber(String data) {
+        return JMString.isNumber(data) ? Double
+                .valueOf(data) : JMExceptionManager
+                .handleExceptionAndReturn(log,
+                        new RuntimeException("Wrong Number Format Occur !!!"),
+                        "transformToNumber", () -> 0D, mutatorId, data);
     }
 
     private void applyDateFormat(Map<String, Object> fieldObjectMap) {

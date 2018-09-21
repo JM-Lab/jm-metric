@@ -21,7 +21,8 @@ public class FieldConfigHandlerTest {
         this.fieldConfig =
                 JMJson.withJsonResource("fieldConfigTest.json",
                         FieldConfig.class);
-        this.fieldConfigHandler = new FieldConfigHandler(this.fieldConfig);
+        this.fieldConfigHandler =
+                new FieldConfigHandler("testMutatorId", this.fieldConfig);
     }
 
     @Test
@@ -85,11 +86,13 @@ public class FieldConfigHandlerTest {
                                                         .setChangeDateConfig(
                                                                 null)
                                                         .createDateFormatConfig())
-                                        .createDateFormatConfig())).setFilter(null)
+                                        .createDateFormatConfig()))
+                        .setFilter(null)
                         .createFieldConfig();
 
-        stringObjectMap = new FieldConfigHandler(this.fieldConfig)
-                .applyFieldConfig(fieldObjectMap);
+        stringObjectMap =
+                new FieldConfigHandler("testMutatorId", this.fieldConfig)
+                        .applyFieldConfig(fieldObjectMap);
         System.out.println(stringObjectMap);
         Assert.assertEquals("08/Jun/2015:17:00:00 +0900",
                 stringObjectMap.get("receivedTimestamp"));
