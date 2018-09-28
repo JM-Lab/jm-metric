@@ -50,6 +50,9 @@
             "dateFormatType": "ISO"
           }
         }
+      },
+      "dataType": {
+        "sizeByte": "NUMBER"
       }
     }
   },

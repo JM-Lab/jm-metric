@@ -50,7 +50,10 @@ public class JMMetricConfigManagerTest {
         Assert.assertEquals(EPOCH, mutatorConfig.getFieldConfig()
                 .getDateFormat().get("receivedTimestamp").getChangeDateConfig
                         ().getDateFormatType());
-        Assert.assertFalse(mutatorConfig.getFieldConfig().isRawData());
+        Assert.assertTrue(mutatorConfig.getFieldConfig().isRawData());
+        Assert.assertEquals(
+                mutatorConfig.getFieldConfig().getDataType().get("sizeByte").name(),
+                "NUMBER");
 
 
     }

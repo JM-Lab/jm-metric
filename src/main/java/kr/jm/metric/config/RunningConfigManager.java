@@ -72,8 +72,8 @@ public class RunningConfigManager extends AbstractConfigManager {
             return configManager.transform(JMOptional.getOptional(configId)
                     .map(configManager::getConfig)
                     .map(ConfigInterface::extractConfigMap)
-                    .map(oldConfigMap -> buildCombinedConfigMap(configMap,
-                            oldConfigMap)).orElse(configMap));
+                    .map(oldConfigMap -> buildCombinedConfigMap(oldConfigMap,
+                            configMap)).orElse(configMap));
         } catch (Exception e) {
             throw JMExceptionManager.handleExceptionAndReturnRuntimeEx(log, e,
                     "buildCombinedConfig", configManager, configMap);
@@ -81,13 +81,21 @@ public class RunningConfigManager extends AbstractConfigManager {
     }
 
     private Map<String, Object> buildCombinedConfigMap(
-            Map<String, Object> newConfigMap,
-            Map<String, Object> oldConfigMap) {
+            Map<String, Object> oldConfigMap,
+            Map<String, Object> newConfigMap) {
         newConfigMap.entrySet().stream()
                 .filter(entry -> Objects.nonNull(entry.getValue())).forEach(
                 entry -> oldConfigMap.put(entry.getKey(),
-                        entry.getValue()));
+                        buildCombinedValue(oldConfigMap.get(entry.getKey()),
+                                entry.getValue())));
         return oldConfigMap;
+    }
+
+    private Object buildCombinedValue(Object oldValue, Object newValue) {
+        return Objects.nonNull(oldValue) &&
+                oldValue instanceof Map ? buildCombinedConfigMap(
+                (Map<String, Object>) oldValue,
+                (Map<String, Object>) newValue) : newValue;
     }
 
 }

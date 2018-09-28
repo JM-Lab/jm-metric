@@ -8,7 +8,7 @@
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
     "fieldConfig": {
-      "rawData": false,
+      "rawData": true,
       "dateFormat": {
         "receivedTimestamp": {
           "dateFormatType": "CUSTOM",
