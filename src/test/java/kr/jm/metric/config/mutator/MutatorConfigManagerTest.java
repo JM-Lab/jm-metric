@@ -40,7 +40,7 @@ public class MutatorConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
-        assertEquals(9, mutatorConfigManager.getConfigMap().size());
+        assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MutatorConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
-        assertEquals(9, mutatorConfigManager.getConfigMap().size());
+        assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class MutatorConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
-        assertEquals(9, mutatorConfigManager.getConfigMap().size());
+        assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MutatorConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
-        assertEquals(9, mutatorConfigManager.getConfigMap().size());
+        assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class MutatorConfigManagerTest {
         System.out.println(
                 JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
-        assertEquals(9, mutatorConfigManager.getConfigMap().size());
+        assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     private void insertConfig(AbstractMutatorConfig config) {
@@ -113,7 +113,7 @@ public class MutatorConfigManagerTest {
 
     @Test
     public void testLoadConfig() {
-        assertEquals(13,
+        assertEquals(14,
                 mutatorConfigManager.loadConfig("testMutator.json")
                         .getConfigMap().size());
         assertEquals("keyValueDelimiterSample2",

@@ -1,5 +1,7 @@
 package kr.jm.metric.mutator.processor;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import kr.jm.metric.config.mutator.*;
 import kr.jm.metric.config.mutator.field.DataType;
 import kr.jm.metric.config.mutator.field.FieldConfigBuilder;
@@ -9,13 +11,15 @@ import kr.jm.utils.helper.JMJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class MutatorTest {
     static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
     }
 
     private MutatorConfigManager mutatorConfigManager;

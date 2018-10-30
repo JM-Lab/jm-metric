@@ -31,16 +31,50 @@
     }
   },
   {
+    "mutatorId": "CommonLogFormat",
+    "mutatorConfigType": "APACHE_ACCESS_LOG",
+    "format": "%h %l %u %t \"%r\" %>s %b",
+    "fieldConfig": {
+      "dateFormat": {
+        "receivedTimestamp": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "changeDateConfig": {
+            "dateFormatType": "ISO"
+          }
+        }
+      },
+      "dataType": {
+        "sizeByte": "NUMBER"
+      }
+    }
+  },
+  {
     "mutatorId": "ApacheAccessLog",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
-    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" %D"
+    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\" %D",
+    "fieldConfig": {
+      "dateFormat": {
+        "receivedTimestamp": {
+          "dateFormatType": "CUSTOM",
+          "format": "dd/MMM/yyyy:HH:mm:ss Z",
+          "zoneOffset": "",
+          "changeDateConfig": {
+            "dateFormatType": "ISO"
+          }
+        }
+      },
+      "dataType": {
+        "sizeByte": "NUMBER"
+      }
+    }
   },
   {
     "mutatorId": "CombinedLogFormat",
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
     "fieldConfig": {
-      "rawData": false,
       "dateFormat": {
         "receivedTimestamp": {
           "dateFormatType": "CUSTOM",
@@ -77,7 +111,6 @@
           "mutatorConfigType": "DELIMITER"
         }
       },
-      "rawData": false,
       "dateFormat": {
         "timeLocal": {
           "dateFormatType": "CUSTOM",

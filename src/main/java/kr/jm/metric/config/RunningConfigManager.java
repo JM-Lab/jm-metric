@@ -1,10 +1,7 @@
 package kr.jm.metric.config;
 
-import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.config.input.InputConfigManager;
-import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigManager;
-import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMOptional;
@@ -12,46 +9,48 @@ import kr.jm.utils.helper.JMResources;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Getter
 @ToString
 public class RunningConfigManager extends AbstractConfigManager {
 
-    private RunningConfig runningConfig;
-    private InputConfigInterface inputConfig;
-    private MutatorConfigInterface mutatorConfig;
-    private List<OutputConfigInterface> outputConfigs;
+    private BindingConfig bindingConfig;
 
     public RunningConfigManager(String runningConfigFilename,
             InputConfigManager inputConfigManager,
             MutatorConfigManager mutatorConfigManager,
             OutputConfigManager outputConfigManager) {
-
-        this.runningConfig = transformRunningConfig(runningConfigFilename);
-        if (Objects.nonNull(this.runningConfig)) {
-            this.runningConfig.getInputIdAsOpt()
-                    .map(inputId -> buildCombinedConfig(inputConfigManager,
-                            inputId, this.runningConfig.getInput()))
-                    .ifPresent(inputConfig -> inputConfigManager
-                            .insertConfig(this.inputConfig = inputConfig));
-            this.runningConfig.getMutatorIdAsOpt()
-                    .map(mutatorId -> buildCombinedConfig(mutatorConfigManager,
-                            mutatorId, this.runningConfig.getMutator()))
-                    .ifPresent(mutatorConfig -> mutatorConfigManager
-                            .insertConfig(this.mutatorConfig = mutatorConfig));
-            this.outputConfigs =
-                    runningConfig.getOutputIdMap().entrySet().stream()
-                            .map(entry -> buildCombinedConfig(
-                                    outputConfigManager, entry.getKey(),
-                                    entry.getValue()))
-                            .peek(outputConfigManager::insertConfig)
-                            .collect(Collectors.toList());
-        }
+        Optional.ofNullable(transformRunningConfig(runningConfigFilename))
+                .ifPresent(
+                        runningConfig -> init(runningConfig, inputConfigManager,
+                                mutatorConfigManager, outputConfigManager));
     }
+
+    private void init(RunningConfig runningConfig,
+            InputConfigManager inputConfigManager,
+            MutatorConfigManager mutatorConfigManager,
+            OutputConfigManager outputConfigManager) {
+        this.bindingConfig = runningConfig.getBinding();
+        addConfigList(inputConfigManager, runningConfig.getInputs(), "inputId");
+        addConfigList(mutatorConfigManager, runningConfig.getMutators(),
+                "mutatorId");
+        addConfigList(outputConfigManager, runningConfig.getOutputs(),
+                "outputId");
+    }
+
+    private <C extends ConfigInterface> void addConfigList(
+            AbstractListConfigManager<C> listConfigManager,
+            Map<String, Object>[] configMaps, String idKey) {
+        JMOptional.getOptional(configMaps).stream().flatMap(Arrays::stream)
+                .map(map -> buildCombinedConfig(listConfigManager,
+                        map.get(idKey).toString(), map))
+                .forEach(listConfigManager::insertConfig);
+    }
+
 
     private RunningConfig transformRunningConfig(String jmMetricConfigUrl) {
         try {

@@ -1,5 +1,7 @@
 package kr.jm.metric.mutator.processor;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import kr.jm.metric.config.mutator.ApacheAccessLogMutatorConfig;
 import kr.jm.metric.config.mutator.MutatorConfigManager;
 import kr.jm.metric.config.mutator.field.FieldConfig;
@@ -13,6 +15,7 @@ import kr.jm.utils.helper.JMPathOperation;
 import kr.jm.utils.helper.JMThread;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +28,8 @@ import static org.junit.Assert.assertTrue;
 
 public class MutatorProcessorTest {
     static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
     }
 
     private static final String ResourceName = "webAccessLogSample.txt";

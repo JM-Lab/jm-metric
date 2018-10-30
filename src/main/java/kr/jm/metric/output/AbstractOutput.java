@@ -1,9 +1,12 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.OutputConfigInterface;
+import kr.jm.metric.data.FieldMap;
+import kr.jm.metric.data.Transfer;
 import lombok.Getter;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,5 +63,10 @@ public abstract class AbstractOutput implements OutputInterface {
     public String toString() {
         return "AbstractOutput{" + "outputId='" + outputId + '\'' +
                 ", outputConfig=" + outputConfig + '}';
+    }
+
+    @Override
+    public void writeData(List<Transfer<FieldMap>> transferList) {
+
     }
 }

@@ -3,7 +3,7 @@ package kr.jm.metric.mutator.processor;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.mutator.MutatorInterface;
-import kr.jm.utils.flow.processor.JMProcessor;
+import kr.jm.utils.flow.processor.JMConcurrentProcessor;
 import kr.jm.utils.flow.processor.JMProcessorBuilder;
 import kr.jm.utils.flow.processor.JMProcessorInterface;
 import kr.jm.utils.helper.JMLog;
@@ -24,13 +24,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class MutatorProcessor implements
-        JMProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>> {
+        JMProcessorInterface<List<Transfer<String>>,
+                List<Transfer<FieldMap>>>, AutoCloseable {
 
     @Getter
     private String mutatorId;
     private int workers;
     private MatchFilter matchFilter;
-    private JMProcessor<List<Transfer<String>>, List<Transfer<FieldMap>>>
+    private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<FieldMap>>>
             jmProcessor;
 
     public MutatorProcessor(int workers, MutatorInterface mutator,
@@ -108,4 +109,8 @@ public class MutatorProcessor implements
     public void onComplete() {this.jmProcessor.onComplete();}
 
 
+    @Override
+    public void close() {
+        this.jmProcessor.close();
+    }
 }

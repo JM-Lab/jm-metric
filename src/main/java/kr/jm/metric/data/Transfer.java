@@ -1,6 +1,5 @@
 package kr.jm.metric.data;
 
-import kr.jm.utils.helper.JMOptional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -183,9 +182,7 @@ public class Transfer<T> {
      */
     public <D> Transfer<D> newWith(D data, long timestamp,
             Map<String, Object> meta) {
-        return new Transfer<>(this.inputId, data, timestamp,
-                JMOptional.getOptional(meta).map(HashMap::new)
-                        .orElseGet(HashMap::new));
+        return new Transfer<>(this.inputId, data, timestamp, meta);
     }
 
     /**

@@ -6,6 +6,7 @@ import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigManager;
 import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
+import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.enums.OS;
 import kr.jm.utils.helper.*;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * The type Jm metric config manager.
@@ -73,7 +75,7 @@ public class JMMetricConfigManager {
                 this.mutatorConfigManager, this.outputConfigManager);
     }
 
-    private String buildConfigFilePath(String path, String alternativePath) {
+    protected String buildConfigFilePath(String path, String alternativePath) {
         return JMOptional.getOptional(path).map(JMPath::getPath)
                 .filter(JMPath::exists).map(Path::toAbsolutePath)
                 .map(Object::toString)
@@ -250,18 +252,20 @@ public class JMMetricConfigManager {
      * @return the jm metric config manager
      */
     public JMMetricConfigManager printAllConfig() {
-        loggingConfigInfo("==== Input Config Map ====", inputConfigManager);
-        loggingConfigInfo("==== Mutator Config Map ====",
-                mutatorConfigManager);
-        loggingConfigInfo("==== Output Config Map ====",
-                outputConfigManager);
+        loggingConfigInfo("Input", inputConfigManager);
+        loggingConfigInfo("Mutator", mutatorConfigManager);
+        loggingConfigInfo("Output", outputConfigManager);
         return this;
     }
 
-    private void loggingConfigInfo(String infoHead,
+    protected void loggingConfigInfo(String title,
             AbstractListConfigManager configManager) {
-        printInfo(buildInfo(infoHead,
-                JMJson.toPrettyJsonString(configManager.getConfigMap())));
+        loggingConfigInfo(title, configManager.getConfigMap());
+    }
+
+    protected void loggingConfigInfo(String title, Object object) {
+        printInfo(buildInfo("==== " + title + " Config ====",
+                JMJson.toPrettyJsonString(object)));
     }
 
     private void printInfo(String info) {
@@ -275,18 +279,26 @@ public class JMMetricConfigManager {
     }
 
     public String getInputConfigId() {
-        return Optional.ofNullable(runningConfigManager.getInputConfig())
-                .map(InputConfigInterface::getInputId).orElse(JMString.EMPTY);
+        return getConfigId(BindingConfig::getInputId);
     }
 
-    public String getMutatorConfigId() {
-        return Optional.ofNullable(runningConfigManager.getMutatorConfig())
-                .map(MutatorConfigInterface::getMutatorId)
+    private String getConfigId(Function<BindingConfig, String>
+            configIdFunction) {
+        return getBindingConfigAsOpt().map(configIdFunction)
                 .orElse(JMString.EMPTY);
     }
 
+    public String getMutatorConfigId() {
+        return getConfigId(BindingConfig::getMutatorId);
+    }
+
     public String[] getOutputConfigIds() {
-        return runningConfigManager.getOutputConfigs().stream()
-                .map(OutputConfigInterface::getOutputId).toArray(String[]::new);
+        return getBindingConfigAsOpt().map(BindingConfig::getOutputIds)
+                .orElse(JMArrays.EMPTY_STRINGS);
+    }
+
+    private Optional<BindingConfig> getBindingConfigAsOpt() {
+        return Optional
+                .ofNullable(this.runningConfigManager.getBindingConfig());
     }
 }

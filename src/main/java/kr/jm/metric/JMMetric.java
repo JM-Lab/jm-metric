@@ -36,8 +36,11 @@ public class JMMetric implements
 
     @Getter
     private JMMetricConfigManager jmMetricConfigManager;
+    @Getter
     private InputPublisher inputPublisher;
+    @Getter
     private MutatorProcessor mutatorProcessor;
+    @Getter
     private List<OutputSubscriber> outputSubscriberList;
     private JMProcessor<List<Transfer<FieldMap>>, List<Transfer<FieldMap>>>
             customProcessor;
@@ -48,7 +51,7 @@ public class JMMetric implements
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        new JMMetricMain().main(args);
+        new JMMetricMain().start(args);
     }
 
     /**
@@ -113,7 +116,7 @@ public class JMMetric implements
                 JMLambda.supplierIfNull(jmMetricConfigManager,
                         JMMetricConfigManager::new);
         withInputId(inputId).withMutatorId(mutatorConfigId)
-                .withOutputIds(outputIds).build();
+                .withOutputIds(outputIds);
         String info =
                 "Running with InputId = " + inputPublisher.getInputId() +
                         ", MutatorId = " + mutatorProcessor.getMutatorId() +
@@ -135,11 +138,11 @@ public class JMMetric implements
     }
 
     private JMMetric withMutatorId(String mutatorConfigId) {
-        this.mutatorProcessor = this.inputPublisher.subscribeAndReturnSubcriber(
+        this.mutatorProcessor =
                 MutatorProcessorBuilder.build(this.jmMetricConfigManager
                         .getMutatorConfig(
                                 JMOptional.getOptional(mutatorConfigId)
-                                        .orElse("Raw"))));
+                                        .orElse("Raw")));
         return this;
     }
 
@@ -158,25 +161,20 @@ public class JMMetric implements
     public JMMetric start() {
         JMLog.info(log, "start", getInputId(), getMutatorId(),
                 getOutputIdList());
+        bindInputAndMutator();
+        bindOutput();
         this.inputPublisher.start();
         return this;
     }
 
-    /**
-     * Build jm metric.
-     *
-     * @return the jm metric
-     */
-    public JMMetric build() {
-        JMLog.info(log, "build", getInputId(), getMutatorId(),
-                getOutputIdList());
+    protected void bindOutput() {
         this.outputSubscriberList.forEach(this::subscribe);
-        return this;
     }
 
-    private Flow.Publisher<List<Transfer<FieldMap>>> getFinalPublisher() {
-        return Objects.nonNull(
-                this.customProcessor) ? this.customProcessor : this.mutatorProcessor;
+    protected void bindInputAndMutator() {
+        this.inputPublisher.subscribe(this.mutatorProcessor);
+        Optional.ofNullable(this.customProcessor)
+                .ifPresent(this.mutatorProcessor::subscribe);
     }
 
     @Override
@@ -184,6 +182,7 @@ public class JMMetric implements
         JMLog.info(log, "close", getInputId(), getMutatorId(),
                 getOutputIdList());
         this.inputPublisher.close();
+        this.mutatorProcessor.close();
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
@@ -195,13 +194,11 @@ public class JMMetric implements
      */
     public JMMetric withCustomFunction(
             Function<Transfer<FieldMap>, Map<String, Object>> customFunction) {
-        this.customProcessor = mutatorProcessor
-                .subscribeAndReturnProcessor(JMProcessorBuilder
-                        .build((List<Transfer<FieldMap>> list) -> list.stream()
-                                .map(mapTransfer -> mapTransfer.newWith(
-                                        buildNewFieldMap(customFunction,
-                                                mapTransfer)))
-                                .collect(Collectors.toList())));
+        this.customProcessor = JMProcessorBuilder
+                .build((List<Transfer<FieldMap>> list) -> list.stream()
+                        .map(mapTransfer -> mapTransfer.newWith(
+                                buildNewFieldMap(customFunction, mapTransfer)))
+                        .collect(Collectors.toList()));
         return this;
     }
 
@@ -260,6 +257,11 @@ public class JMMetric implements
     public JMMetric testInput(List<String> dataList) {
         inputPublisher.testInput(dataList);
         return this;
+    }
+
+    private Flow.Publisher<List<Transfer<FieldMap>>> getFinalPublisher() {
+        return Objects.nonNull(
+                this.customProcessor) ? this.customProcessor : this.mutatorProcessor;
     }
 
     @Override

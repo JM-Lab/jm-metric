@@ -1,5 +1,7 @@
 package kr.jm.metric;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import kr.jm.metric.config.ConfigInterface;
 import kr.jm.metric.config.JMMetricConfigManager;
 import kr.jm.metric.config.input.FileInputConfig;
@@ -17,6 +19,7 @@ import kr.jm.utils.stats.generator.WordCountGenerator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,7 +34,8 @@ import static org.junit.Assert.assertTrue;
 
 public class JMMetricTest {
     static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
     }
 
     private JMMetric jmMetric;
@@ -159,6 +163,7 @@ public class JMMetricTest {
         Assert.assertEquals(
                 "{request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, wordCount.I=1, requestMethod=GET, wordCount.en=1, meta.field.custom.customObject.bool=false, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), wordCount.08=1, wordCount.4=1, remoteHost|requestUrl=127.0.0.1|/apache_pb.gif, meta.inputId=TestInput, meta.field.custom.customKey=customValue, wordCount.Nav=1, requestUrl=/apache_pb.gif, meta.field.unit.timeLocal=Second, meta.field.custom.customList=[hello, world], wordCount.Mozilla=1, sizeByte=2326.0, wordCount.Win98=1, requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
                 fieldStringMap.toString());
+        System.out.println(JMJson.toJsonString(resultList));
 
     }
 

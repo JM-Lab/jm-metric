@@ -25,7 +25,7 @@ public class FileInput extends AbstractInput<FileInputConfig> {
     @Override
     protected void startImpl(Consumer<Transfer<String>> inputConsumer) {
         JMFiles.getLineStream(this.inputConfig.getFilePath())
-                .map(this::newTransfer).forEach(inputConsumer::accept);
+                .map(this::newTransfer).forEach(inputConsumer);
     }
 
     /**

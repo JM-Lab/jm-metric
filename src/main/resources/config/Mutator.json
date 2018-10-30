@@ -33,6 +33,13 @@
     "mutatorConfigType": "APACHE_ACCESS_LOG",
     "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
     "fieldConfig": {
+      "format": {
+        // %r = request
+        "request": {
+          "fields": ["requestMethod", "requestUrl", "requestProtocol"],
+          "mutatorConfigType": "DELIMITER"
+        }
+      },
       "dateFormat": {
         "receivedTimestamp": {
           "dateFormatType": "CUSTOM",

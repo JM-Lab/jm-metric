@@ -1,40 +1,49 @@
 {
-  "input": {
-    "inputId": "Stdin"
-  },
-  "mutator": {
-    //  **** Apache Access Log Mutator Example ****
+  "binding": {
+    "inputId": "Stdin",
     "mutatorId": "CombinedLogFormat",
-    "mutatorConfigType": "APACHE_ACCESS_LOG",
-    "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
-    "fieldConfig": {
-      "rawData": true,
-      "dateFormat": {
-        "receivedTimestamp": {
-          "dateFormatType": "CUSTOM",
-          "format": "dd/MMM/yyyy:HH:mm:ss Z",
-          "zoneOffset": "",
-          "newFieldName": "timestamp",
-          "changeDateConfig": {
-            "dateFormatType": "EPOCH"
+    "outputIds": ["Stdout", "Stdout2"]
+  },
+  "inputs": [
+    {
+      "inputId": "Stdin"
+    }
+  ],
+  "mutators": [
+    //  **** Apache Access Log Mutator Example ****
+    {
+      "mutatorId": "CombinedLogFormat",
+      "mutatorConfigType": "APACHE_ACCESS_LOG",
+      "format": "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"",
+      "fieldConfig": {
+        "rawData": true,
+        "dateFormat": {
+          "receivedTimestamp": {
+            "dateFormatType": "CUSTOM",
+            "format": "dd/MMM/yyyy:HH:mm:ss Z",
+            "zoneOffset": "",
+            "newFieldName": "timestamp",
+            "changeDateConfig": {
+              "dateFormatType": "EPOCH"
+            }
           }
         }
       }
     }
     //  ****************************
-  },
+  ],
   "outputs": [
+    //  **** File Output Example ****
     {
-      //  **** File Output Example ****
       "outputId": "Stdout",
       "enableJsonString": false
-      //  ****************************
     },
+    //  ****************************
+    //  **** File Output Example ****
     {
-      //  **** File Output Example ****
       "outputId": "Stdout2",
       "outputConfigType": "STDOUT"
-      //  ****************************
     }
+    //  ****************************
   ]
 }

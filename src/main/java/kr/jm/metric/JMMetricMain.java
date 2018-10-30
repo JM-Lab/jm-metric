@@ -6,22 +6,24 @@ import kr.jm.utils.enums.OS;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMThread;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * The type Jm metric main.
+ * The type Jm metric start.
  */
 @Getter
-@Slf4j
 public class JMMetricMain {
 
+    protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+
+    private CommandLine commandLine;
     private JMMetric jmMetric;
     private JMMetricConfigManager jmMetricConfigManager;
     private String inputId;
@@ -33,16 +35,24 @@ public class JMMetricMain {
      *
      * @param args the args
      */
-    public void main(String... args) {
+    public void start(String... args) {
         Optional.ofNullable(parseCLI(buildCLIOptions(), args))
                 .ifPresent(commandLine -> {
                     applyCommandLine(commandLine);
-                    this.jmMetric = new JMMetric(this.jmMetricConfigManager,
-                            inputId, mutatorId, outputIds);
-                    this.jmMetric.getJmMetricConfigManager().printAllConfig();
+                    runHookBeforeStart(this.jmMetric =
+                            new JMMetric(this.jmMetricConfigManager,
+                                    inputId, mutatorId, outputIds));
                     JMThread.runAsync(this.jmMetric::start);
-                    OS.addShutdownHook(this.jmMetric::close);
+                    runHookAfterShutdown();
                 });
+    }
+
+    protected void runHookAfterShutdown() {
+        OS.addShutdownHook(this.jmMetric::close);
+    }
+
+    protected void runHookBeforeStart(JMMetric jmMetric) {
+        jmMetric.getJmMetricConfigManager().printAllConfig();
     }
 
     private CommandLine parseCLI(Options options, String... args) {
@@ -61,18 +71,18 @@ public class JMMetricMain {
         return commandLine.hasOption("help") ? printHelp(options) : commandLine;
     }
 
-    private CommandLine printHelp(final Options options) {
-        final HelpFormatter formatter = new HelpFormatter();
-        final String syntax = "JMMetric";
-        final String usageHeader = "Options:";
-        final String usageFooter =
+    private CommandLine printHelp(Options options) {
+        HelpFormatter formatter = new HelpFormatter();
+        String syntax = "JMMetric";
+        String usageHeader = "Options:";
+        String usageFooter =
                 "See https://github.com/JM-Lab/jm-metric for further details.";
         formatter.printHelp(120, syntax, usageHeader, options, usageFooter,
                 true);
         return null;
     }
 
-    private Options buildCLIOptions() {
+    protected Options buildCLIOptions() {
         Options options = new Options();
         options.addOption("h", "help", false, "print help message");
         options.addOption("c", "config", true,
@@ -87,21 +97,26 @@ public class JMMetricMain {
     }
 
     private void applyCommandLine(CommandLine commandLine) {
-        Optional.ofNullable(commandLine.getOptionValue("config"))
+        this.commandLine = commandLine;
+        extractConfigValueAsOpt("config")
                 .map(config -> this.jmMetricConfigManager =
                         new JMMetricConfigManager(config))
                 .ifPresent(jmMetricConfigManager -> {
-                    this.inputId = jmMetricConfigManager.getInputConfigId();
+                    this.inputId =
+                            jmMetricConfigManager.getInputConfigId();
                     this.mutatorId = jmMetricConfigManager.getMutatorConfigId();
                     this.outputIds = jmMetricConfigManager.getOutputConfigIds();
                 });
-        Optional.ofNullable(commandLine.getOptionValue("inputId"))
+        extractConfigValueAsOpt("inputId")
                 .ifPresent(inputId -> this.inputId = inputId);
-        Optional.ofNullable(commandLine.getOptionValue("mutatorId"))
+        extractConfigValueAsOpt("mutatorId")
                 .ifPresent(mutatorId -> this.mutatorId = mutatorId);
-        Optional.ofNullable(commandLine.getOptionValue("outputIds"))
-                .map(JMArrays::buildArrayFromCsv)
+        extractConfigValueAsOpt("outputIds").map(JMArrays::buildArrayFromCsv)
                 .ifPresent(outputIds -> this.outputIds = outputIds);
+    }
+
+    public Optional<String> extractConfigValueAsOpt(String opt) {
+        return Optional.ofNullable(this.commandLine.getOptionValue(opt));
     }
 
 }

@@ -1,5 +1,7 @@
 package kr.jm.metric;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
@@ -9,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -18,7 +21,8 @@ import java.util.List;
 
 public class JMMetricMainTest {
     static {
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.INFO);
     }
 
     private PrintWriter printWriter;
@@ -37,23 +41,23 @@ public class JMMetricMainTest {
 
     @Test
     public void testMain1() {
-        new JMMetricMain().main();
+        new JMMetricMain().start();
     }
 
     @Test
     public void testMain2() {
-        new JMMetricMain().main("-h", "-m", "CombinedLogFormat");
+        new JMMetricMain().start("-h", "-m", "CombinedLogFormat");
     }
 
     @Test
     public void testMain3() {
-        new JMMetricMain().main("CombinedLogFormat");
+        new JMMetricMain().start("CombinedLogFormat");
     }
 
     @Test
     public void testMain() {
         JMMetricMain jmMetricMain = new JMMetricMain();
-        jmMetricMain.main("-i", "Stdin", "-m", "CombinedLogFormat");
+        jmMetricMain.start("-i", "Stdin", "-m", "CombinedLogFormat");
         List<Transfer<FieldMap>> resultList = new ArrayList<>();
         JMMetric jmMetric = jmMetricMain.getJmMetric();
         jmMetric.subscribe(JMSubscriberBuilder.build(resultList::addAll));
@@ -74,7 +78,7 @@ public class JMMetricMainTest {
     @Test
     public void testMainWithJMMetricConfig() {
         JMMetricMain jmMetricMain = new JMMetricMain();
-        jmMetricMain.main("-c",
+        jmMetricMain.start("-c",
                 JMResources.getURL("JMMetricConfigTest.json").getPath());
         List<Transfer<FieldMap>> resultList = new ArrayList<>();
         JMMetric jmMetric = jmMetricMain.getJmMetric();

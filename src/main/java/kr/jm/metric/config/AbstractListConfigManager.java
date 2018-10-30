@@ -198,10 +198,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
      * @return the config
      */
     public C getConfig(String configId) {
-        return JMOptional.getOptional(this.configMap, configId).orElseGet(
-                () -> JMExceptionManager.handleExceptionAndReturnNull(log,
-                        JMExceptionManager.newRunTimeException("No Config !!!"),
-                        "getConfig", configId));
+        return this.configMap.get(configId);
     }
 
     /**
