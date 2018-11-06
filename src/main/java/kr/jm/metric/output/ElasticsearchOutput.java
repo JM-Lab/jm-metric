@@ -3,7 +3,9 @@ package kr.jm.metric.output;
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
+import kr.jm.utils.collections.JMNestedMap;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
+import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
@@ -13,43 +15,33 @@ import org.elasticsearch.common.settings.Settings;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Elasticsearch output.
- */
 @ToString(callSuper = true)
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
 
     private String zoneId;
-    private String indexSuffixDateFormat;
+    private String indexField;
     private String indexPrefix;
     private String indexSuffixDate;
-    private String index;
+    private String indexSuffixDateFormat;
+    private String indexPreSuf;
 
-    /**
-     * The Elasticsearch client.
-     */
+    private JMNestedMap<Object, String, String> indexCache;
+
     protected JMElasticsearchClient elasticsearchClient;
 
-    /**
-     * Instantiates a new Elasticsearch output.
-     */
     public ElasticsearchOutput() {
         this(new ElasticsearchOutputConfig());
     }
 
-    /**
-     * Instantiates a new Elasticsearch output.
-     *
-     * @param outputConfig the output config
-     */
     public ElasticsearchOutput(ElasticsearchOutputConfig outputConfig) {
         super(outputConfig);
+        this.zoneId = outputConfig.getZoneId();
+        this.indexField = outputConfig.getIndexField();
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
-        this.zoneId = outputConfig.getZoneId();
         this.indexSuffixDate = buildInputSuffixDate(System.currentTimeMillis());
-        this.index = buildIndex(this.indexSuffixDate);
+        this.indexPreSuf = buildIndexPreSuf(this.indexSuffixDate);
         this.elasticsearchClient = new JMElasticsearchClient(
                 outputConfig.getElasticsearchConnect(), buildSettings(
                 JMElasticsearchClient
@@ -60,6 +52,7 @@ public class ElasticsearchOutput extends AbstractOutput {
         this.elasticsearchClient.setBulkProcessor(outputConfig.getBulkActions(),
                 outputConfig.getBulkSizeKB(),
                 outputConfig.getFlushIntervalSeconds());
+        this.indexCache = new JMNestedMap<>(true);
     }
 
     private static Settings buildSettings(Settings.Builder settingsBuilder,
@@ -69,8 +62,8 @@ public class ElasticsearchOutput extends AbstractOutput {
         return settingsBuilder.build();
     }
 
-    private String buildIndex(long timestamp) {
-        return getIndex(buildInputSuffixDate(timestamp));
+    private String buildIndexPreSuf(long timestamp) {
+        return buildIndexPreSuf(buildInputSuffixDate(timestamp));
     }
 
     private String buildInputSuffixDate(long timestamp) {
@@ -78,16 +71,16 @@ public class ElasticsearchOutput extends AbstractOutput {
                 .getTime(timestamp, this.indexSuffixDateFormat, this.zoneId);
     }
 
-    private String getIndex(String indexSuffixDate) {
+    private String buildIndexPreSuf(String indexSuffixDate) {
         return indexSuffixDate
-                .equals(this.indexSuffixDate) ? this.index : buildIndex(
+                .equals(this.indexSuffixDate) ? this.indexPreSuf : getIndexPreSuf(
                 indexSuffixDate);
     }
 
-    private String buildIndex(String indexSuffixDate) {
+    private String getIndexPreSuf(String indexSuffixDate) {
         synchronized (this.indexSuffixDate) {
             this.indexSuffixDate = indexSuffixDate;
-            return this.index =
+            return this.indexPreSuf =
                     this.indexPrefix + JMString.HYPHEN + indexSuffixDate;
         }
     }
@@ -99,11 +92,25 @@ public class ElasticsearchOutput extends AbstractOutput {
 
     @Override
     public void writeData(List<Transfer<FieldMap>> transferList) {
-        for (Transfer<FieldMap> inputIdTransfer : transferList)
-            this.elasticsearchClient
-                    .sendWithBulkProcessor(inputIdTransfer.getData(),
-                            buildIndex(inputIdTransfer.getTimestamp()),
-                            inputIdTransfer.getInputId());
+        for (Transfer<FieldMap> inputIdTransfer : transferList) {
+            writeData(inputIdTransfer.getData(), inputIdTransfer.getTimestamp
+                    (), inputIdTransfer.getInputId());
+        }
+    }
+
+    private void writeData(FieldMap data, long timestamp, String inputId) {
+        this.elasticsearchClient
+                .sendWithBulkProcessor(data,
+                        buildIndex(data, buildIndexPreSuf(timestamp)), inputId);
+    }
+
+    private String buildIndex(FieldMap data, String indexPreSuf) {
+        return JMOptional.getOptional(this.indexField).map(data::get)
+                .map(indexValue -> indexCache
+                        .getOrPutGetNew(indexValue, indexPreSuf,
+                                () -> indexValue + JMString.HYPHEN +
+                                        indexPreSuf))
+                .orElse(indexPreSuf);
     }
 
 }

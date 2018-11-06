@@ -84,7 +84,7 @@ public class ElasticsearchOutputTest {
         JMThread.sleep(3000);
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);
-        String index = elasticsearchOutput.getIndex();
+        String index = elasticsearchOutput.getIndexPreSuf();
         Assert.assertTrue(allIndices.contains(index));
         SearchResponse searchResponse =
                 jmElasticsearchClient.searchAll(JMArrays.toArray(allIndices));

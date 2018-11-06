@@ -7,41 +7,17 @@ import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
 import lombok.ToString;
 
-/**
- * The type Elasticsearch output config.
- */
 @Getter
 @ToString(callSuper = true)
 public class ElasticsearchOutputConfig extends AbstractOutputConfig {
 
-    /**
-     * The constant DEFAULT_BULK_ACTIONS.
-     */
     public static final int DEFAULT_BULK_ACTIONS = 128;
-    /**
-     * The constant DEFAULT_BULK_SIZE_KB.
-     */
     public static final long DEFAULT_BULK_SIZE_KB = 1024;
-    /**
-     * The constant DEFAULT_FLUSH_INTERVAL_Millis.
-     */
     public static final int DEFAULT_FLUSH_INTERVAL_SECONDS = 1;
-    /**
-     * The constant DEFAULT_ZONE_ID.
-     */
     public static final String DEFAULT_ZONE_ID = JMTimeUtil.UTC_ZONE_ID;
-    /**
-     * The constant DEFAULT_INDEX_SUFFIX_DATE_FORMAT.
-     */
     public static final String DEFAULT_INDEX_SUFFIX_DATE_FORMAT = "yyyy.MM.dd";
-    /**
-     * The constant DEFAULT_INDEX_PREFIX.
-     */
     public static final String DEFAULT_INDEX_PREFIX = "jm-metric";
     private static final String DEFAULT_NODE_NAME = OS.getHostname();
-    /**
-     * The constant DEFAULT_ELASTICSEARCH_CONNECT.
-     */
     public static final String DEFAULT_ELASTICSEARCH_CONNECT =
             JMString.buildIpOrHostnamePortPair(DEFAULT_NODE_NAME, 9300);
 
@@ -50,6 +26,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     private boolean clientTransportSniff;
     private String clusterName;
 
+    private String indexField;
     private String indexPrefix;
     private String indexSuffixDateFormat;
     private String zoneId;
@@ -58,135 +35,68 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     private long bulkSizeKB;
     private int flushIntervalSeconds;
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     */
     public ElasticsearchOutputConfig() {
         this(DEFAULT_ELASTICSEARCH_CONNECT);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect) {
         this(elasticsearchConnect, DEFAULT_NODE_NAME);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName) {
         this(elasticsearchConnect, nodeName, false);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param clientTransportSniff the client transport sniff
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             boolean clientTransportSniff) {
         this(elasticsearchConnect, DEFAULT_NODE_NAME, clientTransportSniff);
     }
 
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     * @param clientTransportSniff the client transport sniff
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName, boolean clientTransportSniff) {
         this(elasticsearchConnect, nodeName, clientTransportSniff, null);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect the elasticsearch connect
-     * @param nodeName             the node name
-     * @param clientTransportSniff the client transport sniff
-     * @param clusterName          the cluster name
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName, boolean clientTransportSniff, String clusterName) {
+        this(elasticsearchConnect, nodeName, clientTransportSniff, clusterName,
+                null);
+    }
+
+    public ElasticsearchOutputConfig(String elasticsearchConnect,
+            String nodeName, boolean clientTransportSniff, String
+            clusterName, String indexField) {
         this(elasticsearchConnect, nodeName, clientTransportSniff,
-                clusterName, DEFAULT_INDEX_PREFIX,
+                clusterName, indexField, DEFAULT_INDEX_PREFIX,
                 DEFAULT_INDEX_SUFFIX_DATE_FORMAT, DEFAULT_ZONE_ID);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect  the elasticsearch connect
-     * @param nodeName              the node name
-     * @param clientTransportSniff  the client transport sniff
-     * @param clusterName           the cluster name
-     * @param indexPrefix           the index prefix
-     * @param indexSuffixDateFormat the index suffix date format
-     * @param zoneId                the zone id
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
             String nodeName, boolean clientTransportSniff, String clusterName,
-            String indexPrefix, String indexSuffixDateFormat, String zoneId) {
+            String indexField, String indexPrefix, String indexSuffixDateFormat,
+            String zoneId) {
         this(elasticsearchConnect, nodeName, clientTransportSniff, clusterName,
-                indexPrefix, indexSuffixDateFormat, zoneId,
+                indexField, indexPrefix, indexSuffixDateFormat, zoneId,
                 DEFAULT_BULK_ACTIONS, DEFAULT_BULK_SIZE_KB,
                 DEFAULT_FLUSH_INTERVAL_SECONDS);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param elasticsearchConnect  the elasticsearch connect
-     * @param nodeName              the node name
-     * @param clientTransportSniff  the client transport sniff
-     * @param clusterName           the cluster name
-     * @param indexPrefix           the index prefix
-     * @param indexSuffixDateFormat the index suffix date format
-     * @param zoneId                the zone id
-     * @param bulkActions           the bulk actions
-     * @param bulkSizeKB            the bulk size kb
-     * @param flushIntervalSeconds  the flush interval seconds
-     */
     public ElasticsearchOutputConfig(String elasticsearchConnect,
-            String nodeName,
-            boolean clientTransportSniff, String clusterName,
-            String indexPrefix, String indexSuffixDateFormat, String zoneId,
-            int bulkActions, long bulkSizeKB, int flushIntervalSeconds) {
+            String nodeName, boolean clientTransportSniff, String clusterName,
+            String indexField, String indexPrefix, String indexSuffixDateFormat,
+            String zoneId, int bulkActions, long bulkSizeKB,
+            int flushIntervalSeconds) {
         this("ESOutput-" + nodeName, elasticsearchConnect, nodeName,
-                clientTransportSniff, clusterName, indexPrefix,
+                clientTransportSniff, clusterName, indexField, indexPrefix,
                 indexSuffixDateFormat, zoneId, bulkActions, bulkSizeKB,
                 flushIntervalSeconds);
     }
 
-    /**
-     * Instantiates a new Elasticsearch output config.
-     *
-     * @param outputId              the output id
-     * @param elasticsearchConnect  the elasticsearch connect
-     * @param nodeName              the node name
-     * @param clientTransportSniff  the client transport sniff
-     * @param clusterName           the cluster name
-     * @param indexPrefix           the index prefix
-     * @param indexSuffixDateFormat the index suffix date format
-     * @param zoneId                the zone id
-     * @param bulkActions           the bulk actions
-     * @param bulkSizeKB            the bulk size kb
-     * @param flushIntervalSeconds  the flush interval seconds
-     */
     public ElasticsearchOutputConfig(String outputId,
             String elasticsearchConnect, String nodeName,
-            boolean clientTransportSniff, String clusterName,
+            boolean clientTransportSniff, String clusterName, String indexField,
             String indexPrefix, String indexSuffixDateFormat, String zoneId,
             int bulkActions, long bulkSizeKB, int flushIntervalSeconds) {
         super(outputId);
@@ -194,6 +104,7 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
         this.nodeName = nodeName;
         this.clientTransportSniff = clientTransportSniff;
         this.clusterName = clusterName;
+        this.indexField = indexField;
         this.indexPrefix = indexPrefix;
         this.indexSuffixDateFormat = indexSuffixDateFormat;
         this.zoneId = zoneId;

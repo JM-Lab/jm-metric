@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data
@@ -35,15 +35,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.lib>lib/</project.lib>
         <java.version>9</java.version>
-        <junit.version>4.12</junit.version>
-        <jmlab-utils-java9.version>0.1.3</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>0.6.2.4
-        </jmlab-utils-elasticsearch.version>
-        <jmlab-utils-kafka.version>1.1.0</jmlab-utils-kafka.version>
-        <common-cli.version>1.4</common-cli.version>
         <slf4j.version>1.7.25</slf4j.version>
+        <junit.version>4.12</junit.version>
+        <jmlab-utils-java9.version>0.1.4</jmlab-utils-java9.version>
+        <jmlab-utils-elasticsearch.version>0.6.4.2
+        </jmlab-utils-elasticsearch.version>
+        <jmlab-utils-kafka.version>1.1.1</jmlab-utils-kafka.version>
+        <common-cli.version>1.4</common-cli.version>
         <logback.version>1.2.3</logback.version>
-        <lombok.version>1.16.20</lombok.version>
+        <lombok.version>1.18.4</lombok.version>
     </properties>
     <build>
         <plugins>
@@ -154,12 +154,6 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>kr.jmlab</groupId>
             <artifactId>jmlab-utils-java9</artifactId>
             <version>${jmlab-utils-java9.version}</version>
@@ -186,10 +180,22 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
