@@ -41,7 +41,7 @@ public class ElasticsearchOutput extends AbstractOutput {
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
         this.indexSuffixDate = buildInputSuffixDate(System.currentTimeMillis());
-        this.indexPreSuf = buildIndexPreSuf(this.indexSuffixDate);
+        this.indexPreSuf = getIndexPreSuf(indexSuffixDate);
         this.elasticsearchClient = new JMElasticsearchClient(
                 outputConfig.getElasticsearchConnect(), buildSettings(
                 JMElasticsearchClient
@@ -99,17 +99,16 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private void writeData(FieldMap data, long timestamp, String inputId) {
-        this.elasticsearchClient
-                .sendWithBulkProcessor(data,
-                        buildIndex(data, buildIndexPreSuf(timestamp)), inputId);
+        this.elasticsearchClient.sendWithBulkProcessor(data,
+                buildIndex(data, buildIndexPreSuf(timestamp)), inputId);
     }
 
     private String buildIndex(FieldMap data, String indexPreSuf) {
         return JMOptional.getOptional(this.indexField).map(data::get)
                 .map(indexValue -> indexCache
                         .getOrPutGetNew(indexValue, indexPreSuf,
-                                () -> indexValue + JMString.HYPHEN +
-                                        indexPreSuf))
+                                () -> indexValue.toString().toLowerCase() +
+                                        JMString.HYPHEN + indexPreSuf))
                 .orElse(indexPreSuf);
     }
 
