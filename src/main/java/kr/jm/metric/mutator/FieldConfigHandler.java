@@ -13,10 +13,7 @@ import kr.jm.utils.helper.JMStream;
 import kr.jm.utils.helper.JMString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
@@ -40,10 +37,20 @@ class FieldConfigHandler {
         applyRawData(fieldObjectMap);
         applyCombinedFields(fieldObjectMap);
         applyFormulaFields(fieldObjectMap);
-        applyIgnore(fieldObjectMap);
         applyDateFormat(fieldObjectMap);
         applyDataType(fieldObjectMap);
+        applyAlterFieldName(fieldObjectMap);
+        applyIgnore(fieldObjectMap);
         return fieldObjectMap;
+    }
+
+    private void applyAlterFieldName(Map<String, Object> fieldObjectMap) {
+        JMOptional.getOptional(this.fieldConfig.getAlterFieldName())
+                .stream().map(Map::entrySet).flatMap(Set::stream)
+                .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
+                .filter(entry -> JMString.isNotNullOrEmpty(entry.getValue()))
+                .forEach(entry -> fieldObjectMap.put(entry.getValue(),
+                        fieldObjectMap.remove(entry.getKey())));
     }
 
     private void applyDataType(Map<String, Object> fieldObjectMap) {

@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * The interface Mutator interface.
- */
 public interface MutatorInterface extends
         Function<Transfer<String>, Transfer<FieldMap>> {
 
@@ -42,34 +39,12 @@ public interface MutatorInterface extends
         return meta;
     }
 
-    /**
-     * Mutate map.
-     *
-     * @param data the data
-     * @return the map
-     */
     Map<String, Object> mutate(String data);
 
-    /**
-     * Gets mutator id.
-     *
-     * @return the mutator id
-     */
     String getMutatorId();
 
-    /**
-     * Build field object map map.
-     *
-     * @param targetString the target string
-     * @return the map
-     */
     Map<String, Object> buildFieldObjectMap(String targetString);
 
-    /**
-     * Gets field meta.
-     *
-     * @return the field meta
-     */
     Map<String, Object> getFieldMeta();
 
 }

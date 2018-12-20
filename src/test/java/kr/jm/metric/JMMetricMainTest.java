@@ -1,7 +1,5 @@
 package kr.jm.metric;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
@@ -11,7 +9,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -20,10 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JMMetricMainTest {
-    static {
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
-    }
 
     private PrintWriter printWriter;
 

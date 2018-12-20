@@ -15,9 +15,6 @@ import org.slf4j.Logger;
 import java.util.Arrays;
 import java.util.Optional;
 
-/**
- * The type Jm metric start.
- */
 @Getter
 public class JMMetricMain {
 
@@ -30,11 +27,6 @@ public class JMMetricMain {
     private String mutatorId;
     private String[] outputIds;
 
-    /**
-     * Main.
-     *
-     * @param args the args
-     */
     public void start(String... args) {
         Optional.ofNullable(parseCLI(buildCLIOptions(), args))
                 .ifPresent(commandLine -> {

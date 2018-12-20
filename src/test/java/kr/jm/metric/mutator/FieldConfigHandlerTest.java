@@ -54,8 +54,7 @@ public class FieldConfigHandlerTest {
                 ("receivedTimestamp"));
         Assert.assertEquals(448d, stringObjectMap.get
                 ("sizeByte"));
-        Assert.assertEquals(167434d, stringObjectMap.get
-                ("requestTime"));
+        Assert.assertEquals(167434d, stringObjectMap.get("aa"));
         Assert.assertEquals(167434d / 1000, stringObjectMap.get
                 ("requestTimeInMicro"));
         Assert.assertNull(stringObjectMap.get("requestTime_sizeByte"));
@@ -87,8 +86,8 @@ public class FieldConfigHandlerTest {
                                                                 null)
                                                         .createDateFormatConfig())
                                         .createDateFormatConfig()))
-                        .setFilter(null)
                         .createFieldConfig();
+        System.out.println(JMJson.toJsonString(fieldConfig));
 
         stringObjectMap =
                 new FieldConfigHandler("testMutatorId", this.fieldConfig)
@@ -98,5 +97,6 @@ public class FieldConfigHandlerTest {
                 stringObjectMap.get("receivedTimestamp"));
         Assert.assertEquals("2015-06-08T08:00:00.000Z",
                 stringObjectMap.get("@timestamp"));
+
     }
 }

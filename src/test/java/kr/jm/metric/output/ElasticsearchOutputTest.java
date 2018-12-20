@@ -1,7 +1,5 @@
 package kr.jm.metric.output;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.FieldMap;
@@ -15,18 +13,12 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ElasticsearchOutputTest {
-
-    static {
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
-    }
 
     private JMEmbeddedElasticsearch jmEmbeddedElasticsearch;
     private ElasticsearchOutput elasticsearchOutput;

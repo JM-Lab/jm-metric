@@ -19,6 +19,7 @@ import java.util.Map;
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
 
+    private static final String TYPE = "doc";
     private String zoneId;
     private String indexField;
     private String indexPrefix;
@@ -92,15 +93,14 @@ public class ElasticsearchOutput extends AbstractOutput {
 
     @Override
     public void writeData(List<Transfer<FieldMap>> transferList) {
-        for (Transfer<FieldMap> inputIdTransfer : transferList) {
-            writeData(inputIdTransfer.getData(), inputIdTransfer.getTimestamp
-                    (), inputIdTransfer.getInputId());
-        }
+        for (Transfer<FieldMap> inputIdTransfer : transferList)
+            writeData(inputIdTransfer.getData(),
+                    inputIdTransfer.getTimestamp());
     }
 
-    private void writeData(FieldMap data, long timestamp, String inputId) {
+    private void writeData(FieldMap data, long timestamp) {
         this.elasticsearchClient.sendWithBulkProcessor(data,
-                buildIndex(data, buildIndexPreSuf(timestamp)), inputId);
+                buildIndex(data, buildIndexPreSuf(timestamp)), TYPE);
     }
 
     private String buildIndex(FieldMap data, String indexPreSuf) {

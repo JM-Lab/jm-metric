@@ -15,9 +15,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 
-/**
- * The type Formula field config.
- */
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

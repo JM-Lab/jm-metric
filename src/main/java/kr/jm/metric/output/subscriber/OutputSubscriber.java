@@ -11,15 +11,9 @@ import lombok.Getter;
 
 import java.util.List;
 
-/**
- * The type Output subscriber.
- */
 public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
         implements AutoCloseable {
 
-    /**
-     * The Output id.
-     */
     @Getter
     protected String outputId;
     private OutputInterface output;

@@ -1,7 +1,5 @@
 package kr.jm.metric;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMWordSplitter;
@@ -13,16 +11,11 @@ import kr.jm.utils.helper.JMThread;
 import kr.jm.utils.stats.generator.WordCountGenerator;
 import org.junit.After;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 public class JMMetricSampleTest {
-    static {
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.INFO);
-    }
 
     // jshell --class-path .m2/repository/com/github/jm-lab/jm-metric/0.1.0-SNAPSHOT/jm-metric-0.1.0-jar-with-dependencies.jar
     private JMMetric jmMetric;

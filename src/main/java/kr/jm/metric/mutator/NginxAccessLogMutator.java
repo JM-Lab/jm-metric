@@ -7,25 +7,14 @@ import lombok.ToString;
 
 import java.util.Map;
 
-/**
- * The type Nginx access log field map mutator.
- */
 @ToString(callSuper = true)
 public class NginxAccessLogMutator extends FormattedMutator {
 
-    /**
-     * Instantiates a new Nginx access log field map mutator.
-     */
     public NginxAccessLogMutator() {
         this(new NginxAccessLogMutatorConfig("NginxLogMutator",
                 "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\""));
     }
 
-    /**
-     * Instantiates a new Nginx access log field map mutator.
-     *
-     * @param formattedMutatorConfig the formatted mutator config
-     */
     public NginxAccessLogMutator(
             FormattedMutatorConfig formattedMutatorConfig) {
         super(formattedMutatorConfig, JMJson.withClasspathOrFilePath

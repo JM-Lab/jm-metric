@@ -20,9 +20,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-/**
- * The type Input publisher.
- */
 @Slf4j
 public class InputPublisher implements
         TransferSubmissionPublisherInterface<String>, AutoCloseable {
@@ -30,14 +27,8 @@ public class InputPublisher implements
     private BulkSubmissionPublisher<Transfer<String>>
             transferBulkSubmissionPublisher;
 
-    /**
-     * The Input id.
-     */
     @Getter
     protected String inputId;
-    /**
-     * The Input.
-     */
     protected InputInterface input;
 
     private Consumer<Transfer<String>> chunkConsumer;
@@ -48,12 +39,6 @@ public class InputPublisher implements
         this(transferBulkSubmissionPublisher, input, ChunkType.NONE);
     }
 
-    /**
-     * Instantiates a new Input publisher.
-     *
-     * @param transferBulkSubmissionPublisher the submission publisher
-     * @param input                           the input
-     */
     public InputPublisher(
             BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input, ChunkType chunkType) {
@@ -88,11 +73,6 @@ public class InputPublisher implements
                         .toArray(Transfer[]::new));
     }
 
-    /**
-     * Start input publisher.
-     *
-     * @return the input publisher
-     */
     public InputPublisher start() {
         JMLog.info(log, "start", inputId);
         input.start(this.chunkConsumer);
@@ -124,20 +104,10 @@ public class InputPublisher implements
         return this;
     }
 
-    /**
-     * Test input.
-     *
-     * @param data the data
-     */
     public void testInput(String data) {
         submit(this.inputId, List.of(data));
     }
 
-    /**
-     * Test input.
-     *
-     * @param dataList the data list
-     */
     public void testInput(List<String> dataList) {
         submit(this.inputId, dataList);
         this.transferBulkSubmissionPublisher.flush();

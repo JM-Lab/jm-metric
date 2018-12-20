@@ -11,40 +11,17 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- * The type Output subscriber builder.
- */
 public class OutputSubscriberBuilder {
 
-    /**
-     * Build file output output subscriber.
-     *
-     * @param filePath the file path
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildFileOutput(String filePath) {
         return buildFileOutput(true, filePath);
     }
 
-    /**
-     * Build file output output subscriber.
-     *
-     * @param enableJsonString the enable json string
-     * @param filePath         the file path
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildFileOutput(
             boolean enableJsonString, String filePath) {
         return buildFileOutput(enableJsonString, filePath, null);
     }
 
-    /**
-     * Build file output output subscriber.
-     *
-     * @param filePath                      the file path
-     * @param transformOutputObjectFunction the transform output object function
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildFileOutput(String filePath,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         return buildFileOutput(true, filePath,
@@ -52,14 +29,6 @@ public class OutputSubscriberBuilder {
     }
 
 
-    /**
-     * Build file output output subscriber.
-     *
-     * @param enableJsonString              the enable json string
-     * @param filePath                      the file path
-     * @param transformOutputObjectFunction the transform output object function
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildFileOutput(boolean enableJsonString,
             String filePath,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
@@ -67,44 +36,20 @@ public class OutputSubscriberBuilder {
                 transformOutputObjectFunction));
     }
 
-    /**
-     * Build std out output subscriber.
-     *
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildStdout() {
         return buildStdout(true);
     }
 
-    /**
-     * Build std out output subscriber.
-     *
-     * @param enableJsonString the enable json string
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildStdout(boolean enableJsonString) {
         return buildStdout(enableJsonString, null);
     }
 
-    /**
-     * Build std out output subscriber.
-     *
-     * @param transformOutputObjectFunction the transform output object function
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildStdout(
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         return buildStdout(true, transformOutputObjectFunction);
     }
 
 
-    /**
-     * Build std out output subscriber.
-     *
-     * @param enableJsonString              the enable json string
-     * @param transformOutputObjectFunction the transform output object function
-     * @return the output subscriber
-     */
     public static OutputSubscriber buildStdout(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         return build(new StdoutLineOutput(enableJsonString,
@@ -113,13 +58,6 @@ public class OutputSubscriberBuilder {
     }
 
 
-    /**
-     * Build output subscriber.
-     *
-     * @param outputId       the output id
-     * @param outputConsumer the output consumer
-     * @return the output subscriber
-     */
     public static OutputSubscriber build(String outputId,
             Consumer<List<Transfer<FieldMap>>> outputConsumer) {
         return build(new OutputInterface() {
@@ -141,22 +79,10 @@ public class OutputSubscriberBuilder {
         });
     }
 
-    /**
-     * Build output subscriber.
-     *
-     * @param outputConfig the output config
-     * @return the output subscriber
-     */
     public static OutputSubscriber build(OutputConfigInterface outputConfig) {
         return new OutputSubscriber(outputConfig.buildOutput());
     }
 
-    /**
-     * Build output subscriber.
-     *
-     * @param output the output
-     * @return the output subscriber
-     */
     public static OutputSubscriber build(OutputInterface output) {
         return new OutputSubscriber(output);
     }

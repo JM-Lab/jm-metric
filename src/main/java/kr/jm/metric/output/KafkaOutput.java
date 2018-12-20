@@ -11,9 +11,6 @@ import lombok.ToString;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * The type Kafka output.
- */
 @ToString(callSuper = true)
 public class KafkaOutput extends AbstractOutput {
 
@@ -23,11 +20,6 @@ public class KafkaOutput extends AbstractOutput {
     @Getter
     private String keyField;
 
-    /**
-     * Instantiates a new Kafka output.
-     *
-     * @param outputConfig the output config
-     */
     public KafkaOutput(KafkaOutputConfig outputConfig) {
         super(outputConfig);
         this.topic = outputConfig.getTopic();

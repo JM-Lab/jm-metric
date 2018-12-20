@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * The type Key value delimiter field map mutator.
- */
 @ToString(callSuper = true)
 public class KeyValueDelimiterMutator extends DelimiterMutator {
 
@@ -25,9 +22,6 @@ public class KeyValueDelimiterMutator extends DelimiterMutator {
                 Pattern.compile(mutatorConfig.getKeyValueDelimiterRegex());
     }
 
-    /**
-     * Instantiates a new Key value delimiter field map mutator.
-     */
     public KeyValueDelimiterMutator() {
         this(new KeyValueDelimiterMutatorConfig("KeyValueDelimiterMutator"));
     }

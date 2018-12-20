@@ -12,9 +12,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * The type Std out line output.
- */
 @ToString(callSuper = true)
 public class StdoutLineOutput extends AbstractOutput {
 
@@ -24,49 +21,24 @@ public class StdoutLineOutput extends AbstractOutput {
             transformOutputObjectFunction;
     private Function<Object, String> toStringFunction;
 
-    /**
-     * Instantiates a new Std out line output.
-     */
     public StdoutLineOutput() {
         this(false);
     }
 
-    /**
-     * Instantiates a new Std out line output.
-     *
-     * @param enableJsonString the enable json string
-     */
     public StdoutLineOutput(boolean enableJsonString) {
         this(enableJsonString, null);
     }
 
-    /**
-     * Instantiates a new Std out line output.
-     *
-     * @param enableJsonString              the enable json string
-     * @param transformOutputObjectFunction the transform output object function
-     */
     public StdoutLineOutput(boolean enableJsonString,
             Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
         this(new StdoutLineOutputConfig(enableJsonString),
                 transformOutputObjectFunction);
     }
 
-    /**
-     * Instantiates a new Std out line output.
-     *
-     * @param outputConfig the output config
-     */
     public StdoutLineOutput(StdoutLineOutputConfig outputConfig) {
         this(outputConfig, null);
     }
 
-    /**
-     * Instantiates a new Std out line output.
-     *
-     * @param outputConfig                  the output config
-     * @param transformOutputObjectFunction the transform output object function
-     */
     public StdoutLineOutput(StdoutLineOutputConfig outputConfig,
             Function<List<Transfer<FieldMap>>, List<Object>>
                     transformOutputObjectFunction) {
@@ -86,11 +58,6 @@ public class StdoutLineOutput extends AbstractOutput {
 
     }
 
-    /**
-     * Write string.
-     *
-     * @param string the string
-     */
     protected void writeString(String string) {
         System.out.println(string);
     }

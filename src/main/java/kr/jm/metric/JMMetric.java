@@ -26,9 +26,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * The type Jm metric.
- */
 @Slf4j
 public class JMMetric implements
         JMProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>>,
@@ -45,71 +42,32 @@ public class JMMetric implements
     private JMProcessor<List<Transfer<FieldMap>>, List<Transfer<FieldMap>>>
             customProcessor;
 
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
     public static void main(String[] args) {
         new JMMetricMain().start(args);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     */
     public JMMetric() {
         this(new JMMetricConfigManager());
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param jmMetricConfigManager the jm metric config manager
-     */
     public JMMetric(JMMetricConfigManager jmMetricConfigManager) {
         this(jmMetricConfigManager, null);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param mutatorConfigId the mutator config id
-     */
     public JMMetric(String mutatorConfigId) {
         this(null, mutatorConfigId);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param jmMetricConfigManager the jm metric config manager
-     * @param mutatorConfigId       the mutator config id
-     */
     public JMMetric(JMMetricConfigManager jmMetricConfigManager, String
             mutatorConfigId) {
         this(jmMetricConfigManager, null, mutatorConfigId);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param inputId         the input id
-     * @param mutatorConfigId the mutator config id
-     * @param outputIds       the output ids
-     */
     public JMMetric(String inputId, String mutatorConfigId,
             String... outputIds) {
         this(null, inputId, mutatorConfigId, outputIds);
     }
 
-    /**
-     * Instantiates a new Jm metric.
-     *
-     * @param jmMetricConfigManager the jm metric config manager
-     * @param inputId               the input id
-     * @param mutatorConfigId       the mutator config id
-     * @param outputIds             the output ids
-     */
     public JMMetric(JMMetricConfigManager jmMetricConfigManager,
             String inputId, String mutatorConfigId, String... outputIds) {
         this.jmMetricConfigManager =
@@ -155,9 +113,6 @@ public class JMMetric implements
         return this;
     }
 
-    /**
-     * Start.
-     */
     public JMMetric start() {
         JMLog.info(log, "start", getInputId(), getMutatorId(),
                 getOutputIdList());
@@ -186,12 +141,6 @@ public class JMMetric implements
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
-    /**
-     * With custom function jm metric.
-     *
-     * @param customFunction the custom function
-     * @return the jm metric
-     */
     public JMMetric withCustomFunction(
             Function<Transfer<FieldMap>, Map<String, Object>> customFunction) {
         this.customProcessor = JMProcessorBuilder
@@ -209,51 +158,24 @@ public class JMMetric implements
                 .apply(transfer.newWith(transfer.getData().newFieldMap())));
     }
 
-    /**
-     * Gets input id.
-     *
-     * @return the input id
-     */
     public String getInputId() {
         return this.inputPublisher.getInputId();
     }
 
-    /**
-     * Gets mutator id.
-     *
-     * @return the mutator id
-     */
     public String getMutatorId() {
         return this.mutatorProcessor.getMutatorId();
     }
 
-    /**
-     * Gets output id list.
-     *
-     * @return the output id list
-     */
     public List<String> getOutputIdList() {
         return JMCollections.buildNewList(this.outputSubscriberList,
                 OutputSubscriber::getOutputId);
     }
 
-    /**
-     * Test input jm metric.
-     *
-     * @param data the data
-     * @return the jm metric
-     */
     public JMMetric testInput(String data) {
         inputPublisher.testInput(data);
         return this;
     }
 
-    /**
-     * Test input jm metric.
-     *
-     * @param dataList the data list
-     * @return the jm metric
-     */
     public JMMetric testInput(List<String> dataList) {
         inputPublisher.testInput(dataList);
         return this;

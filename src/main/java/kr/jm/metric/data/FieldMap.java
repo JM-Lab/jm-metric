@@ -10,66 +10,35 @@ import lombok.NoArgsConstructor;
 
 import java.util.*;
 
-/**
- * The type Field map.
- */
 @SuppressWarnings("ALL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FieldMap implements Map<String, Object> {
     private static final String META_PREFIX = Transfer.META + JMString.DOT;
-    /**
-     * The constant EMPTY_FIELD_MAP.
-     */
     public static FieldMap EMPTY_FIELD_MAP =
             new FieldMap(Collections.emptyMap());
     private Map<String, Object> fieldMap;
     private Map<String, Object> dataMap;
     private Map<String, Object> metaMap;
 
-    /**
-     * Instantiates a new Field map.
-     *
-     * @param fieldObjectMap the field object map
-     */
     public FieldMap(Map<String, Object> fieldObjectMap) {
         this.fieldMap = JMMap.newFlatKeyMap(fieldObjectMap);
     }
 
-    /**
-     * New field map field map.
-     *
-     * @return the field map
-     */
     public FieldMap newFieldMap() {
         FieldMap newFieldMap = new FieldMap();
         newFieldMap.fieldMap = new HashMap<>(this.fieldMap);
         return newFieldMap;
     }
 
-    /**
-     * Extract field string map map.
-     *
-     * @return the map
-     */
     public Map<String, String> extractFieldStringMap() {
         return JMMap.newChangedValueMap(getFieldMap(), Object::toString);
     }
 
-    /**
-     * Extract raw data string.
-     *
-     * @return the string
-     */
     public String extractRawData() {
         return JMOptional.getOptional(getFieldMap(), FieldConfig.RAW_DATA)
                 .map(Object::toString).orElse(null);
     }
 
-    /**
-     * Extract data map map.
-     *
-     * @return the map
-     */
     public Map<String, Object> extractDataMap() {
         return JMLambda.supplierIfNull(this.dataMap,
                 () -> this.dataMap = JMMap.newFilteredMap(getFieldMap(),
@@ -77,11 +46,6 @@ public class FieldMap implements Map<String, Object> {
                                 !entry.getKey().equals(FieldConfig.RAW_DATA)));
     }
 
-    /**
-     * Extract meta map map.
-     *
-     * @return the map
-     */
     public Map<String, Object> extractMetaMap() {
         return JMLambda.supplierIfNull(this.metaMap,
                 () -> this.metaMap = JMMap.newFilteredMap(getFieldMap(),
@@ -152,11 +116,6 @@ public class FieldMap implements Map<String, Object> {
         return getFieldMap().toString();
     }
 
-    /**
-     * Empty field map.
-     *
-     * @return the field map
-     */
     public static FieldMap empty() {
         return EMPTY_FIELD_MAP;
     }

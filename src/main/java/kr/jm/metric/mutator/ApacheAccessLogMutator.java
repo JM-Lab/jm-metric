@@ -4,25 +4,14 @@ import kr.jm.metric.config.mutator.ApacheAccessLogMutatorConfig;
 import kr.jm.utils.helper.JMJson;
 import lombok.ToString;
 
-/**
- * The type Apache access log field map mutator.
- */
 @ToString(callSuper = true)
 public class ApacheAccessLogMutator extends FormattedMutator {
 
-    /**
-     * Instantiates a new Apache access log field map mutator.
-     */
     public ApacheAccessLogMutator() {
         this(new ApacheAccessLogMutatorConfig("ApacheAccessLogMutator",
                 "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\""));
     }
 
-    /**
-     * Instantiates a new Apache access log field map mutator.
-     *
-     * @param apacheAccessLogMutatorConfig the apache access log mutator config
-     */
     public ApacheAccessLogMutator(
             ApacheAccessLogMutatorConfig apacheAccessLogMutatorConfig) {
         super(apacheAccessLogMutatorConfig, JMJson.withClasspathOrFilePath(

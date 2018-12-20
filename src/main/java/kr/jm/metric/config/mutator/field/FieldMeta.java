@@ -13,33 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * The type Field meta.
- */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class FieldMeta {
 
-    /**
-     * The Unit.
-     */
     @Getter
     protected Map<String, String> unit;
-    /**
-     * The Custom.
-     */
     @Getter
     protected Map<String, Object> custom;
 
     private Map<String, Object> fieldMetaMap;
 
-    /**
-     * Instantiates a new Field meta.
-     *
-     * @param unit   the unit
-     * @param custom the custom
-     */
     public FieldMeta(
             Map<String, String> unit,
             Map<String, Object> custom) {
@@ -47,11 +32,6 @@ public class FieldMeta {
         this.custom = custom;
     }
 
-    /**
-     * Extract field meta map map.
-     *
-     * @return the map
-     */
     synchronized public Map<String, Object> extractFieldMetaMap() {
         return Objects.requireNonNullElseGet(this.fieldMetaMap,
                 () -> this.fieldMetaMap = buildFlatMap(new HashMap<>()));

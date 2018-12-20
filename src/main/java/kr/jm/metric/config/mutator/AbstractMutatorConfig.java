@@ -9,56 +9,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * The type Abstract mutator config.
- */
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMutatorConfig extends AbstractConfig implements
         MutatorConfigInterface {
 
-    /**
-     * The Mutator id.
-     */
     @Getter
     protected String mutatorId;
-    /**
-     * The Mutator config type.
-     */
     @Getter
     protected MutatorConfigType mutatorConfigType;
-    /**
-     * The Field config.
-     */
     @Getter
     protected FieldConfig fieldConfig;
-    /**
-     * The Fields.
-     */
     protected String[] fields;
 
     @Getter
     protected int workers;
 
-    /**
-     * Instantiates a new Abstract mutator config.
-     *
-     * @param mutatorId         the mutator id
-     * @param mutatorConfigType the mutator config type
-     */
     public AbstractMutatorConfig(String mutatorId,
             MutatorConfigType mutatorConfigType) {
         this(mutatorId, mutatorConfigType, null);
     }
 
-    /**
-     * Instantiates a new Abstract mutator config.
-     *
-     * @param mutatorId         the mutator id
-     * @param mutatorConfigType the mutator config type
-     * @param fieldConfig       the field config
-     * @param fields            the fields
-     */
     public AbstractMutatorConfig(String mutatorId,
             MutatorConfigType mutatorConfigType,
             FieldConfig fieldConfig, String... fields) {

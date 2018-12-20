@@ -7,17 +7,9 @@ import lombok.ToString;
 
 import java.util.function.Consumer;
 
-/**
- * The type File input.
- */
 @ToString(callSuper = true)
 public class FileInput extends AbstractInput<FileInputConfig> {
 
-    /**
-     * Instantiates a new File input.
-     *
-     * @param inputConfig the input config
-     */
     public FileInput(FileInputConfig inputConfig) {
         super(inputConfig);
     }
@@ -28,11 +20,6 @@ public class FileInput extends AbstractInput<FileInputConfig> {
                 .map(this::newTransfer).forEach(inputConsumer);
     }
 
-    /**
-     * Instantiates a new File input.
-     *
-     * @param filePath the file path
-     */
     public FileInput(String filePath) {
         this(new FileInputConfig(filePath));
     }

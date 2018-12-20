@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * The type Formatted field map mutator.
- */
 @Slf4j
 public class FormattedMutator extends
         AbstractMutator<FormattedMutatorConfig> {
@@ -21,22 +18,11 @@ public class FormattedMutator extends
     private String valueRegex;
     JMRegex jmRegex;
 
-    /**
-     * Instantiates a new Formatted field map mutator.
-     *
-     * @param formattedMutatorConfig the formatted mutator config
-     */
     public FormattedMutator(
             FormattedMutatorConfig formattedMutatorConfig) {
         this(formattedMutatorConfig, formattedMutatorConfig.getFieldNameMap());
     }
 
-    /**
-     * Instantiates a new Formatted field map mutator.
-     *
-     * @param formattedMutatorConfig the formatted mutator config
-     * @param defaultFieldNameMap    the default field name map
-     */
     public FormattedMutator(
             FormattedMutatorConfig formattedMutatorConfig,
             Map<String, String> defaultFieldNameMap) {
@@ -90,13 +76,6 @@ public class FormattedMutator extends
         return jmRegex.getGroupNameList();
     }
 
-    /**
-     * Build part group regex string.
-     *
-     * @param field the field
-     * @param name  the name
-     * @return the string
-     */
     protected String buildPartGroupRegex(String field, String name) {
         return "(?<" + name + ">" + this.valueRegex + ")";
     }

@@ -18,9 +18,6 @@ import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-/**
- * The type Mutator processor.
- */
 @Slf4j
 @ToString
 public class MutatorProcessor implements
@@ -46,13 +43,6 @@ public class MutatorProcessor implements
     }
 
 
-    /**
-     * Process list.
-     *
-     * @param dataList the data list
-     * @param mutator  the mutator
-     * @return the list
-     */
     private List<Transfer<FieldMap>> process(
             List<Transfer<String>> dataList, MutatorInterface mutator) {
         JMLog.info(log, "process", dataList.size() > 0 ? dataList.get(0)

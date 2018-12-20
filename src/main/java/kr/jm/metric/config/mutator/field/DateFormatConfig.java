@@ -6,9 +6,6 @@ import lombok.*;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-/**
- * The type Date format config.
- */
 @Getter
 @ToString
 @AllArgsConstructor
@@ -21,12 +18,6 @@ public class DateFormatConfig {
     private String newFieldName;
     private DateFormatConfig changeDateConfig;
 
-    /**
-     * Change object.
-     *
-     * @param value the value
-     * @return the object
-     */
     public Object change(Object value) {
         return Optional.ofNullable(changeDateConfig).map
                 (DateFormatConfig::getDateFormatType).map(changeFormatType ->

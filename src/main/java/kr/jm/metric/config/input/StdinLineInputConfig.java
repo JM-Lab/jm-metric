@@ -5,18 +5,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * The type Std in line input config.
- */
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StdinLineInputConfig extends AbstractInputConfig {
 
-    /**
-     * Instantiates a new Std in line input config.
-     *
-     * @param inputId the input id
-     */
     public StdinLineInputConfig(String inputId) {
         super(inputId);
     }

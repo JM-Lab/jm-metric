@@ -7,9 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 
 public abstract class AbstractConfigManager {
-    /**
-     * The Log.
-     */
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     protected static ObjectMapper ConfigObjectMapper = new ObjectMapper()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

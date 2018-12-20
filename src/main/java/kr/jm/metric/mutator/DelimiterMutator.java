@@ -10,16 +10,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * The type Delimiter field map mutator.
- */
 @ToString(callSuper = true)
 public class DelimiterMutator extends
         AbstractMutator<DelimiterMutatorConfig> {
 
-    /**
-     * The constant DefaultIndexHeader.
-     */
     public static final String DefaultIndexHeader = "Index-";
     protected String[] fields;
     private Pattern splitPattern;
@@ -29,11 +23,6 @@ public class DelimiterMutator extends
         this(new DelimiterMutatorConfig("Delimiter"));
     }
 
-    /**
-     * Instantiates a new Delimiter field map mutator.
-     *
-     * @param mutatorConfig the mutator config
-     */
     public DelimiterMutator(DelimiterMutatorConfig mutatorConfig) {
         super(mutatorConfig);
         this.splitPattern = Pattern.compile(JMOptional.getOptional(mutatorConfig

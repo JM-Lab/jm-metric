@@ -7,9 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * The type Kafka input config.
- */
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,26 +17,11 @@ public class KafkaInputConfig extends AbstractInputConfig {
     private boolean isLatest;
     private String[] topics;
 
-    /**
-     * Instantiates a new Kafka input config.
-     *
-     * @param inputId          the input id
-     * @param bootstrapServers the bootstrap servers
-     * @param topics           the topics
-     */
     public KafkaInputConfig(String inputId, String bootstrapServers,
             String... topics) {
         this(inputId, bootstrapServers, true, topics);
     }
 
-    /**
-     * Instantiates a new Kafka input config.
-     *
-     * @param inputId          the input id
-     * @param bootstrapServers the bootstrap servers
-     * @param isLatest         the is latest
-     * @param topics           the topics
-     */
     public KafkaInputConfig(String inputId, String bootstrapServers,
             boolean isLatest, String... topics) {
         this(inputId, null, bootstrapServers, "KafkaInputGroup", isLatest,
@@ -47,15 +29,6 @@ public class KafkaInputConfig extends AbstractInputConfig {
     }
 
 
-    /**
-     * Instantiates a new Kafka input config.
-     *
-     * @param inputId          the input id
-     * @param bootstrapServers the bootstrap servers
-     * @param groupId          the group id
-     * @param isLatest         the is latest
-     * @param topics           the topics
-     */
     public KafkaInputConfig(String inputId, ChunkType chunkType, String
             bootstrapServers,
             String groupId, boolean isLatest, String... topics) {

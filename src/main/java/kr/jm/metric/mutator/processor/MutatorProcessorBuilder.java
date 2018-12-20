@@ -11,26 +11,12 @@ import kr.jm.utils.helper.JMOptional;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * The type Mutator processor builder.
- */
 public class MutatorProcessorBuilder {
 
-    /**
-     * Build raw mutator processor.
-     *
-     * @return the mutator processor
-     */
     public static MutatorProcessor buildRaw() {
         return build(new RawMutator());
     }
 
-    /**
-     * Build mutator processor.
-     *
-     * @param mutatorConfig the mutator config
-     * @return the mutator processor
-     */
     public static MutatorProcessor build(MutatorConfigInterface mutatorConfig) {
         return build(mutatorConfig.getWorkers(), mutatorConfig.buildMutator(),
                 Optional.ofNullable(mutatorConfig.getFieldConfig())

@@ -9,20 +9,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-/**
- * The type Kafka input.
- */
 @ToString(callSuper = true)
 public class KafkaInput extends AbstractInput<KafkaInputConfig> {
 
     private JMKafkaConsumer kafkaConsumer;
     private Consumer<Transfer<String>> inputConsumer;
 
-    /**
-     * Instantiates a new Kafka input.
-     *
-     * @param inputConfig the input config
-     */
     public KafkaInput(KafkaInputConfig inputConfig) {
         super(inputConfig);
     }

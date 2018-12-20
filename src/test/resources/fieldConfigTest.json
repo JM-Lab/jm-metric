@@ -56,5 +56,8 @@
       "bool": false
     },
     "customList": ["hello", "world"]
+  },
+  "alterFieldName": {
+    "requestTime": "aa"
   }
 }

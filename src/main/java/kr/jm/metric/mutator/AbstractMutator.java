@@ -14,45 +14,20 @@ import java.util.Optional;
 
 import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
-/**
- * The type Abstract field map mutator.
- *
- * @param <C> the type parameter
- */
 public abstract class AbstractMutator<C extends AbstractMutatorConfig> implements
         MutatorInterface {
 
-    /**
-     * The Log.
-     */
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
 
-    /**
-     * The Mutator id.
-     */
     @Getter
     protected String mutatorId;
-    /**
-     * The Mutator config.
-     */
     protected C mutatorConfig;
-    /**
-     * The Field config.
-     */
     protected FieldConfig fieldConfig;
-    /**
-     * The Field meta.
-     */
     @Getter
     protected Map<String, Object> fieldMeta;
 
     private FieldConfigHandler fieldConfigHandler;
 
-    /**
-     * Instantiates a new Abstract field map mutator.
-     *
-     * @param mutatorConfig the mutator config
-     */
     public AbstractMutator(C mutatorConfig) {
         this.mutatorConfig = mutatorConfig;
         this.mutatorId = mutatorConfig.getMutatorId();
@@ -62,11 +37,6 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
                         fieldConfig.extractFieldMetaMap());
     }
 
-    /**
-     * Gets config.
-     *
-     * @return the config
-     */
     public Map<String, Object> getConfig() {
         return mutatorConfig.extractConfigMap();
     }

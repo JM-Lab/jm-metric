@@ -7,25 +7,14 @@ import lombok.ToString;
 
 import java.util.Map;
 
-/**
- * The type Json field map mutator.
- */
 @ToString(callSuper = true)
 public class JsonMutator extends
         AbstractMutator<JsonMutatorConfig> {
 
-    /**
-     * Instantiates a new Json field map mutator.
-     */
     public JsonMutator() {
         this(new JsonMutatorConfig("JsonMutator"));
     }
 
-    /**
-     * Instantiates a new Json field map mutator.
-     *
-     * @param jsonMutatorConfig the json mutator config
-     */
     public JsonMutator(JsonMutatorConfig jsonMutatorConfig) {
         super(jsonMutatorConfig);
     }
