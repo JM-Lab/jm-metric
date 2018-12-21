@@ -13,6 +13,7 @@ public class FieldConfigBuilder {
     private Map<String, DateFormatConfig> dateFormat;
     private Map<String, FilterConfig> filter;
     private Map<String, String> alterFieldName;
+    private Map<String, Object> custom;
 
     public FieldConfigBuilder setFormat(
             Map<String, Map<String, Object>> format) {
@@ -64,9 +65,15 @@ public class FieldConfigBuilder {
         return this;
     }
 
+    public FieldConfigBuilder setCustom(Map<String, Object> custom) {
+        this.custom = custom;
+        return this;
+    }
+
 
     public FieldConfig createFieldConfig() {
         return new FieldConfig(format, rawData, ignore, combinedFields,
-                formulaFields, dataType, dateFormat, filter, alterFieldName);
+                formulaFields, dataType, dateFormat, filter, alterFieldName,
+                custom);
     }
 }

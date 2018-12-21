@@ -20,8 +20,6 @@ public class FieldMeta {
 
     @Getter
     protected Map<String, String> unit;
-    @Getter
-    protected Map<String, Object> custom;
 
     private Map<String, Object> fieldMetaMap;
 
@@ -29,7 +27,6 @@ public class FieldMeta {
             Map<String, String> unit,
             Map<String, Object> custom) {
         this.unit = unit;
-        this.custom = custom;
     }
 
     synchronized public Map<String, Object> extractFieldMetaMap() {
@@ -39,7 +36,6 @@ public class FieldMeta {
 
     private Map<String, Object> buildFlatMap(Map<String, Object> flatMap) {
         buildFlatMap(flatMap, "unit", unit);
-        buildFlatMap(flatMap, "custom", custom);
         return flatMap;
     }
 

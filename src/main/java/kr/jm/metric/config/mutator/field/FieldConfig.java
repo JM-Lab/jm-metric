@@ -25,5 +25,6 @@ public class FieldConfig extends FieldMeta {
 
     protected Map<String, FilterConfig> filter;
     protected Map<String, String> alterFieldName;
+    protected Map<String, Object> custom;
 
 }

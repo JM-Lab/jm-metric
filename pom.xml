@@ -33,12 +33,12 @@
     </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.lib>lib/</project.lib>
-        <java.version>9</java.version>
+        <java.version>11</java.version>
+        <log4j.version>2.11.1</log4j.version>
         <slf4j.version>1.7.25</slf4j.version>
         <junit.version>4.12</junit.version>
         <jmlab-utils-java9.version>0.1.4</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>0.6.4.2
+        <jmlab-utils-elasticsearch.version>0.6.4.3
         </jmlab-utils-elasticsearch.version>
         <jmlab-utils-kafka.version>1.1.1</jmlab-utils-kafka.version>
         <common-cli.version>1.4</common-cli.version>
@@ -174,16 +174,9 @@
             <version>${common-cli.version}</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

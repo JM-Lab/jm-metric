@@ -61,9 +61,8 @@ public class FieldConfigHandlerTest {
 
         Map<String, Object> fieldMetaMap = fieldConfig.extractFieldMetaMap();
         System.out.println(fieldMetaMap);
-        Assert.assertEquals("{unit={requestTime=MicroSecond}, " +
-                "custom={customKey=customValue, customObject={bool=false}, " +
-                "customList=[hello, world]}}", fieldMetaMap.toString());
+        Assert.assertEquals("{unit={requestTime=MicroSecond}}",
+                fieldMetaMap.toString());
 
         this.fieldConfig =
                 new FieldConfigBuilder().setRawData(false)

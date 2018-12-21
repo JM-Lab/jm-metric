@@ -60,7 +60,7 @@ public class JMMetricTest {
                 .buildMutator().mutate(targetString);
         System.out.println(fieldStringMap);
         Assert.assertEquals(
-                "{request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, requestUrl=/apache_pb.gif, requestMethod=GET, alterFieldName=127.0.0.1|/apache_pb.gif, sizeByte=2326.0, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
+                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, customObject.bool=false, requestMethod=GET, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), requestUrl=/apache_pb.gif, alterFieldName=127.0.0.1|/apache_pb.gif, sizeByte=2326.0, customList=[hello, world], requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
                 fieldStringMap.toString());
         Map<String, Map<String, Object>> nestedFormat =
                 nginxAccessLogSampleConfig.getFieldConfig().getFormat();
@@ -154,7 +154,7 @@ public class JMMetricTest {
         FieldMap fieldStringMap = resultList.get(0).getData();
         System.out.println(fieldStringMap);
         Assert.assertEquals(
-                "{request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, wordCount.I=1, requestMethod=GET, wordCount.en=1, meta.field.custom.customObject.bool=false, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), wordCount.08=1, wordCount.4=1, meta.inputId=TestInput, meta.field.custom.customKey=customValue, wordCount.Nav=1, requestUrl=/apache_pb.gif, meta.field.unit.timeLocal=Second, meta.field.custom.customList=[hello, world], alterFieldName=127.0.0.1|/apache_pb.gif, wordCount.Mozilla=1, sizeByte=2326.0, wordCount.Win98=1, requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
+                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, customObject.bool=false, wordCount.I=1, requestMethod=GET, wordCount.en=1, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), wordCount.08=1, wordCount.4=1, meta.inputId=TestInput, wordCount.Nav=1, requestUrl=/apache_pb.gif, meta.field.unit.timeLocal=Second, alterFieldName=127.0.0.1|/apache_pb.gif, wordCount.Mozilla=1, sizeByte=2326.0, customList=[hello, world], wordCount.Win98=1, requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
                 fieldStringMap.toString());
         System.out.println(JMJson.toJsonString(resultList));
 

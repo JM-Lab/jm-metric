@@ -41,7 +41,13 @@ class FieldConfigHandler {
         applyDataType(fieldObjectMap);
         applyAlterFieldName(fieldObjectMap);
         applyIgnore(fieldObjectMap);
+        applyCustom(fieldObjectMap);
         return fieldObjectMap;
+    }
+
+    private void applyCustom(Map<String, Object> fieldObjectMap) {
+        JMOptional.getOptional(this.fieldConfig.getCustom())
+                .ifPresent(fieldObjectMap::putAll);
     }
 
     private void applyAlterFieldName(Map<String, Object> fieldObjectMap) {
