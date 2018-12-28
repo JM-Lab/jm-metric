@@ -2,12 +2,12 @@ package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.AbstractMutatorConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.utils.exception.JMExceptionManager;
 import kr.jm.utils.helper.JMLambda;
 import lombok.Getter;
 import org.slf4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,9 +42,9 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
     }
 
     @Override
-    public FieldMap mutate(String targetString) {
+    public Map<String, Object> mutate(String targetString) {
         try {
-            return buildFieldMapWithRawData(buildFieldObjectMap(targetString),
+            return buildDataWithRawData(buildFieldObjectMap(targetString),
                     targetString);
         } catch (Exception e) {
             return JMExceptionManager
@@ -53,7 +53,7 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
         }
     }
 
-    private FieldMap buildFieldMapWithRawData(
+    private Map<String, Object> buildDataWithRawData(
             Map<String, Object> fieldObjectMap, String targetString) {
         if (Objects.nonNull(this.fieldConfig)) {
             fieldObjectMap.put(RAW_DATA, targetString);
@@ -63,7 +63,7 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
                                     this.fieldConfig))
                     .applyFieldConfig(fieldObjectMap);
         }
-        return new FieldMap(fieldObjectMap);
+        return new HashMap<>(fieldObjectMap);
     }
 
     @Override

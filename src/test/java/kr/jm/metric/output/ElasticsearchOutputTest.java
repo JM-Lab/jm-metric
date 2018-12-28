@@ -2,7 +2,6 @@ package kr.jm.metric.output;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
@@ -15,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,10 +64,10 @@ public class ElasticsearchOutputTest {
 
     @Test
     public void writeData() {
-        List<Transfer<List<FieldMap>>> dataList =
+        List<Transfer<List<Map<String, Object>>>> dataList =
                 JMResources.readLines("testTransferData.txt").stream()
                         .map(line -> JMJson.withJsonString(line,
-                                new TypeReference<Transfer<List<FieldMap>>>() {}))
+                                new TypeReference<Transfer<List<Map<String, Object>>>>() {}))
                         .collect(Collectors.toList());
         elasticsearchOutput
                 .writeData(dataList.stream().flatMap(

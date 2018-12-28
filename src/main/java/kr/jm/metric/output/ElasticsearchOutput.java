@@ -1,7 +1,6 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.collections.JMNestedMap;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
@@ -92,18 +91,18 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     @Override
-    public void writeData(List<Transfer<FieldMap>> transferList) {
-        for (Transfer<FieldMap> inputIdTransfer : transferList)
+    public void writeData(List<Transfer<Map<String, Object>>> transferList) {
+        for (Transfer<Map<String, Object>> inputIdTransfer : transferList)
             writeData(inputIdTransfer.getData(),
                     inputIdTransfer.getTimestamp());
     }
 
-    private void writeData(FieldMap data, long timestamp) {
+    private void writeData(Map<String, Object> data, long timestamp) {
         this.elasticsearchClient.sendWithBulkProcessor(data,
                 buildIndex(data, buildIndexPreSuf(timestamp)), TYPE);
     }
 
-    private String buildIndex(FieldMap data, String indexPreSuf) {
+    private String buildIndex(Map<String, Object> data, String indexPreSuf) {
         return JMOptional.getOptional(this.indexField).map(data::get)
                 .map(indexValue -> indexCache
                         .getOrPutGetNew(indexValue, indexPreSuf,

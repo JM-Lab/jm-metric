@@ -23,8 +23,8 @@ public class StdinLineInput extends AbstractInput<StdinLineInputConfig> {
     @Override
     protected void startImpl(Consumer<Transfer<String>> inputConsumer) {
         this.stdInLineConsumer =
-                new StdInLineConsumer(s -> inputConsumer.accept(newTransfer
-                        (s))).consumeStdIn();
+                new StdInLineConsumer(s -> inputConsumer.accept(newTransfer(s)))
+                        .consumeStdIn();
     }
 
     @Override

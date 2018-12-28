@@ -1,6 +1,5 @@
 package kr.jm.metric.mutator.processor;
 
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.mutator.MutatorInterface;
 import kr.jm.utils.flow.processor.JMConcurrentProcessor;
@@ -13,6 +12,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class MutatorProcessor implements
-        JMProcessorInterface<List<Transfer<String>>,
-                List<Transfer<FieldMap>>>, AutoCloseable {
+        JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>,
+        AutoCloseable {
 
     @Getter
     private String mutatorId;
     private int workers;
     private MatchFilter matchFilter;
-    private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<FieldMap>>>
+    private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>
             jmProcessor;
 
     public MutatorProcessor(int workers, MutatorInterface mutator,
@@ -43,7 +43,7 @@ public class MutatorProcessor implements
     }
 
 
-    private List<Transfer<FieldMap>> process(
+    private List<Transfer<Map<String, Object>>> process(
             List<Transfer<String>> dataList, MutatorInterface mutator) {
         JMLog.info(log, "process", dataList.size() > 0 ? dataList.get(0)
                         .getInputId() : JMString.EMPTY, mutator.getMutatorId(),
@@ -53,7 +53,7 @@ public class MutatorProcessor implements
                 .collect(Collectors.toList());
     }
 
-    private boolean isPassed(Transfer<FieldMap> fieldMapTransfer) {
+    private boolean isPassed(Transfer<Map<String, Object>> fieldMapTransfer) {
         return Objects.isNull(matchFilter) || !matchFilter
                 .filter(fieldMapTransfer.getData());
     }
@@ -61,21 +61,21 @@ public class MutatorProcessor implements
 
     @Override
     public MutatorProcessor subscribeWith(
-            Flow.Subscriber<List<Transfer<FieldMap>>>... subscribers) {
+            Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {
         this.jmProcessor.subscribeWith(subscribers);
         return this;
     }
 
     @Override
     public MutatorProcessor consumeWith(
-            Consumer<List<Transfer<FieldMap>>>... consumers) {
+            Consumer<List<Transfer<Map<String, Object>>>>... consumers) {
         this.jmProcessor.consumeWith(consumers);
         return this;
     }
 
     @Override
     public void subscribe(
-            Flow.Subscriber<? super List<Transfer<FieldMap>>> subscriber) {
+            Flow.Subscriber<? super List<Transfer<Map<String, Object>>>> subscriber) {
         this.jmProcessor.subscribe(subscriber);
     }
 

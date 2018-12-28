@@ -6,7 +6,6 @@ import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.metric.config.mutator.*;
 import kr.jm.metric.config.mutator.field.DateFormatType;
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
@@ -60,7 +59,7 @@ public class JMMetricTest {
                 .buildMutator().mutate(targetString);
         System.out.println(fieldStringMap);
         Assert.assertEquals(
-                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, customObject.bool=false, requestMethod=GET, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), requestUrl=/apache_pb.gif, alterFieldName=127.0.0.1|/apache_pb.gif, sizeByte=2326.0, customList=[hello, world], requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
+                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, requestMethod=GET, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), requestUrl=/apache_pb.gif, customObject={bool=false}, alterFieldName=127.0.0.1|/apache_pb.gif, sizeByte=2326.0, customList=[hello, world], requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
                 fieldStringMap.toString());
         Map<String, Map<String, Object>> nestedFormat =
                 nginxAccessLogSampleConfig.getFieldConfig().getFormat();
@@ -136,13 +135,14 @@ public class JMMetricTest {
     @Test
     public void testWithCustomFunction() {
         this.jmMetric = new JMMetric("NginxAccessLog");
-        List<Transfer<FieldMap>> resultList = new ArrayList<>();
+        List<Transfer<Map<String, Object>>> resultList = new ArrayList<>();
         jmMetric.withCustomFunction(fieldMapTransfer -> {
-            FieldMap fieldMap = fieldMapTransfer.getData();
+            Map<String, Object> fieldMap = fieldMapTransfer.getData();
             fieldMap.put("wordCount", WordCountGenerator
                     .buildCountMap(JMWordSplitter.splitAsStream(
                             fieldMap.get("userAgent").toString())));
-            fieldMap.remove("meta.processTimestamp");
+            ((Map<String, Object>) fieldMap.get("@meta"))
+                    .remove("@processTimestamp");
             return fieldMap;
         }).subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
                 .consumeWith(mutatorIdTransferList -> resultList
@@ -151,10 +151,10 @@ public class JMMetricTest {
                 "127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] \"GET /apache_pb.gif HTTP/1.0\" 200 2326 \"http://www.example.com/start.html\" \"Mozilla/4.08 [en] (Win98; I ;Nav)\"";
         jmMetric.testInput(targetString);
         JMThread.sleep(3000);
-        FieldMap fieldStringMap = resultList.get(0).getData();
+        Map<String, Object> fieldStringMap = resultList.get(0).getData();
         System.out.println(fieldStringMap);
         Assert.assertEquals(
-                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, remoteHost=127.0.0.1, customObject.bool=false, wordCount.I=1, requestMethod=GET, wordCount.en=1, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), wordCount.08=1, wordCount.4=1, meta.inputId=TestInput, wordCount.Nav=1, requestUrl=/apache_pb.gif, meta.field.unit.timeLocal=Second, alterFieldName=127.0.0.1|/apache_pb.gif, wordCount.Mozilla=1, sizeByte=2326.0, customList=[hello, world], wordCount.Win98=1, requestProtocol=HTTP/1.0, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
+                "{customKey=customValue, request=GET /apache_pb.gif HTTP/1.0, referer=http://www.example.com/start.html, wordCount={Win98=1, Nav=1, Mozilla=1, 4=1, 08=1, I=1, en=1}, remoteHost=127.0.0.1, requestMethod=GET, userAgent=Mozilla/4.08 [en] (Win98; I ;Nav), requestUrl=/apache_pb.gif, customObject={bool=false}, alterFieldName=127.0.0.1|/apache_pb.gif, sizeByte=2326.0, customList=[hello, world], requestProtocol=HTTP/1.0, @meta={inputId=TestInput, field={unit={timeLocal=Second}}}, timeLocal=2000-10-10T20:55:36.000Z, statusCode=200}",
                 fieldStringMap.toString());
         System.out.println(JMJson.toJsonString(resultList));
 

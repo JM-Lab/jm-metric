@@ -1,13 +1,13 @@
 package kr.jm.metric.output.subscriber;
 
 import kr.jm.metric.config.output.OutputConfigInterface;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.output.FileOutput;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.metric.output.StdoutLineOutput;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -23,7 +23,7 @@ public class OutputSubscriberBuilder {
     }
 
     public static OutputSubscriber buildFileOutput(String filePath,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         return buildFileOutput(true, filePath,
                 transformOutputObjectFunction);
     }
@@ -31,7 +31,7 @@ public class OutputSubscriberBuilder {
 
     public static OutputSubscriber buildFileOutput(boolean enableJsonString,
             String filePath,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         return build(new FileOutput(enableJsonString, filePath,
                 transformOutputObjectFunction));
     }
@@ -45,13 +45,13 @@ public class OutputSubscriberBuilder {
     }
 
     public static OutputSubscriber buildStdout(
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         return buildStdout(true, transformOutputObjectFunction);
     }
 
 
     public static OutputSubscriber buildStdout(boolean enableJsonString,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         return build(new StdoutLineOutput(enableJsonString,
                 transformOutputObjectFunction));
 
@@ -59,7 +59,7 @@ public class OutputSubscriberBuilder {
 
 
     public static OutputSubscriber build(String outputId,
-            Consumer<List<Transfer<FieldMap>>> outputConsumer) {
+            Consumer<List<Transfer<Map<String, Object>>>> outputConsumer) {
         return build(new OutputInterface() {
             @Override
             public String getOutputId() {
@@ -68,7 +68,7 @@ public class OutputSubscriberBuilder {
 
             @Override
             public void writeData(
-                    List<Transfer<FieldMap>> transferList) {
+                    List<Transfer<Map<String, Object>>> transferList) {
                 outputConsumer.accept(transferList);
             }
 

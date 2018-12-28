@@ -1,6 +1,5 @@
 package kr.jm.metric;
 
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.JMResources;
@@ -15,6 +14,7 @@ import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JMMetricMainTest {
 
@@ -51,7 +51,7 @@ public class JMMetricMainTest {
     public void testMain() {
         JMMetricMain jmMetricMain = new JMMetricMain();
         jmMetricMain.start("-i", "Stdin", "-m", "CombinedLogFormat");
-        List<Transfer<FieldMap>> resultList = new ArrayList<>();
+        List<Transfer<Map<String, Object>>> resultList = new ArrayList<>();
         JMMetric jmMetric = jmMetricMain.getJmMetric();
         jmMetric.subscribe(JMSubscriberBuilder.build(resultList::addAll));
         printWriter
@@ -73,7 +73,7 @@ public class JMMetricMainTest {
         JMMetricMain jmMetricMain = new JMMetricMain();
         jmMetricMain.start("-c",
                 JMResources.getURL("JMMetricConfigTest.json").getPath());
-        List<Transfer<FieldMap>> resultList = new ArrayList<>();
+        List<Transfer<Map<String, Object>>> resultList = new ArrayList<>();
         JMMetric jmMetric = jmMetricMain.getJmMetric();
         jmMetric.subscribe(JMSubscriberBuilder.build(resultList::addAll));
         printWriter

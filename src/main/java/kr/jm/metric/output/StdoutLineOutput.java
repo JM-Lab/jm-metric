@@ -1,13 +1,13 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.StdoutLineOutputConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMJson;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,7 +17,7 @@ public class StdoutLineOutput extends AbstractOutput {
 
     @Getter
     private boolean enableJsonString;
-    private Function<List<Transfer<FieldMap>>, List<Object>>
+    private Function<List<Transfer<Map<String, Object>>>, List<Object>>
             transformOutputObjectFunction;
     private Function<Object, String> toStringFunction;
 
@@ -30,7 +30,7 @@ public class StdoutLineOutput extends AbstractOutput {
     }
 
     public StdoutLineOutput(boolean enableJsonString,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         this(new StdoutLineOutputConfig(enableJsonString),
                 transformOutputObjectFunction);
     }
@@ -40,7 +40,7 @@ public class StdoutLineOutput extends AbstractOutput {
     }
 
     public StdoutLineOutput(StdoutLineOutputConfig outputConfig,
-            Function<List<Transfer<FieldMap>>, List<Object>>
+            Function<List<Transfer<Map<String, Object>>>, List<Object>>
                     transformOutputObjectFunction) {
         super(outputConfig);
         this.enableJsonString = outputConfig.isEnableJsonString();
@@ -63,7 +63,7 @@ public class StdoutLineOutput extends AbstractOutput {
     }
 
     @Override
-    public void writeData(List<Transfer<FieldMap>> transferList) {
+    public void writeData(List<Transfer<Map<String, Object>>> transferList) {
         transformOutputObjectFunction.apply(transferList).stream()
                 .map(toStringFunction).forEach(this::writeString);
     }

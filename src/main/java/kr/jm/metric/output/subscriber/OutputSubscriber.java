@@ -1,6 +1,5 @@
 package kr.jm.metric.output.subscriber;
 
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.output.OutputInterface;
 import kr.jm.utils.exception.JMExceptionManager;
@@ -10,8 +9,10 @@ import kr.jm.utils.helper.JMString;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
 
-public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
+public class OutputSubscriber extends
+        JMSubscriber<List<Transfer<Map<String, Object>>>>
         implements AutoCloseable {
 
     @Getter
@@ -36,7 +37,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<FieldMap>>>
         }
     }
 
-    private void output(List<Transfer<FieldMap>> dataList) {
+    private void output(List<Transfer<Map<String, Object>>> dataList) {
         JMLog.info(log, "output", dataList.size() > 0 ? dataList.get(0)
                 .getInputId() : JMString.EMPTY, outputId, dataList.size());
         try {

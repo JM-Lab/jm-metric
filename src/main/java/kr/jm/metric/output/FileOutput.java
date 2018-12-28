@@ -1,13 +1,13 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.FileOutputConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMFileAppender;
 import lombok.ToString;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @ToString(callSuper = true)
@@ -24,7 +24,7 @@ public class FileOutput extends StdoutLineOutput {
     }
 
     public FileOutput(String filePath,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         this(false, filePath, transformOutputObjectFunction);
     }
 
@@ -33,13 +33,13 @@ public class FileOutput extends StdoutLineOutput {
     }
 
     public FileOutput(boolean enableJsonString, String filePath,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         this(new FileOutputConfig(enableJsonString, filePath),
                 transformOutputObjectFunction);
     }
 
     public FileOutput(FileOutputConfig fileOutputConfig,
-            Function<List<Transfer<FieldMap>>, List<Object>> transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         super(fileOutputConfig, transformOutputObjectFunction);
         this.fileAppender = new JMFileAppender(fileOutputConfig.getFilePath());
     }

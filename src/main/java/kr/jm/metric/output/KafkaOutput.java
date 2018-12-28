@@ -1,7 +1,6 @@
 package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.KafkaOutputConfig;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.kafka.client.JMKafkaProducer;
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 @ToString(callSuper = true)
@@ -46,11 +46,11 @@ public class KafkaOutput extends AbstractOutput {
     }
 
     @Override
-    public void writeData(List<Transfer<FieldMap>> transferList) {
+    public void writeData(List<Transfer<Map<String, Object>>> transferList) {
         transferList.stream().map(Transfer::getData).forEach(this::writeData);
     }
 
-    private void writeData(FieldMap fieldMap) {
+    private void writeData(Map<String, Object> fieldMap) {
         this.kafkaProducer.sendJsonString(
                 JMOptional.getOptional(keyField).map(fieldMap::get)
                         .map(Object::toString).orElse(null), fieldMap);

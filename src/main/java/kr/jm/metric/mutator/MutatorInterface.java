@@ -1,6 +1,5 @@
 package kr.jm.metric.mutator;
 
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.time.JMTimeUtil;
@@ -10,20 +9,24 @@ import java.util.Map;
 import java.util.function.Function;
 
 public interface MutatorInterface extends
-        Function<Transfer<String>, Transfer<FieldMap>> {
+        Function<Transfer<String>, Transfer<Map<String, Object>>> {
+
+    String META = "@meta";
+    String PROCESS_TIMESTAMP = "@processTimestamp";
 
     @Override
-    default Transfer<FieldMap> apply(Transfer<String> inputTransfer) {
+    default Transfer<Map<String, Object>> apply(
+            Transfer<String> inputTransfer) {
         return inputTransfer.newWith(
                 JMOptional.getOptional(mutate(inputTransfer.getData()))
-                        .map(map -> buildFinalFieldMap(map,
+                        .map(map -> buildFinalData(map,
                                 buildMeta(inputTransfer))).orElse(null));
     }
 
-    private FieldMap buildFinalFieldMap(Map<String, Object> fieldObjectMap,
-            Map<String, Object> meta) {
-        fieldObjectMap.put("meta", meta);
-        return new FieldMap(fieldObjectMap);
+    private Map<String, Object> buildFinalData(
+            Map<String, Object> fieldObjectMap, Map<String, Object> meta) {
+        fieldObjectMap.put(META, meta);
+        return new HashMap<>(fieldObjectMap);
     }
 
     private Map<String, Object> buildMeta(Transfer<String> inputTransfer) {
@@ -33,7 +36,7 @@ public interface MutatorInterface extends
         JMOptional.getOptional(getFieldMeta())
                 .ifPresent(fieldMeta -> meta.put("field", fieldMeta));
         meta.put("inputId", inputTransfer.getInputId());
-        meta.put("processTimestamp",
+        meta.put(PROCESS_TIMESTAMP,
                 JMTimeUtil.getTimeAsDefaultUtcFormat(inputTransfer
                         .getTimestamp()));
         return meta;

@@ -1,7 +1,6 @@
 package kr.jm.metric;
 
 import kr.jm.metric.config.JMMetricConfigManager;
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.publisher.InputPublisher;
 import kr.jm.metric.input.publisher.InputPublisherBuilder;
@@ -17,10 +16,7 @@ import kr.jm.utils.helper.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -28,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class JMMetric implements
-        JMProcessorInterface<List<Transfer<String>>, List<Transfer<FieldMap>>>,
+        JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>,
         AutoCloseable {
 
     @Getter
@@ -39,7 +35,7 @@ public class JMMetric implements
     private MutatorProcessor mutatorProcessor;
     @Getter
     private List<OutputSubscriber> outputSubscriberList;
-    private JMProcessor<List<Transfer<FieldMap>>, List<Transfer<FieldMap>>>
+    private JMProcessor<List<Transfer<Map<String, Object>>>, List<Transfer<Map<String, Object>>>>
             customProcessor;
 
     public static void main(String[] args) {
@@ -142,20 +138,20 @@ public class JMMetric implements
     }
 
     public JMMetric withCustomFunction(
-            Function<Transfer<FieldMap>, Map<String, Object>> customFunction) {
+            Function<Transfer<Map<String, Object>>, Map<String, Object>> customFunction) {
         this.customProcessor = JMProcessorBuilder
-                .build((List<Transfer<FieldMap>> list) -> list.stream()
-                        .map(mapTransfer -> mapTransfer.newWith(
+                .build((List<Transfer<Map<String, Object>>> list) -> list
+                        .stream().map(mapTransfer -> mapTransfer.newWith(
                                 buildNewFieldMap(customFunction, mapTransfer)))
                         .collect(Collectors.toList()));
         return this;
     }
 
-    private FieldMap buildNewFieldMap(
-            Function<Transfer<FieldMap>, Map<String, Object>> customFunction,
-            Transfer<FieldMap> transfer) {
-        return new FieldMap(customFunction
-                .apply(transfer.newWith(transfer.getData().newFieldMap())));
+    private Map<String, Object> buildNewFieldMap(
+            Function<Transfer<Map<String, Object>>, Map<String, Object>> customFunction,
+            Transfer<Map<String, Object>> transfer) {
+        return new HashMap<>(customFunction
+                .apply(transfer.newWith(new HashMap<>(transfer.getData()))));
     }
 
     public String getInputId() {
@@ -181,14 +177,14 @@ public class JMMetric implements
         return this;
     }
 
-    private Flow.Publisher<List<Transfer<FieldMap>>> getFinalPublisher() {
+    private Flow.Publisher<List<Transfer<Map<String, Object>>>> getFinalPublisher() {
         return Objects.nonNull(
                 this.customProcessor) ? this.customProcessor : this.mutatorProcessor;
     }
 
     @Override
     public void subscribe(
-            Flow.Subscriber<? super List<Transfer<FieldMap>>> subscriber) {
+            Flow.Subscriber<? super List<Transfer<Map<String, Object>>>> subscriber) {
         getFinalPublisher().subscribe(subscriber);
     }
 
@@ -214,14 +210,14 @@ public class JMMetric implements
 
     @Override
     public JMMetric subscribeWith(
-            Flow.Subscriber<List<Transfer<FieldMap>>>... subscribers) {
+            Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {
         JMProcessorInterface.super.subscribeWith(subscribers);
         return this;
     }
 
     @Override
     public JMMetric consumeWith(
-            Consumer<List<Transfer<FieldMap>>>... consumers) {
+            Consumer<List<Transfer<Map<String, Object>>>>... consumers) {
         JMProcessorInterface.super.consumeWith(consumers);
         return this;
     }

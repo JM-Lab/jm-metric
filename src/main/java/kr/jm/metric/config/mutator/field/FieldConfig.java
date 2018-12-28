@@ -10,7 +10,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FieldConfig extends FieldMeta {
-    public static final String RAW_DATA = "rawData";
+    public static final String RAW_DATA = "@rawData";
 
     protected Map<String, Map<String, Object>> format;
 

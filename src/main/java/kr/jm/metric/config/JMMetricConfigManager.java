@@ -158,13 +158,8 @@ public class JMMetricConfigManager {
     }
 
     protected void loggingConfigInfo(String title, Object object) {
-        printInfo(buildInfo("==== " + title + " Config ====",
+        log.info(buildInfo("==== " + title + " Config ====",
                 JMJson.toPrettyJsonString(object)));
-    }
-
-    private void printInfo(String info) {
-        log.info(info);
-        System.out.println(info);
     }
 
     private String buildInfo(String infoHead, String info) {

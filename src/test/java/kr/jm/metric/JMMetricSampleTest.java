@@ -1,6 +1,5 @@
 package kr.jm.metric;
 
-import kr.jm.metric.data.FieldMap;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMWordSplitter;
 import kr.jm.utils.flow.processor.JMProcessor;
@@ -13,7 +12,10 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
 public class JMMetricSampleTest {
 
@@ -48,11 +50,12 @@ public class JMMetricSampleTest {
         jmMetric.testInput("Hello JMMetric !!!");
         JMThread.sleep(1000);
 
-        JMProcessor<List<Transfer<FieldMap>>, Stream<String>>
+        JMProcessor<List<Transfer<Map<String, Object>>>, Stream<String>>
                 wordStreamProcessor =
                 JMProcessorBuilder
                         .build(t -> t.stream().map(Transfer::getData)
-                                .map(fieldMap -> fieldMap.extractRawData())
+                                .map(fieldMap -> fieldMap.get(RAW_DATA))
+                                .map(Object::toString)
                                 .flatMap(JMWordSplitter::splitAsStream));
         jmMetric.subscribeWith(wordStreamProcessor);
         wordStreamProcessor
