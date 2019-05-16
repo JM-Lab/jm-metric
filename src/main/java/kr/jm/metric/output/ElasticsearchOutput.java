@@ -4,6 +4,7 @@ import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.collections.JMNestedMap;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
+import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMOptional;
 import kr.jm.utils.helper.JMString;
 import kr.jm.utils.time.JMTimeUtil;
@@ -98,8 +99,10 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private void writeData(Map<String, Object> data, long timestamp) {
-        this.elasticsearchClient.sendWithBulkProcessor(data,
-                buildIndex(data, buildIndexPreSuf(timestamp)), TYPE);
+        // elasticsearch 자체 json parser xcontent가 잘 안되는 경우가 있음
+        this.elasticsearchClient
+                .sendWithBulkProcessor(JMJson.transformToMap(data),
+                        buildIndex(data, buildIndexPreSuf(timestamp)), TYPE);
     }
 
     private String buildIndex(Map<String, Object> data, String indexPreSuf) {

@@ -1,6 +1,7 @@
 package kr.jm.metric;
 
 import kr.jm.metric.config.JMMetricConfigManager;
+import kr.jm.metric.custom.CustomFunctionInterface;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.publisher.InputPublisher;
 import kr.jm.metric.input.publisher.InputPublisherBuilder;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -137,8 +137,7 @@ public class JMMetric implements
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
-    public JMMetric withCustomFunction(
-            Function<Transfer<Map<String, Object>>, Map<String, Object>> customFunction) {
+    public JMMetric withCustomFunction(CustomFunctionInterface customFunction) {
         this.customProcessor = JMProcessorBuilder
                 .build((List<Transfer<Map<String, Object>>> list) -> list
                         .stream().map(mapTransfer -> mapTransfer.newWith(
@@ -148,7 +147,7 @@ public class JMMetric implements
     }
 
     private Map<String, Object> buildNewFieldMap(
-            Function<Transfer<Map<String, Object>>, Map<String, Object>> customFunction,
+            CustomFunctionInterface customFunction,
             Transfer<Map<String, Object>> transfer) {
         return new HashMap<>(customFunction
                 .apply(transfer.newWith(new HashMap<>(transfer.getData()))));

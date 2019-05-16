@@ -49,11 +49,11 @@ mvn install -Dmaven.test.skip=true
 ### For Example :
 - **[HelloJMMetric.jsh](https://github.com/JM-Lab/jm-metric/tree/master/jsh/HelloJMMetric.jsh)**
 ```cmd
-jshell --module-path bin --add-modules jm.metric -startup jsh/HelloJMMetric.jsh
+jshell --class-path bin/jm-metric.jar -startup jsh/HelloJMMetric.jsh
 ```
 - [Interact with JShell](https://docs.oracle.com/javase/9/jshell/)
 ```jshell
-/env --module-path bin --add-modules jm.metric
+/env --class-path bin/jm-metric.jar
 
 import kr.jm.metric.JMMetric;
 JMMetric jmMetric = new JMMetric().start().testInput("Hello JMMetric !!!");

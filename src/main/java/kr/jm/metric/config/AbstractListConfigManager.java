@@ -101,7 +101,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
                     JMResources.getStringWithFilePathOrClasspath(
                             jmMetricConfigUrl))
                             .orElseThrow(NullPointerException::new),
-                    JMJson.LIST_MAP_TYPE_REFERENCE);
+                    JMJson.MAP_LIST_TYPE_REFERENCE);
         } catch (Exception e) {
             return JMExceptionManager.handleExceptionAndReturn(log, e,
                     "buildConfigMapList", Collections::emptyList,

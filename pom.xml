@@ -34,16 +34,16 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
-        <log4j.version>2.11.1</log4j.version>
-        <slf4j.version>1.7.25</slf4j.version>
-        <junit.version>4.12</junit.version>
-        <jmlab-utils-java9.version>0.1.4</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>0.6.4.3
-        </jmlab-utils-elasticsearch.version>
-        <jmlab-utils-kafka.version>1.1.1</jmlab-utils-kafka.version>
-        <common-cli.version>1.4</common-cli.version>
+        <log4j.version>2.11.2</log4j.version>
         <logback.version>1.2.3</logback.version>
-        <lombok.version>1.18.4</lombok.version>
+        <slf4j.version>1.7.26</slf4j.version>
+        <junit.version>4.12</junit.version>
+        <jmlab-utils-java9.version>0.1.5</jmlab-utils-java9.version>
+        <jmlab-utils-elasticsearch.version>0.6.7.2
+        </jmlab-utils-elasticsearch.version>
+        <jmlab-utils-kafka.version>2.1.1</jmlab-utils-kafka.version>
+        <common-cli.version>1.4</common-cli.version>
+        <lombok.version>1.18.8</lombok.version>
     </properties>
     <build>
         <plugins>
@@ -96,6 +96,14 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2.1</version>
@@ -111,8 +119,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.1.0</version>
                 <configuration>
+                    <source>${java.version}</source>
                     <javadocExecutable>${java.home}/bin/javadoc
                     </javadocExecutable>
                 </configuration>
@@ -128,7 +137,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -142,7 +150,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.8</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -152,6 +160,7 @@
             </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>kr.jmlab</groupId>

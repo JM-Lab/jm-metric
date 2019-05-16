@@ -13,6 +13,7 @@ public interface MutatorInterface extends
 
     String META = "@meta";
     String PROCESS_TIMESTAMP = "@processTimestamp";
+    String INPUT_ID = "inputId";
 
     @Override
     default Transfer<Map<String, Object>> apply(
@@ -35,7 +36,7 @@ public interface MutatorInterface extends
                 .ifPresent(meta::putAll);
         JMOptional.getOptional(getFieldMeta())
                 .ifPresent(fieldMeta -> meta.put("field", fieldMeta));
-        meta.put("inputId", inputTransfer.getInputId());
+        meta.put(INPUT_ID, inputTransfer.getInputId());
         meta.put(PROCESS_TIMESTAMP,
                 JMTimeUtil.getTimeAsDefaultUtcFormat(inputTransfer
                         .getTimestamp()));

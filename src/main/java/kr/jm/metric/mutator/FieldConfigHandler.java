@@ -158,7 +158,6 @@ class FieldConfigHandler {
                 .getConfigClass());
     }
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> buildNestedFieldStringMap(
             MutatorConfigInterface mutatorConfig, String targetString) {
         return mutatorConfig.buildMutator().mutate(targetString);

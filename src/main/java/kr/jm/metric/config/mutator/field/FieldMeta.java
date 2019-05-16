@@ -23,9 +23,7 @@ public class FieldMeta {
 
     private Map<String, Object> fieldMetaMap;
 
-    public FieldMeta(
-            Map<String, String> unit,
-            Map<String, Object> custom) {
+    public FieldMeta(Map<String, String> unit) {
         this.unit = unit;
     }
 

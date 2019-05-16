@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CombinedFieldConfig {
     public static final String DEFAULT_DELIMITER = JMString.UNDERSCORE;
-    public static final String N_A = "[N/A]";
+    private static final String N_A = "[N/A]";
     private String[] targetFields;
     private String combinedFieldName;
     private String delimiter;

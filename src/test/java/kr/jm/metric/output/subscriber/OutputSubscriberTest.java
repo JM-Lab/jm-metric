@@ -53,7 +53,8 @@ public class OutputSubscriberTest {
                 .ifPresent(JMPathOperation::deleteDir);
         this.embeddedZookeeper = new JMZookeeperServer().start();
         String zookeeperConnect = this.embeddedZookeeper.getZookeeperConnect();
-        this.kafkaServer = new JMKafkaServer(zookeeperConnect).start();
+        this.kafkaServer =
+                new JMKafkaServer.Builder(zookeeperConnect).build().start();
         this.bootstrapServers = kafkaServer.getKafkaServerConnect();
         sleep(3000);
         this.kafkaProducer = new JMKafkaProducer(bootstrapServers);
