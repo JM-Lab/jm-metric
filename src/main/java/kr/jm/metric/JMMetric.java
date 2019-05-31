@@ -17,7 +17,10 @@ import kr.jm.utils.helper.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -149,8 +152,7 @@ public class JMMetric implements
     private Map<String, Object> buildNewFieldMap(
             CustomFunctionInterface customFunction,
             Transfer<Map<String, Object>> transfer) {
-        return new HashMap<>(customFunction
-                .apply(transfer.newWith(new HashMap<>(transfer.getData()))));
+        return customFunction.apply(transfer.newWith(transfer.getData()));
     }
 
     public String getInputId() {

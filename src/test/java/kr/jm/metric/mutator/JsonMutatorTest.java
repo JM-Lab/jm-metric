@@ -1,5 +1,6 @@
 package kr.jm.metric.mutator;
 
+import kr.jm.utils.datastructure.JMMap;
 import org.junit.Test;
 
 import java.util.Map;
@@ -16,7 +17,8 @@ public class JsonMutatorTest {
         Map<String, Object> fieldMap = jsonMutator.mutate(targetString);
         System.out.println(fieldMap);
         assertEquals("dd/MMM/yyyy:HH:mm:ss Z",
-                fieldMap.get("dateFormat.timestamp.format"));
+                JMMap.newFlatKeyMap(fieldMap)
+                        .get("dateFormat.timestamp.format"));
         Map<String, Object> fieldObjectMap = jsonMutator.mutate(
                 targetString);
         System.out.println(fieldObjectMap);
