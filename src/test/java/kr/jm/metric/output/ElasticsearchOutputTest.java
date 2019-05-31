@@ -37,9 +37,13 @@ public class ElasticsearchOutputTest {
                 this.jmEmbeddedElasticsearch.getTransportIpPortPair());
 
         // JMElasticsearchClient Init
+        ElasticsearchOutputConfig outputConfig =
+                JMJson.transform(Map.of("elasticsearchConnect",
+                        this.jmEmbeddedElasticsearch.getTransportIpPortPair(),
+                        "indexField", "requestMethod"),
+                        ElasticsearchOutputConfig.class);
         this.elasticsearchOutput =
-                new ElasticsearchOutput(new ElasticsearchOutputConfig(
-                        this.jmEmbeddedElasticsearch.getTransportIpPortPair()));
+                new ElasticsearchOutput(outputConfig);
         System.out.println(JMJson.toJsonString(
                 this.elasticsearchOutput.getConfig()));
     }
@@ -73,11 +77,12 @@ public class ElasticsearchOutputTest {
                 .writeData(dataList.stream().flatMap(
                         transfer -> transfer.newStreamWith(transfer.getData()))
                         .collect(Collectors.toList()));
-        JMThread.sleep(3000);
+        JMThread.sleep(3500);
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);
-        String index = elasticsearchOutput.getIndexPreSuf();
-        Assert.assertTrue(allIndices.contains(index));
+        Assert.assertEquals(
+                "[jm-metric-n_a-2018.05.15, jm-metric-get-2018.05.15, " +
+                        "jm-metric-post-2018.05.15]", allIndices.toString());
         SearchResponse searchResponse =
                 jmElasticsearchClient.searchAll(JMArrays.toArray(allIndices));
         System.out.println(searchResponse);

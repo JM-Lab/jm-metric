@@ -25,7 +25,6 @@ public class ElasticsearchOutput extends AbstractOutput {
     private String indexPrefix;
     private String indexSuffixDate;
     private String indexSuffixDateFormat;
-    private String indexPreSuf;
 
     private JMNestedMap<Object, String, String> indexCache;
 
@@ -41,8 +40,6 @@ public class ElasticsearchOutput extends AbstractOutput {
         this.indexField = outputConfig.getIndexField();
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
-        this.indexSuffixDate = buildInputSuffixDate(System.currentTimeMillis());
-        this.indexPreSuf = getIndexPreSuf(indexSuffixDate);
         this.elasticsearchClient = new JMElasticsearchClient(
                 outputConfig.getElasticsearchConnect(), buildSettings(
                 JMElasticsearchClient
@@ -63,27 +60,9 @@ public class ElasticsearchOutput extends AbstractOutput {
         return settingsBuilder.build();
     }
 
-    private String buildIndexPreSuf(long timestamp) {
-        return buildIndexPreSuf(buildInputSuffixDate(timestamp));
-    }
-
     private String buildInputSuffixDate(long timestamp) {
         return JMTimeUtil
                 .getTime(timestamp, this.indexSuffixDateFormat, this.zoneId);
-    }
-
-    private String buildIndexPreSuf(String indexSuffixDate) {
-        return indexSuffixDate
-                .equals(this.indexSuffixDate) ? this.indexPreSuf : getIndexPreSuf(
-                indexSuffixDate);
-    }
-
-    private String getIndexPreSuf(String indexSuffixDate) {
-        synchronized (this.indexSuffixDate) {
-            this.indexSuffixDate = indexSuffixDate;
-            return this.indexPreSuf =
-                    this.indexPrefix + JMString.HYPHEN + indexSuffixDate;
-        }
     }
 
     @Override
@@ -102,16 +81,24 @@ public class ElasticsearchOutput extends AbstractOutput {
         // elasticsearch 자체 json parser xcontent가 잘 안되는 경우가 있음
         this.elasticsearchClient
                 .sendWithBulkProcessor(JMJson.transformToMap(data),
-                        buildIndex(data, buildIndexPreSuf(timestamp)), TYPE);
+                        buildIndex(data, buildInputSuffixDate(timestamp)),
+                        TYPE);
     }
 
-    private String buildIndex(Map<String, Object> data, String indexPreSuf) {
-        return JMOptional.getOptional(this.indexField).map(data::get)
-                .map(indexValue -> indexCache
-                        .getOrPutGetNew(indexValue, indexPreSuf,
-                                () -> indexValue.toString().toLowerCase() +
-                                        JMString.HYPHEN + indexPreSuf))
-                .orElse(indexPreSuf);
+    private String buildIndex(Map<String, Object> data, String indexSuffix) {
+        return JMString.isNullOrEmpty(indexField) ? indexCache
+                .getOrPutGetNew(JMString.EMPTY, indexSuffix,
+                        () -> indexPrefix + JMString.HYPHEN +
+                                indexSuffix) : buildIndex(
+                JMOptional.getOptional(data, this.indexField).orElse("n_a"),
+                indexSuffix);
+    }
+
+    private String buildIndex(Object indexValue, String indexSuffix) {
+        return indexCache.getOrPutGetNew(indexValue, indexSuffix,
+                () -> indexPrefix + JMString.HYPHEN +
+                        indexValue.toString().toLowerCase() +
+                        JMString.HYPHEN + indexSuffix);
     }
 
 }
