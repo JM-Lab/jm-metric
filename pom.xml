@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.2.2</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data
