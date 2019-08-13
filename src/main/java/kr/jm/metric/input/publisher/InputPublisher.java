@@ -24,8 +24,7 @@ import java.util.stream.Stream;
 public class InputPublisher implements
         TransferSubmissionPublisherInterface<String>, AutoCloseable {
 
-    private BulkSubmissionPublisher<Transfer<String>>
-            transferBulkSubmissionPublisher;
+    private BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher;
 
     @Getter
     protected String inputId;
@@ -33,8 +32,7 @@ public class InputPublisher implements
 
     private Consumer<Transfer<String>> chunkConsumer;
 
-    public InputPublisher(
-            BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
+    public InputPublisher(BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input) {
         this(transferBulkSubmissionPublisher, input, ChunkType.NONE);
     }
@@ -45,13 +43,11 @@ public class InputPublisher implements
         this.transferBulkSubmissionPublisher = transferBulkSubmissionPublisher;
         this.inputId = input.getInputId();
         this.input = input;
-        this.chunkConsumer = buildChunkConsumer(
-                Optional.ofNullable(chunkType).orElse(ChunkType.NONE));
+        this.chunkConsumer = buildChunkConsumer(Optional.ofNullable(chunkType).orElse(ChunkType.NONE));
         JMLog.info(log, "InputPublisher", inputId, input, chunkType);
     }
 
-    private Consumer<Transfer<String>> buildChunkConsumer(
-            ChunkType chunkType) {
+    private Consumer<Transfer<String>> buildChunkConsumer(ChunkType chunkType) {
         switch (chunkType) {
             case LINES:
                 return buildTransferConsumer(data -> Arrays
@@ -65,12 +61,10 @@ public class InputPublisher implements
         }
     }
 
-    private Consumer<Transfer<String>> buildTransferConsumer(
-            Function<String, Stream<String>> stringStreamFunction) {
+    private Consumer<Transfer<String>> buildTransferConsumer(Function<String, Stream<String>> stringStreamFunction) {
         return transfer -> this.transferBulkSubmissionPublisher
-                .submit(JMOptional.getOptional(transfer.getData()).stream()
-                        .flatMap(stringStreamFunction).map(transfer::newWith)
-                        .toArray(Transfer[]::new));
+                .submit(JMOptional.getOptional(transfer.getData()).stream().flatMap(stringStreamFunction)
+                        .map(transfer::newWith).toArray(Transfer[]::new));
     }
 
     public InputPublisher start() {
@@ -91,15 +85,13 @@ public class InputPublisher implements
     }
 
     @Override
-    public InputPublisher subscribeWith(
-            Flow.Subscriber<List<Transfer<String>>>... subscribers) {
+    public InputPublisher subscribeWith(Flow.Subscriber<List<Transfer<String>>>... subscribers) {
         this.transferBulkSubmissionPublisher.subscribeWith(subscribers);
         return this;
     }
 
     @Override
-    public InputPublisher consumeWith(
-            Consumer<List<Transfer<String>>>... consumers) {
+    public InputPublisher consumeWith(Consumer<List<Transfer<String>>>... consumers) {
         this.transferBulkSubmissionPublisher.consumeWith(consumers);
         return this;
     }
@@ -114,8 +106,7 @@ public class InputPublisher implements
     }
 
     @Override
-    public void subscribe(
-            Flow.Subscriber<? super List<Transfer<String>>> subscriber) {
+    public void subscribe(Flow.Subscriber<? super List<Transfer<String>>> subscriber) {
         this.transferBulkSubmissionPublisher.subscribe(subscriber);
     }
 

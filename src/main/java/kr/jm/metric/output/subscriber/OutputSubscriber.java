@@ -11,9 +11,7 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Map;
 
-public class OutputSubscriber extends
-        JMSubscriber<List<Transfer<Map<String, Object>>>>
-        implements AutoCloseable {
+public class OutputSubscriber extends JMSubscriber<List<Transfer<Map<String, Object>>>> implements AutoCloseable {
 
     @Getter
     protected String outputId;
@@ -24,7 +22,7 @@ public class OutputSubscriber extends
         this.outputId = output.getOutputId();
         this.output = output;
         setDataConsumer(this::output);
-        JMLog.info(log, "OutputSubscriber", outputId, output);
+        JMLog.debug(log, "OutputSubscriber", outputId, output);
     }
 
     @Override
@@ -38,13 +36,12 @@ public class OutputSubscriber extends
     }
 
     private void output(List<Transfer<Map<String, Object>>> dataList) {
-        JMLog.info(log, "output", dataList.size() > 0 ? dataList.get(0)
-                .getInputId() : JMString.EMPTY, outputId, dataList.size());
+        JMLog.debug(log, "output", dataList.size() > 0 ? dataList.get(0).getInputId() : JMString.EMPTY, outputId,
+                dataList.size());
         try {
             this.output.writeData(dataList);
         } catch (Exception e) {
-            JMExceptionManager
-                    .handleException(log, e, "output", outputId, dataList);
+            JMExceptionManager.handleException(log, e, "output", outputId, dataList);
         }
     }
 

@@ -21,61 +21,49 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class MutatorProcessor implements
-        JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>,
-        AutoCloseable {
+        JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>, AutoCloseable {
 
     @Getter
     private String mutatorId;
     private int workers;
     private MatchFilter matchFilter;
-    private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>
-            jmProcessor;
+    private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<Map<String, Object>>>> jmProcessor;
 
-    public MutatorProcessor(int workers, MutatorInterface mutator,
-            MatchFilter matchFilter) {
+    public MutatorProcessor(int workers, MutatorInterface mutator, MatchFilter matchFilter) {
         this.mutatorId = mutator.getMutatorId();
         this.workers = workers;
-        this.jmProcessor = JMProcessorBuilder
-                .buildWithThreadPool(workers, list -> process(list, mutator));
+        this.jmProcessor = JMProcessorBuilder.buildWithThreadPool(workers, list -> process(list, mutator));
         this.matchFilter = matchFilter;
-        JMLog.info(log, "MutatorProcessor", this.mutatorId, this.workers,
-                mutator, matchFilter);
+        JMLog.info(log, "MutatorProcessor", this.mutatorId, this.workers, mutator, matchFilter);
     }
 
 
-    private List<Transfer<Map<String, Object>>> process(
-            List<Transfer<String>> dataList, MutatorInterface mutator) {
-        JMLog.info(log, "process", dataList.size() > 0 ? dataList.get(0)
-                        .getInputId() : JMString.EMPTY, mutator.getMutatorId(),
-                dataList.size());
-        return dataList.stream().map(mutator).filter(fieldMapTransfer -> Objects
-                .nonNull(fieldMapTransfer.getData())).filter(this::isPassed)
-                .collect(Collectors.toList());
+    private List<Transfer<Map<String, Object>>> process(List<Transfer<String>> dataList, MutatorInterface mutator) {
+        JMLog.debug(log, "process", dataList.size() > 0 ? dataList.get(0).getInputId() : JMString.EMPTY,
+                mutator.getMutatorId(), dataList.size());
+        return dataList.stream().map(mutator).filter(fieldMapTransfer -> Objects.nonNull(fieldMapTransfer.getData()))
+                .filter(this::isPassed).collect(Collectors.toList());
     }
 
     private boolean isPassed(Transfer<Map<String, Object>> fieldMapTransfer) {
-        return Objects.isNull(matchFilter) || !matchFilter
-                .filter(fieldMapTransfer.getData());
+        return Objects.isNull(matchFilter) || !matchFilter.filter(fieldMapTransfer.getData());
     }
 
 
     @Override
-    public MutatorProcessor subscribeWith(
-            Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {
+    public MutatorProcessor subscribeWith(Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {
         this.jmProcessor.subscribeWith(subscribers);
         return this;
     }
 
     @Override
-    public MutatorProcessor consumeWith(
-            Consumer<List<Transfer<Map<String, Object>>>>... consumers) {
+    public MutatorProcessor consumeWith(Consumer<List<Transfer<Map<String, Object>>>>... consumers) {
         this.jmProcessor.consumeWith(consumers);
         return this;
     }
 
     @Override
-    public void subscribe(
-            Flow.Subscriber<? super List<Transfer<Map<String, Object>>>> subscriber) {
+    public void subscribe(Flow.Subscriber<? super List<Transfer<Map<String, Object>>>> subscriber) {
         this.jmProcessor.subscribe(subscriber);
     }
 
@@ -85,8 +73,7 @@ public class MutatorProcessor implements
     }
 
     @Override
-    public void onNext(
-            List<Transfer<String>> item) {
+    public void onNext(List<Transfer<String>> item) {
         this.jmProcessor.onNext(item);
     }
 
