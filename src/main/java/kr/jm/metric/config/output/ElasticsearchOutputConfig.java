@@ -7,6 +7,8 @@ import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Map;
+
 @Getter
 @ToString(callSuper = true)
 public class ElasticsearchOutputConfig extends AbstractOutputConfig {
@@ -26,9 +28,10 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     private boolean clientTransportSniff;
     private String clusterName;
 
-    private String indexField;
     private String indexPrefix;
+    private String indexField;
     private String indexSuffixDateFormat;
+    private Map<String, String> indexSuffixDateFormatMap;
     private String zoneId;
 
     private int bulkActions;
@@ -122,4 +125,5 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     public ElasticsearchOutput buildOutput() {
         return new ElasticsearchOutput(this);
     }
+
 }

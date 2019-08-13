@@ -37,15 +37,12 @@ public class ElasticsearchOutputTest {
                 this.jmEmbeddedElasticsearch.getTransportIpPortPair());
 
         // JMElasticsearchClient Init
-        ElasticsearchOutputConfig outputConfig =
-                JMJson.transform(Map.of("elasticsearchConnect",
-                        this.jmEmbeddedElasticsearch.getTransportIpPortPair(),
-                        "indexField", "requestMethod"),
-                        ElasticsearchOutputConfig.class);
-        this.elasticsearchOutput =
-                new ElasticsearchOutput(outputConfig);
-        System.out.println(JMJson.toJsonString(
-                this.elasticsearchOutput.getConfig()));
+        ElasticsearchOutputConfig outputConfig = JMJson.transform(
+                Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(), "indexField",
+                        "requestMethod", "indexSuffixDateFormatMap", Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
+                ElasticsearchOutputConfig.class);
+        this.elasticsearchOutput = new ElasticsearchOutput(outputConfig);
+        System.out.println(JMJson.toJsonString(this.elasticsearchOutput.getConfig()));
     }
 
     /**
@@ -56,8 +53,7 @@ public class ElasticsearchOutputTest {
     @After
     public void tearDown() throws Exception {
         JMOptional.getOptional(jmElasticsearchClient.getAllIndices())
-                .ifPresent(indices -> jmElasticsearchClient.deleteIndices(
-                        indices.toArray(new String[indices.size()])));
+                .ifPresent(indices -> jmElasticsearchClient.deleteIndices(indices.toArray(new String[indices.size()])));
         while (jmElasticsearchClient.getAllIndices().size() > 0)
             JMThread.sleep(1000);
         jmElasticsearchClient.close();
@@ -69,22 +65,16 @@ public class ElasticsearchOutputTest {
     @Test
     public void writeData() {
         List<Transfer<List<Map<String, Object>>>> dataList =
-                JMResources.readLines("testTransferData.txt").stream()
-                        .map(line -> JMJson.withJsonString(line,
-                                new TypeReference<Transfer<List<Map<String, Object>>>>() {}))
-                        .collect(Collectors.toList());
-        elasticsearchOutput
-                .writeData(dataList.stream().flatMap(
-                        transfer -> transfer.newStreamWith(transfer.getData()))
-                        .collect(Collectors.toList()));
+                JMResources.readLines("testTransferData.txt").stream().map(line -> JMJson.withJsonString(line,
+                        new TypeReference<Transfer<List<Map<String, Object>>>>() {})).collect(Collectors.toList());
+        elasticsearchOutput.writeData(dataList.stream().flatMap(transfer -> transfer.newStreamWith(transfer.getData()))
+                .collect(Collectors.toList()));
         JMThread.sleep(3500);
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);
-        Assert.assertEquals(
-                "[jm-metric-n_a-2018.05.15, jm-metric-get-2018.05.15, " +
-                        "jm-metric-post-2018.05.15]", allIndices.toString());
-        SearchResponse searchResponse =
-                jmElasticsearchClient.searchAll(JMArrays.toArray(allIndices));
+        Assert.assertEquals("[jm-metric-n_a-2018.20, jm-metric-post-2018.05, jm-metric-get-2018.05.15]",
+                allIndices.toString());
+        SearchResponse searchResponse = jmElasticsearchClient.searchAll(JMArrays.toArray(allIndices));
         System.out.println(searchResponse);
         Assert.assertEquals(200, searchResponse.getHits().getTotalHits());
         elasticsearchOutput.close();
