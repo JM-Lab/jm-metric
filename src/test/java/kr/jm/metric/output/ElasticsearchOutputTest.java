@@ -13,6 +13,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +67,7 @@ public class ElasticsearchOutputTest {
 
     @Test
     public void writeData() {
+
         List<Transfer<List<Map<String, Object>>>> dataList =
                 JMResources.readLines("testTransferData.txt").stream().map(line -> JMJson.withJsonString(line,
                         new TypeReference<Transfer<List<Map<String, Object>>>>() {})).collect(Collectors.toList());
@@ -78,5 +82,37 @@ public class ElasticsearchOutputTest {
         System.out.println(searchResponse);
         Assert.assertEquals(200, searchResponse.getHits().getTotalHits());
         elasticsearchOutput.close();
+    }
+
+    @Test
+    public void buildIndex() {
+        long epochMilli = 1566027760265l;
+        ZonedDateTime zonedDateTime = Instant.ofEpochMilli(epochMilli).atZone(ZoneId.of("UTC"));
+        System.out.println(elasticsearchOutput.buildIndex(Map.of(), epochMilli));
+        Assert.assertEquals("jm-metric-n_a-2019.33", elasticsearchOutput.buildIndex(Map.of(),
+                zonedDateTime.toInstant().toEpochMilli()));
+        Assert.assertEquals("jm-metric-n_a-2019.35", elasticsearchOutput.buildIndex(Map.of(),
+                zonedDateTime.plusWeeks(2).toInstant().toEpochMilli()));
+
+        Assert.assertEquals("jm-metric-post-2019.08", elasticsearchOutput
+                .buildIndex(Map.of("requestMethod", "POST"), zonedDateTime.toInstant().toEpochMilli()));
+        Assert.assertEquals("jm-metric-post-2020.01", elasticsearchOutput
+                .buildIndex(Map.of("requestMethod", "POST"), zonedDateTime.plusMonths(5).toInstant().toEpochMilli()));
+
+        // JMElasticsearchClient Init
+        this.elasticsearchOutput.close();
+        ElasticsearchOutputConfig outputConfig = JMJson.transform(
+                Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(),
+                        "indexSuffixDateFormatMap", Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
+                ElasticsearchOutputConfig.class);
+        this.elasticsearchOutput = new ElasticsearchOutput(outputConfig);
+        System.out.println(JMJson.toJsonString(this.elasticsearchOutput.getConfig()));
+
+        ZonedDateTime minusOneDay = zonedDateTime.minusDays(1);
+        System.out.println(elasticsearchOutput.buildIndex(Map.of(), minusOneDay.toInstant().toEpochMilli()));
+        Assert.assertEquals("jm-metric-2019.08.16", elasticsearchOutput.buildIndex(Map.of(),
+                minusOneDay.toInstant().toEpochMilli()));
+        Assert.assertEquals("jm-metric-2019.08.18", elasticsearchOutput.buildIndex(Map.of(),
+                minusOneDay.plusDays(2).toInstant().toEpochMilli()));
     }
 }

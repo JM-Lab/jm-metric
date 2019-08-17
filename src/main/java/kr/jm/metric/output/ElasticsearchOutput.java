@@ -24,7 +24,7 @@ public class ElasticsearchOutput extends AbstractOutput {
     private String indexPrefix;
     private Optional<String> indexFieldAsOpt;
     // default suffixDateFormat
-    private Optional<String> indexSuffixDateFormatAsOpt;
+    private String indexSuffixDateFormat;
     // dynamic suffixDateFormat by indexField's value
     private Map<String, String> indexSuffixDateFormatMap;
 
@@ -41,7 +41,7 @@ public class ElasticsearchOutput extends AbstractOutput {
         this.zoneId = outputConfig.getZoneId();
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexFieldAsOpt = JMOptional.getOptional(outputConfig.getIndexField());
-        this.indexSuffixDateFormatAsOpt = JMOptional.getOptional(outputConfig.getIndexSuffixDateFormat());
+        this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
         this.indexSuffixDateFormatMap = outputConfig.getIndexSuffixDateFormatMap();
         this.elasticsearchClient = new JMElasticsearchClient(outputConfig.getElasticsearchConnect(), buildSettings(
                 JMElasticsearchClient
@@ -57,10 +57,6 @@ public class ElasticsearchOutput extends AbstractOutput {
         return settingsBuilder.build();
     }
 
-    private String buildIndexSuffixDate(long timestamp, String dateFormat) {
-        return JMTimeUtil.getTime(timestamp, dateFormat, this.zoneId);
-    }
-
     @Override
     protected void closeImpl() {
         this.elasticsearchClient.close();
@@ -74,34 +70,28 @@ public class ElasticsearchOutput extends AbstractOutput {
 
     private void writeData(Map<String, Object> data, long timestamp) {
         this.elasticsearchClient.sendWithBulkProcessorAndObjectMapper(data,
-                buildIndexWithSuffix(data, timestamp), TYPE);
+                buildIndex(data, timestamp), TYPE);
     }
 
-    private String buildIndexWithSuffix(Map<String, Object> data, long timestamp) {
-        return indexFieldAsOpt
-                .map(indexField -> buildIndexWithIndexField(timestamp,
-                        JMOptional.getOptional(data, indexField).map(Object::toString).orElse("n_a")))
-                .orElseGet(() -> buildIndexWithoutIndexField(timestamp));
+    String buildIndex(Map<String, Object> data, long timestamp) {
+        return buildIndex(timestamp, indexFieldAsOpt
+                .map(indexField -> JMOptional.getOptional(data, indexField).map(Object::toString).orElse("n_a")));
     }
 
-    private String buildIndexWithoutIndexField(long timestamp) {
-        return this.indexSuffixDateFormatAsOpt.map(suffixDateFormat -> indexCache
-                .getOrPutGetNew(JMString.EMPTY, suffixDateFormat,
-                        () -> indexPrefix + JMString.HYPHEN + buildIndexSuffixDate(timestamp, suffixDateFormat)))
-                .orElse(indexPrefix);
+    private String buildIndex(long timestamp, Optional<String> indexFieldValueAsOpt) {
+        return buildIndex(indexFieldValueAsOpt, buildIndexSuffixDate(timestamp, indexFieldValueAsOpt));
     }
 
-    private String buildIndexWithIndexField(long timestamp, String indexFieldValue) {
-        return indexCache.getOrPutGetNew(indexFieldValue, indexFieldValue,
-                () -> indexPrefix + JMString.HYPHEN + indexFieldValue.toLowerCase() +
-                        extractSuffixDateFormat(timestamp, indexFieldValue));
+    private String buildIndexSuffixDate(long timestamp, Optional<String> indexFieldValueAsOpt) {
+        return JMTimeUtil.getTime(timestamp, indexFieldValueAsOpt
+                .flatMap(indexFieldValue -> JMOptional.getOptional(indexSuffixDateFormatMap, indexFieldValue))
+                .orElse(indexSuffixDateFormat), this.zoneId);
     }
 
-    private String extractSuffixDateFormat(long timestamp, String indexFieldValue) {
-        return JMOptional.getOptional(indexSuffixDateFormatMap, indexFieldValue)
-                .map(dateFormat -> JMString.HYPHEN + buildIndexSuffixDate(timestamp, dateFormat)).orElseGet(
-                        () -> this.indexSuffixDateFormatAsOpt.map(indexSuffixDateFormat -> JMString.HYPHEN +
-                                buildIndexSuffixDate(timestamp, indexSuffixDateFormat)).orElse(JMString.EMPTY));
+    private String buildIndex(Optional<String> indexFieldValueAsOpt, String indexSuffixDate) {
+        return indexCache.getOrPutGetNew(indexFieldValueAsOpt.orElse(JMString.EMPTY), indexSuffixDate,
+                () -> indexPrefix +
+                        indexFieldValueAsOpt.map(indexFieldValue -> JMString.HYPHEN + indexFieldValue.toLowerCase())
+                                .orElse(JMString.EMPTY) + JMString.HYPHEN + indexSuffixDate);
     }
-
 }
