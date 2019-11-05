@@ -46,8 +46,7 @@ class FieldConfigHandler {
     }
 
     private void applyCustom(Map<String, Object> fieldObjectMap) {
-        JMOptional.getOptional(this.fieldConfig.getCustom())
-                .ifPresent(fieldObjectMap::putAll);
+        JMOptional.getOptional(this.fieldConfig.getCustom()).ifPresent(fieldObjectMap::putAll);
     }
 
     private void applyAlterFieldName(Map<String, Object> fieldObjectMap) {
@@ -63,28 +62,30 @@ class FieldConfigHandler {
         JMStream.buildEntryStream(this.fieldConfig.getDataType())
                 .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
                 .forEach(entry -> fieldObjectMap.put(entry.getKey(),
-                        transformToNumber(entry.getValue(),
-                                fieldObjectMap.get(entry.getKey())
-                                        .toString())));
+                        transformToNumber(entry.getValue(), entry.getKey(),
+                                fieldObjectMap.get(entry.getKey()).toString())));
     }
 
-    private Object transformToNumber(DataType dataType, String data) {
-        switch (dataType) {
-            case NUMBER:
-                return transformToNumber(data);
-            case LONG:
-                return transformToNumber(data).longValue();
-            default:
-                return data;
+    private Object transformToNumber(DataType dataType, String key, String data) {
+        try {
+            switch (dataType) {
+                case NUMBER:
+                    return transformToNumber(data);
+                case LONG:
+                    return transformToNumber(data).longValue();
+                default:
+                    return data;
+            }
+        } catch (Exception e) {
+            return JMExceptionManager
+                    .handleExceptionAndReturn(log, e, "transformToNumber", () -> 0D, mutatorId, key, data);
         }
     }
 
     private Double transformToNumber(String data) {
-        return JMString.isNumber(data) ? Double
-                .valueOf(data) : JMExceptionManager
-                .handleExceptionAndReturn(log,
-                        new RuntimeException("Wrong Number Format Occur !!!"),
-                        "transformToNumber", () -> 0D, mutatorId, data);
+        if (JMString.isNumber(data))
+            return Double.valueOf(data);
+        throw new RuntimeException("Wrong Number Format Occur !!!");
     }
 
     private void applyDateFormat(Map<String, Object> fieldObjectMap) {
@@ -105,8 +106,7 @@ class FieldConfigHandler {
 
     private void applyIgnore(Map<String, Object> fieldObjectMap) {
         JMOptional.getOptional(this.fieldConfig.getIgnore())
-                .ifPresent(ignoreList -> ignoreList
-                        .forEach(fieldObjectMap::remove));
+                .ifPresent(ignoreList -> ignoreList.forEach(fieldObjectMap::remove));
     }
 
     private void applyRawData(Map<String, Object> fieldObjectMap) {
@@ -115,47 +115,31 @@ class FieldConfigHandler {
     }
 
     private void applyFormulaFields(Map<String, Object> fieldObjectMap) {
-        JMOptional.getOptional(this.fieldConfig.getFormulaFields()).stream()
-                .flatMap(Arrays::stream)
-                .forEach(formulaFieldConfig -> Optional.ofNullable(
-                        formulaFieldConfig.buildValue(fieldObjectMap))
-                        .ifPresent(value -> fieldObjectMap
-                                .put(formulaFieldConfig.getCombinedFieldName(),
-                                        value)));
+        JMOptional.getOptional(this.fieldConfig.getFormulaFields()).stream().flatMap(Arrays::stream)
+                .forEach(formulaFieldConfig -> Optional.ofNullable(formulaFieldConfig.buildValue(fieldObjectMap))
+                        .ifPresent(value -> fieldObjectMap.put(formulaFieldConfig.getCombinedFieldName(), value)));
     }
 
     private void applyCombinedFields(Map<String, Object> fieldObjectMap) {
-        JMOptional.getOptional(this.fieldConfig.getCombinedFields()).stream()
-                .flatMap(Arrays::stream)
-                .forEach(combinedFieldConfig -> fieldObjectMap
-                        .put(combinedFieldConfig.getCombinedFieldName(),
-                                combinedFieldConfig
-                                        .buildValue(fieldObjectMap)));
+        JMOptional.getOptional(this.fieldConfig.getCombinedFields()).stream().flatMap(Arrays::stream).forEach(
+                combinedFieldConfig -> fieldObjectMap.put(combinedFieldConfig.getCombinedFieldName(),
+                        combinedFieldConfig.buildValue(fieldObjectMap)));
     }
 
     private void applyFormat(Map<String, Object> fieldObjectMap) {
-        Optional.ofNullable(this.fieldConfig.getFormat())
-                .ifPresent(format -> format.forEach(
-                        (field, fieldConfigMap) -> JMOptional
-                                .getOptional(fieldObjectMap, field)
-                                .map(Object::toString)
-                                .map(targetString -> buildNestedFieldStringMap(
-                                        getFormatMutatorConfig(field,
-                                                fieldConfigMap), targetString))
-                                .ifPresent(fieldObjectMap::putAll)));
+        Optional.ofNullable(this.fieldConfig.getFormat()).ifPresent(format -> format
+                .forEach((field, fieldConfigMap) -> JMOptional.getOptional(fieldObjectMap, field).map(Object::toString)
+                        .map(targetString -> buildNestedFieldStringMap(getFormatMutatorConfig(field, fieldConfigMap),
+                                targetString)).ifPresent(fieldObjectMap::putAll)));
     }
 
-    private MutatorConfigInterface getFormatMutatorConfig(String field,
-            Map<String, Object> fieldConfigMap) {
-        return JMMap.getOrPutGetNew(this.formatMutatorConfigMap, field,
-                () -> buildFieldConfig(fieldConfigMap));
+    private MutatorConfigInterface getFormatMutatorConfig(String field, Map<String, Object> fieldConfigMap) {
+        return JMMap.getOrPutGetNew(this.formatMutatorConfigMap, field, () -> buildFieldConfig(fieldConfigMap));
     }
 
-    private MutatorConfigInterface buildFieldConfig(
-            Map<String, Object> fieldConfigMap) {
-        return ConfigInterface.transformConfig(fieldConfigMap, MutatorConfigType
-                .valueOf(fieldConfigMap.get("mutatorConfigType").toString())
-                .getConfigClass());
+    private MutatorConfigInterface buildFieldConfig(Map<String, Object> fieldConfigMap) {
+        return ConfigInterface.transformConfig(fieldConfigMap,
+                MutatorConfigType.valueOf(fieldConfigMap.get("mutatorConfigType").toString()).getConfigClass());
     }
 
     private Map<String, Object> buildNestedFieldStringMap(
