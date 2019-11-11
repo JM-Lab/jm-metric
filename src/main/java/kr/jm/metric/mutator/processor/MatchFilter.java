@@ -2,8 +2,6 @@ package kr.jm.metric.mutator.processor;
 
 import kr.jm.metric.config.mutator.field.FilterConfig;
 import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMConsumer;
-import kr.jm.utils.helper.JMPredicate;
 import kr.jm.utils.helper.JMStream;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +60,6 @@ public class MatchFilter {
     public boolean filter(Object target, Pattern pattern, boolean negate) {
         return Optional.ofNullable(target).map(Object::toString)
                 .map(pattern::matcher).map(Matcher::find)
-                .filter(JMPredicate.peek(JMConsumer.getSOPL()))
                 .filter(bool -> negate ? !bool : bool)
                 .isPresent();
     }

@@ -36,9 +36,8 @@ public class MutatorTest {
         String result = JMJson.toJsonString(resultMap);
         System.out.println(result);
         System.out.println(JMJson.toJsonString(mutatorConfig));
-        Assert.assertEquals("{\"dsnames\":[\"rx\",\"tx\"]," +
-                        "\"plugin_instance\":\"en5\",\"type_instance\":\"\"," +
-                        "\"plugin\":\"interface\",\"values\":[427,430],\"host\":\"jm-macbook-pro-6.local\",\"interval\":5.0,\"time\":1.535336764687E9,\"type\":\"if_packets\",\"dstypes\":[\"derive\",\"derive\"]}",
+        Assert.assertEquals(
+                "{\"values\":[427,430],\"dstypes\":[\"derive\",\"derive\"],\"dsnames\":[\"rx\",\"tx\"],\"time\":1.535336764687E9,\"interval\":5.0,\"host\":\"jm-macbook-pro-6.local\",\"plugin\":\"interface\",\"plugin_instance\":\"en5\",\"type\":\"if_packets\",\"type_instance\":\"\"}",
                 result);
     }
 

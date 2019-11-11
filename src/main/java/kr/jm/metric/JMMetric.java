@@ -38,8 +38,7 @@ public class JMMetric implements
     private MutatorProcessor mutatorProcessor;
     @Getter
     private List<OutputSubscriber> outputSubscriberList;
-    private JMProcessor<List<Transfer<Map<String, Object>>>, List<Transfer<Map<String, Object>>>>
-            customProcessor;
+    private JMProcessor<List<Transfer<Map<String, Object>>>, List<Transfer<Map<String, Object>>>> customProcessor;
 
     public static void main(String[] args) {
         new JMMetricMain().start(args);
@@ -57,64 +56,48 @@ public class JMMetric implements
         this(null, mutatorConfigId);
     }
 
-    public JMMetric(JMMetricConfigManager jmMetricConfigManager, String
-            mutatorConfigId) {
+    public JMMetric(JMMetricConfigManager jmMetricConfigManager, String mutatorConfigId) {
         this(jmMetricConfigManager, null, mutatorConfigId);
     }
 
-    public JMMetric(String inputId, String mutatorConfigId,
-            String... outputIds) {
+    public JMMetric(String inputId, String mutatorConfigId, String... outputIds) {
         this(null, inputId, mutatorConfigId, outputIds);
     }
 
-    public JMMetric(JMMetricConfigManager jmMetricConfigManager,
-            String inputId, String mutatorConfigId, String... outputIds) {
-        this.jmMetricConfigManager =
-                JMLambda.supplierIfNull(jmMetricConfigManager,
-                        JMMetricConfigManager::new);
-        withInputId(inputId).withMutatorId(mutatorConfigId)
-                .withOutputIds(outputIds);
-        String info =
-                "Running with InputId = " + inputPublisher.getInputId() +
-                        ", MutatorId = " + mutatorProcessor.getMutatorId() +
-                        ", OutputIds = " + outputSubscriberList.stream()
-                        .map(OutputSubscriber::getOutputId)
+    public JMMetric(JMMetricConfigManager jmMetricConfigManager, String inputId, String mutatorConfigId,
+            String... outputIds) {
+        this.jmMetricConfigManager = JMLambda.supplierIfNull(jmMetricConfigManager, JMMetricConfigManager::new);
+        withInputId(inputId).withMutatorId(mutatorConfigId).withOutputIds(outputIds);
+        String info = "Running with InputId = " + inputPublisher.getInputId() + ", MutatorId = " +
+                mutatorProcessor.getMutatorId() + ", OutputIds = " +
+                outputSubscriberList.stream().map(OutputSubscriber::getOutputId)
                         .collect(Collectors.joining(JMString.COMMA));
         log.info(info);
         System.out.println(info);
     }
 
     private JMMetric withOutputIds(String... outputIds) {
-        this.outputSubscriberList = JMStream.buildStream(
-                JMOptional.getOptional(outputIds)
-                        .orElseGet(() -> new String[]{"Stdout"}))
-                .map(this.jmMetricConfigManager::getOutputConfig)
-                .map(OutputSubscriberBuilder::build)
-                .collect(Collectors.toList());
+        this.outputSubscriberList =
+                JMStream.buildStream(JMOptional.getOptional(outputIds).orElseGet(() -> new String[]{"Stdout"}))
+                        .map(this.jmMetricConfigManager::getOutputConfig).map(OutputSubscriberBuilder::build)
+                        .collect(Collectors.toList());
         return this;
     }
 
     private JMMetric withMutatorId(String mutatorConfigId) {
-        this.mutatorProcessor =
-                MutatorProcessorBuilder.build(this.jmMetricConfigManager
-                        .getMutatorConfig(
-                                JMOptional.getOptional(mutatorConfigId)
-                                        .orElse("Raw")));
+        this.mutatorProcessor = MutatorProcessorBuilder.build(this.jmMetricConfigManager
+                .getMutatorConfig(JMOptional.getOptional(mutatorConfigId).orElse("Raw")));
         return this;
     }
 
     private JMMetric withInputId(String inputId) {
-        this.inputPublisher = Optional.ofNullable(inputId)
-                .map(this.jmMetricConfigManager::getInputConfig)
-                .map(InputPublisherBuilder::build)
-                .orElseGet(() -> InputPublisherBuilder
-                        .buildTestInput("TestInput"));
+        this.inputPublisher = Optional.ofNullable(inputId).map(this.jmMetricConfigManager::getInputConfig)
+                .map(InputPublisherBuilder::build).orElseGet(() -> InputPublisherBuilder.buildTestInput("TestInput"));
         return this;
     }
 
     public JMMetric start() {
-        JMLog.info(log, "start", getInputId(), getMutatorId(),
-                getOutputIdList());
+        JMLog.info(log, "start", getInputId(), getMutatorId(), getOutputIdList());
         bindInputAndMutator();
         bindOutput();
         this.inputPublisher.start();
@@ -127,30 +110,25 @@ public class JMMetric implements
 
     protected void bindInputAndMutator() {
         this.inputPublisher.subscribe(this.mutatorProcessor);
-        Optional.ofNullable(this.customProcessor)
-                .ifPresent(this.mutatorProcessor::subscribe);
+        Optional.ofNullable(this.customProcessor).ifPresent(this.mutatorProcessor::subscribe);
     }
 
     @Override
     public void close() {
-        JMLog.info(log, "close", getInputId(), getMutatorId(),
-                getOutputIdList());
+        JMLog.info(log, "close", getInputId(), getMutatorId(), getOutputIdList());
         this.inputPublisher.close();
         this.mutatorProcessor.close();
         this.outputSubscriberList.forEach(OutputSubscriber::close);
     }
 
     public JMMetric withCustomFunction(CustomFunctionInterface customFunction) {
-        this.customProcessor = JMProcessorBuilder
-                .build((List<Transfer<Map<String, Object>>> list) -> list
-                        .stream().map(mapTransfer -> mapTransfer.newWith(
-                                buildNewFieldMap(customFunction, mapTransfer)))
-                        .collect(Collectors.toList()));
+        this.customProcessor = JMProcessorBuilder.build((List<Transfer<Map<String, Object>>> list) -> list.stream()
+                .map(mapTransfer -> mapTransfer.newWith(buildNewFieldMap(customFunction, mapTransfer)))
+                .collect(Collectors.toList()));
         return this;
     }
 
-    private Map<String, Object> buildNewFieldMap(
-            CustomFunctionInterface customFunction,
+    private Map<String, Object> buildNewFieldMap(CustomFunctionInterface customFunction,
             Transfer<Map<String, Object>> transfer) {
         return customFunction.apply(transfer.newWith(transfer.getData()));
     }
@@ -164,8 +142,7 @@ public class JMMetric implements
     }
 
     public List<String> getOutputIdList() {
-        return JMCollections.buildNewList(this.outputSubscriberList,
-                OutputSubscriber::getOutputId);
+        return JMCollections.buildNewList(this.outputSubscriberList, OutputSubscriber::getOutputId);
     }
 
     public JMMetric testInput(String data) {

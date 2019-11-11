@@ -45,16 +45,13 @@ public class OutputSubscriberTest {
      */
     @Before
     public void setUp() {
-        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR))
-                .filter(JMPath::exists)
+        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath::exists)
                 .ifPresent(JMPathOperation::deleteDir);
-        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG))
-                .filter(JMPath::exists)
+        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath::exists)
                 .ifPresent(JMPathOperation::deleteDir);
         this.embeddedZookeeper = new JMZookeeperServer().start();
         String zookeeperConnect = this.embeddedZookeeper.getZookeeperConnect();
-        this.kafkaServer =
-                new JMKafkaServer.Builder(zookeeperConnect).build().start();
+        this.kafkaServer = new JMKafkaServer.Builder(zookeeperConnect).build().start();
         this.bootstrapServers = kafkaServer.getKafkaServerConnect();
         sleep(3000);
         this.kafkaProducer = new JMKafkaProducer(bootstrapServers);
@@ -63,21 +60,16 @@ public class OutputSubscriberTest {
 
         jmMetricConfigManager = new JMMetricConfigManager();
         KafkaInputConfig kafkaInputConfig =
-                new KafkaInputConfig("KafkaInput", this.bootstrapServers, false,
-                        inputTopic);
+                new KafkaInputConfig("KafkaInput", this.bootstrapServers, false, inputTopic);
         jmMetricConfigManager.insertInputConfig(kafkaInputConfig);
-        this.kafkaInputPublisher =
-                InputPublisherBuilder.build(kafkaInputConfig);
+        this.kafkaInputPublisher = InputPublisherBuilder.build(kafkaInputConfig);
         System.out.println(JMJson.toJsonString(kafkaInputConfig));
-        this.mutatorProcessor = MutatorProcessorBuilder
-                .build(jmMetricConfigManager
-                        .getMutatorConfig("ApacheAccessLog"));
+        this.mutatorProcessor =
+                MutatorProcessorBuilder.build(jmMetricConfigManager.getMutatorConfig("ApacheAccessLog"));
         this.outputTopic = "kafkaOut-test";
         KafkaOutputConfig kafkaOutputConfig =
-                new KafkaOutputConfig("KafkaOutput", bootstrapServers,
-                        "remoteHost", outputTopic);
-        this.kafkaOutputSubscriber =
-                OutputSubscriberBuilder.build(kafkaOutputConfig);
+                new KafkaOutputConfig("KafkaOutput", bootstrapServers, "remoteHost", outputTopic);
+        this.kafkaOutputSubscriber = OutputSubscriberBuilder.build(kafkaOutputConfig);
         System.out.println(JMJson.toJsonString(kafkaOutputConfig));
     }
 
@@ -92,11 +84,9 @@ public class OutputSubscriberTest {
         kafkaConsumer.shutdown();
         kafkaServer.stop();
         embeddedZookeeper.stop();
-        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR))
-                .filter(JMPath::exists)
+        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath::exists)
                 .ifPresent(JMPathOperation::deleteDir);
-        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG))
-                .filter(JMPath::exists)
+        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath::exists)
                 .ifPresent(JMPathOperation::deleteDir);
     }
 
@@ -104,22 +94,15 @@ public class OutputSubscriberTest {
     public void start() {
         LongAdder lineCount = new LongAdder();
 
-        kafkaInputPublisher
-                .subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
-                .subscribeWith(JMSubscriberBuilder
-                        .build(list -> lineCount.add(list.size())))
-                .subscribeWith(
-                        mutatorProcessor.subscribeWith(kafkaOutputSubscriber))
-                .start();
+        kafkaInputPublisher.subscribeWith(JMSubscriberBuilder.getSOPLSubscriber())
+                .subscribeWith(JMSubscriberBuilder.build(list -> lineCount.add(list.size())))
+                .subscribeWith(mutatorProcessor.subscribeWith(kafkaOutputSubscriber)).start();
 
         LongAdder indexAdder = new LongAdder();
-        this.kafkaConsumer =
-                new JMKafkaConsumer(false, bootstrapServers, "test",
-                        consumerRecord -> {
-                            indexAdder.increment();
-                            System.out.println(consumerRecord.value());
-                        }, outputTopic).start();
-        JMThread.sleep(6000);
+        this.kafkaConsumer = new JMKafkaConsumer(false, bootstrapServers, "test",
+                consumerRecord -> { indexAdder.increment(); System.out.println(consumerRecord.value()); }, outputTopic)
+                .start();
+        JMThread.sleep(10000);
         Assert.assertEquals(1024, lineCount.intValue());
         Assert.assertEquals(1024, indexAdder.intValue());
 

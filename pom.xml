@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data
@@ -34,15 +34,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
-        <log4j.version>2.11.2</log4j.version>
-        <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.26</slf4j.version>
         <junit.version>4.12</junit.version>
-        <jmlab-utils-java9.version>0.1.5</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>6.8.2</jmlab-utils-elasticsearch.version>
-        <jmlab-utils-kafka.version>2.1.1</jmlab-utils-kafka.version>
+        <jmlab-utils-java9.version>0.1.6</jmlab-utils-java9.version>
+        <jmlab-utils-elasticsearch.version>6.8.3</jmlab-utils-elasticsearch.version>
+        <jmlab-utils-kafka.version>2.2.1</jmlab-utils-kafka.version>
         <common-cli.version>1.4</common-cli.version>
-        <lombok.version>1.18.8</lombok.version>
+        <lombok.version>1.18.10</lombok.version>
     </properties>
     <build>
         <plugins>
@@ -165,15 +163,16 @@
             <version>${common-cli.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

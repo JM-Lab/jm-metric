@@ -13,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
 
 @Slf4j
 @ToString
@@ -26,14 +28,14 @@ public class MutatorProcessor implements
     @Getter
     private String mutatorId;
     private int workers;
-    private MatchFilter matchFilter;
+    private Optional<MatchFilter> matchFilterAsOpt;
     private JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<Map<String, Object>>>> jmProcessor;
 
     public MutatorProcessor(int workers, MutatorInterface mutator, MatchFilter matchFilter) {
         this.mutatorId = mutator.getMutatorId();
         this.workers = workers;
         this.jmProcessor = JMProcessorBuilder.buildWithThreadPool(workers, list -> process(list, mutator));
-        this.matchFilter = matchFilter;
+        this.matchFilterAsOpt = Optional.ofNullable(matchFilter);
         JMLog.info(log, "MutatorProcessor", this.mutatorId, this.workers, mutator, matchFilter);
     }
 
@@ -41,14 +43,16 @@ public class MutatorProcessor implements
     private List<Transfer<Map<String, Object>>> process(List<Transfer<String>> dataList, MutatorInterface mutator) {
         JMLog.debug(log, "process", dataList.size() > 0 ? dataList.get(0).getInputId() : JMString.EMPTY,
                 mutator.getMutatorId(), dataList.size());
-        return dataList.stream().map(mutator).filter(fieldMapTransfer -> Objects.nonNull(fieldMapTransfer.getData()))
-                .filter(this::isPassed).collect(Collectors.toList());
+        return dataList.stream().map(mutator)
+                .filter(fieldMapTransfer -> isNotNullAndEmptyAndMatched(fieldMapTransfer.getData()))
+                .collect(Collectors.toList());
     }
 
-    private boolean isPassed(Transfer<Map<String, Object>> fieldMapTransfer) {
-        return Objects.isNull(matchFilter) || !matchFilter.filter(fieldMapTransfer.getData());
+    private boolean isNotNullAndEmptyAndMatched(Map<String, Object> data) {
+        return Optional.ofNullable(data).filter(not(Map::isEmpty))
+                .filter(map -> !matchFilterAsOpt.filter(matchFilter -> matchFilter.filter(data)).isPresent())
+                .isPresent();
     }
-
 
     @Override
     public MutatorProcessor subscribeWith(Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {

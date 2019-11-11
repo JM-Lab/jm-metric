@@ -47,32 +47,23 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
         return loadConfig(configList.stream());
     }
 
-    public AbstractListConfigManager<C> insertConfigMapList(
-            List<Map<String, Object>> configMapList) {
+    public AbstractListConfigManager<C> insertConfigMapList(List<Map<String, Object>> configMapList) {
         return loadConfig(buildConfigStream(configMapList));
     }
 
-    private Stream<C> buildConfigStream(
-            List<Map<String, Object>> configMapList) {
-        return configMapList.stream().map(this::transform)
-                .filter(Objects::nonNull);
+    private Stream<C> buildConfigStream(List<Map<String, Object>> configMapList) {
+        return configMapList.stream().map(this::transform).filter(Objects::nonNull);
     }
 
     public C transform(Map<String, Object> configMap) {
         try {
-            return getConfigTypeStringAsOpt(configMap)
-                    .map(this::extractConfigClass)
-                    .map(configClass -> ConfigInterface
-                            .transformConfig(configMap, configClass))
-                    .orElseGet(() -> JMExceptionManager
-                            .handleExceptionAndReturnNull(log,
-                                    JMExceptionManager.newRunTimeException(
-                                            "Config Error Occur !!!"),
+            return getConfigTypeStringAsOpt(configMap).map(this::extractConfigClass)
+                    .map(configClass -> ConfigInterface.transformConfig(configMap, configClass)).orElseGet(
+                            () -> JMExceptionManager.handleExceptionAndReturnNull(log,
+                                    JMExceptionManager.newRunTimeException("Config Error Occur !!!"),
                                     "transformToConfig", configMap));
         } catch (Exception e) {
-            return JMExceptionManager
-                    .handleExceptionAndReturnNull(log, e, "mutate",
-                            this.configMap);
+            return JMExceptionManager.handleExceptionAndReturnNull(log, e, "mutate", this.configMap);
         }
     }
 
@@ -84,28 +75,22 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
 
     protected abstract Class<C> extractConfigClass(String configTypeString);
 
-    protected Optional<String> getConfigTypeStringAsOpt(
-            Map<String, Object> configMap) {
-        return JMOptional.getOptional(configMap, getConfigTypeKey())
-                .map(Object::toString);
+    protected Optional<String> getConfigTypeStringAsOpt(Map<String, Object> configMap) {
+        return JMOptional.getOptional(configMap, getConfigTypeKey()).map(Object::toString);
     }
 
     protected abstract String getConfigTypeKey();
 
     protected abstract String extractConfigId(C inputConfig);
 
-    private List<Map<String, Object>> buildConfigMapList(
-            String jmMetricConfigUrl) {
+    private List<Map<String, Object>> buildConfigMapList(String jmMetricConfigUrl) {
         try {
-            return ConfigObjectMapper.readValue(JMOptional.getOptional(
-                    JMResources.getStringWithFilePathOrClasspath(
-                            jmMetricConfigUrl))
-                            .orElseThrow(NullPointerException::new),
-                    JMJson.MAP_LIST_TYPE_REFERENCE);
+            return ConfigObjectMapper.readValue(
+                    JMOptional.getOptional(JMResources.getStringWithFilePathOrClasspath(jmMetricConfigUrl))
+                            .orElseThrow(NullPointerException::new), JMJson.MAP_LIST_TYPE_REFERENCE);
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturn(log, e,
-                    "buildConfigMapList", Collections::emptyList,
-                    jmMetricConfigUrl);
+            return JMExceptionManager
+                    .handleExceptionAndReturn(log, e, "buildConfigMapList", Collections::emptyList, jmMetricConfigUrl);
         }
     }
 

@@ -2,6 +2,7 @@ package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.AbstractConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
+import kr.jm.metric.mutator.MutatorInterface;
 import kr.jm.utils.datastructure.JMArrays;
 import kr.jm.utils.helper.JMLambda;
 import lombok.AccessLevel;
@@ -37,6 +38,11 @@ public abstract class AbstractMutatorConfig extends AbstractConfig implements
         this.mutatorConfigType = mutatorConfigType;
         this.fieldConfig = fieldConfig;
         this.fields = fields;
+    }
+
+    @Override
+    public MutatorInterface buildMutator() {
+        return null;
     }
 
     @Override

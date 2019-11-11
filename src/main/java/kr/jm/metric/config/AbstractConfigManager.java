@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 
 public abstract class AbstractConfigManager {
     protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
-    protected static ObjectMapper ConfigObjectMapper = new ObjectMapper()
+    public static final ObjectMapper ConfigObjectMapper = new ObjectMapper()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
