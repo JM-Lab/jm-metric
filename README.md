@@ -17,7 +17,7 @@ Compatibility**
 `STDOUT` `FILE` `KAFKA` `ELASTICSEARCH`
 
 ## version
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/kr.jmlab/jm-metric/badge.svg)](http://search.maven.org/#artifactdetails%7Ckr.jmlab%7Cjm-metric%7C0.2.4%7Cjar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/kr.jmlab/jm-metric/badge.svg)](http://search.maven.org/#artifactdetails%7Ckr.jmlab%7Cjm-metric%7C0.2.5%7Cjar)
 
 ## Prerequisites:
 * Java 9 or later
@@ -27,14 +27,14 @@ Compatibility**
 ## Usage
 Gradle:
 ```groovy
-compile 'kr.jmlab:jm-metric:0.2.4'
+compile 'kr.jmlab:jm-metric:0.2.5'
 ```
 Maven:
 ```xml
 <dependency>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ Checkout the source code:
 ```cmd
 git clone https://github.com/JM-Lab/jm-metric.git
 cd jm-metric
-git checkout -b 0.2.4 origin/0.2.4
+git checkout -b 0.2.5 origin/0.2.5
 mvn install -Dmaven.test.skip=true
 ```
 ### For Example :
