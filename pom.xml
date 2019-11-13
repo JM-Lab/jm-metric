@@ -34,7 +34,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <slf4j.version>1.7.28</slf4j.version>
         <junit.version>4.12</junit.version>
         <jmlab-utils-java9.version>0.1.6</jmlab-utils-java9.version>
         <jmlab-utils-elasticsearch.version>6.8.3</jmlab-utils-elasticsearch.version>
