@@ -123,7 +123,8 @@ public class JMMetric implements
 
     public JMMetric withCustomFunction(CustomFunctionInterface customFunction) {
         this.customProcessor = JMProcessorBuilder.build((List<Transfer<Map<String, Object>>> list) -> list.stream()
-                .map(mapTransfer -> mapTransfer.newWith(buildNewFieldMap(customFunction, mapTransfer)))
+                .map(mapTransfer -> JMOptional.getOptional(buildNewFieldMap(customFunction, mapTransfer))
+                        .map(mapTransfer::newWith)).filter(Optional::isPresent).map(Optional::get)
                 .collect(Collectors.toList()));
         return this;
     }
