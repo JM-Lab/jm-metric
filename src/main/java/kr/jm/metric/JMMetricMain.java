@@ -35,12 +35,12 @@ public class JMMetricMain {
                             new JMMetric(this.jmMetricConfigManager,
                                     inputId, mutatorId, outputIds));
                     JMThread.runAsync(this.jmMetric::start);
-                    runHookAfterShutdown();
+                    OS.addShutdownHook(this::runHookAfterShutdown);
                 });
     }
 
     protected void runHookAfterShutdown() {
-        OS.addShutdownHook(this.jmMetric::close);
+        this.jmMetric.close();
     }
 
     protected void runHookBeforeStart(JMMetric jmMetric) {
