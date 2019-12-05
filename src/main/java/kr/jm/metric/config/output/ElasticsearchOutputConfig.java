@@ -28,6 +28,8 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     private boolean clientTransportSniff;
     private String clusterName;
 
+    private String idField;
+
     private String indexPrefix;
     private String indexField;
     private String indexSuffixDateFormat;

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.function.Predicate.not;
+
 @ToString(callSuper = true)
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
@@ -23,6 +25,7 @@ public class ElasticsearchOutput extends AbstractOutput {
     private String zoneId;
     private String indexPrefix;
     private Optional<String> indexFieldAsOpt;
+    private Optional<String> idFieldAsOpt;
     // default suffixDateFormat
     private String indexSuffixDateFormat;
     // dynamic suffixDateFormat by indexField's value
@@ -41,6 +44,7 @@ public class ElasticsearchOutput extends AbstractOutput {
         this.zoneId = outputConfig.getZoneId();
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexFieldAsOpt = JMOptional.getOptional(outputConfig.getIndexField());
+        this.idFieldAsOpt = JMOptional.getOptional(outputConfig.getIdField());
         this.indexSuffixDateFormat = outputConfig.getIndexSuffixDateFormat();
         this.indexSuffixDateFormatMap = outputConfig.getIndexSuffixDateFormatMap();
         this.elasticsearchClient = new JMElasticsearchClient(outputConfig.getElasticsearchConnect(), buildSettings(
@@ -69,8 +73,8 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private void writeData(Map<String, Object> data, long timestamp) {
-        this.elasticsearchClient.sendWithBulkProcessorAndObjectMapper(data,
-                buildIndex(data, timestamp), TYPE);
+        this.elasticsearchClient.sendWithBulkProcessorAndObjectMapper(data, buildIndex(data, timestamp), TYPE,
+                idFieldAsOpt.map(data::get).map(Object::toString).filter(not(String::isBlank)).orElse(null));
     }
 
     String buildIndex(Map<String, Object> data, long timestamp) {

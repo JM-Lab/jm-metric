@@ -8,6 +8,8 @@ import kr.jm.utils.elasticsearch.JMElasticsearchClient;
 import kr.jm.utils.elasticsearch.JMEmbeddedElasticsearch;
 import kr.jm.utils.helper.*;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ElasticsearchOutputTest {
@@ -41,8 +44,9 @@ public class ElasticsearchOutputTest {
 
         // JMElasticsearchClient Init
         ElasticsearchOutputConfig outputConfig = JMJson.transform(
-                Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(), "indexField",
-                        "requestMethod", "indexSuffixDateFormatMap", Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
+                Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(), "idField", "@id",
+                        "indexField", "requestMethod", "indexSuffixDateFormatMap",
+                        Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
                 ElasticsearchOutputConfig.class);
         this.elasticsearchOutput = new ElasticsearchOutput(outputConfig);
         System.out.println(JMJson.toJsonString(this.elasticsearchOutput.getConfig()));
@@ -71,16 +75,30 @@ public class ElasticsearchOutputTest {
         List<Transfer<List<Map<String, Object>>>> dataList =
                 JMResources.readLines("testTransferData.txt").stream().map(line -> JMJson.withJsonString(line,
                         new TypeReference<Transfer<List<Map<String, Object>>>>() {})).collect(Collectors.toList());
+        String uuid = UUID.randomUUID().toString();
+        dataList.get(0).getData().get(10).put("@id", uuid);
+        dataList.get(0).getData().get(11).put("@id", "");
+        dataList.get(0).getData().get(13).put("@id", "   ");
         elasticsearchOutput.writeData(dataList.stream().flatMap(transfer -> transfer.newStreamWith(transfer.getData()))
                 .collect(Collectors.toList()));
         JMThread.sleep(3500);
+
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);
         Assert.assertEquals("[jm-metric-n_a-2018.20, jm-metric-post-2018.05, jm-metric-get-2018.05.15]",
                 allIndices.toString());
-        SearchResponse searchResponse = jmElasticsearchClient.searchAll(JMArrays.toArray(allIndices));
+        SearchResponse searchResponse = jmElasticsearchClient.searchAllWithTargetCount(JMArrays.toArray(allIndices));
         System.out.println(searchResponse);
-        Assert.assertEquals(200, searchResponse.getHits().getTotalHits());
+        SearchHits hits = searchResponse.getHits();
+        Assert.assertEquals(200, hits.getTotalHits());
+        List<SearchHit> uuidList =
+                JMStream.buildStream(hits.getHits()).filter(searchHit -> searchHit.getSourceAsMap().containsKey("@id"))
+                        .collect(Collectors.toList());
+        Assert.assertEquals(3, uuidList.size());
+        uuidList = JMStream.buildStream(hits.getHits()).filter(searchHit -> searchHit.getId().equals(uuid))
+                .collect(Collectors.toList());
+        Assert.assertEquals(1, uuidList.size());
+        Assert.assertEquals(uuid, uuidList.get(0).getSourceAsMap().get("@id"));
         elasticsearchOutput.close();
     }
 
