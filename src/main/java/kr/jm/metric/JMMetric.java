@@ -10,7 +10,6 @@ import kr.jm.metric.mutator.processor.MutatorProcessorBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.datastructure.JMCollections;
-import kr.jm.utils.enums.OS;
 import kr.jm.utils.flow.processor.JMProcessor;
 import kr.jm.utils.flow.processor.JMProcessorBuilder;
 import kr.jm.utils.flow.processor.JMProcessorInterface;
@@ -120,7 +119,7 @@ public class JMMetric implements
         this.inputPublisher.close();
         this.mutatorProcessor.close();
         for (OutputSubscriber outputSubscriber : this.outputSubscriberList)
-            OS.addShutdownHook(outputSubscriber::close);
+            outputSubscriber.close();
     }
 
     public JMMetric withCustomFunction(CustomFunctionInterface customFunction) {
