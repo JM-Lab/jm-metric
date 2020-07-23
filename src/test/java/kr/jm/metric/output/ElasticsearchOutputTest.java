@@ -90,7 +90,7 @@ public class ElasticsearchOutputTest {
         SearchResponse searchResponse = jmElasticsearchClient.searchAllWithTargetCount(JMArrays.toArray(allIndices));
         System.out.println(searchResponse);
         SearchHits hits = searchResponse.getHits();
-        Assert.assertEquals(200, hits.getTotalHits());
+        Assert.assertEquals(200, hits.getTotalHits().value);
         List<SearchHit> uuidList =
                 JMStream.buildStream(hits.getHits()).filter(searchHit -> searchHit.getSourceAsMap().containsKey("@id"))
                         .collect(Collectors.toList());

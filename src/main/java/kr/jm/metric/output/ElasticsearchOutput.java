@@ -21,7 +21,6 @@ import static java.util.function.Predicate.not;
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
 
-    private static final String TYPE = "doc";
     private String zoneId;
     private String indexPrefix;
     private Optional<String> indexFieldAsOpt;
@@ -73,7 +72,7 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private void writeData(Map<String, Object> data, long timestamp) {
-        this.elasticsearchClient.sendWithBulkProcessorAndObjectMapper(data, buildIndex(data, timestamp), TYPE,
+        this.elasticsearchClient.sendWithBulkProcessorAndObjectMapper(data, buildIndex(data, timestamp),
                 idFieldAsOpt.map(data::get).map(Object::toString).filter(not(String::isBlank)).orElse(null));
     }
 
