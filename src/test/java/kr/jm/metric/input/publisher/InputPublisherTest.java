@@ -4,8 +4,7 @@ import kr.jm.metric.config.input.ChunkType;
 import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.helper.JMConsumer;
-import kr.jm.utils.helper.JMThread;
+import kr.jm.utils.JMThread;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class InputPublisherTest {
         List<Transfer<String>> result = new ArrayList<>();
         this.inputPublisher = InputPublisherBuilder.build(this
                 .inputConfigManager.getConfig("StdinJsonList"))
-                .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
+                .consumeWith(result::addAll).consumeWith(System.out::println);
         this.inputPublisher.testInput(testString);
         JMThread.sleep(1000);
         Assert.assertEquals(
@@ -61,7 +60,7 @@ public class InputPublisherTest {
         result = new ArrayList<>();
         this.inputPublisher = InputPublisherBuilder.build(new
                 StdinLineInputConfig("MultilineTest", ChunkType.LINES))
-                .consumeWith(result::addAll).consumeWith(JMConsumer.getSOPL());
+                .consumeWith(result::addAll).consumeWith(System.out::println);
         this.inputPublisher.testInput(testString);
         JMThread.sleep(1000);
         Assert.assertEquals(2, result.size());

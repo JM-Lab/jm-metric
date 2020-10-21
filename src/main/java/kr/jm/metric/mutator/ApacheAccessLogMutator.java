@@ -14,9 +14,9 @@ public class ApacheAccessLogMutator extends FormattedMutator {
 
     public ApacheAccessLogMutator(
             ApacheAccessLogMutatorConfig apacheAccessLogMutatorConfig) {
-        super(apacheAccessLogMutatorConfig, JMJson.withClasspathOrFilePath(
+        super(apacheAccessLogMutatorConfig, JMJson.getInstance().withClasspathOrFilePath(
                 "DefaultApacheAccessLogKeyNameMap.json",
-                JMJson.getMapOrListTypeReference()));
+                JMJson.getInstance().getMapOrListTypeReference()));
     }
 
     @Override

@@ -9,11 +9,14 @@ import kr.jm.metric.mutator.processor.MutatorProcessor;
 import kr.jm.metric.mutator.processor.MutatorProcessorBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
-import kr.jm.utils.datastructure.JMCollections;
+import kr.jm.utils.JMCollections;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMStream;
+import kr.jm.utils.JMString;
 import kr.jm.utils.flow.processor.JMProcessor;
 import kr.jm.utils.flow.processor.JMProcessorBuilder;
 import kr.jm.utils.flow.processor.JMProcessorInterface;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMLog;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,12 +29,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class JMMetric implements
-        JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>,
+public class JMMetric implements JMProcessorInterface<List<Transfer<String>>, List<Transfer<Map<String, Object>>>>,
         AutoCloseable {
 
     @Getter
-    private JMMetricConfigManager jmMetricConfigManager;
+    private final JMMetricConfigManager jmMetricConfigManager;
     @Getter
     private InputPublisher inputPublisher;
     @Getter
@@ -66,7 +68,7 @@ public class JMMetric implements
 
     public JMMetric(JMMetricConfigManager jmMetricConfigManager, String inputId, String mutatorConfigId,
             String... outputIds) {
-        this.jmMetricConfigManager = JMLambda.supplierIfNull(jmMetricConfigManager, JMMetricConfigManager::new);
+        this.jmMetricConfigManager = Objects.requireNonNullElseGet(jmMetricConfigManager, JMMetricConfigManager::new);
         withInputId(inputId).withMutatorId(mutatorConfigId).withOutputIds(outputIds);
         String info = "Running with InputId = " + inputPublisher.getInputId() + ", MutatorId = " +
                 mutatorProcessor.getMutatorId() + ", OutputIds = " +
@@ -77,16 +79,16 @@ public class JMMetric implements
     }
 
     private JMMetric withOutputIds(String... outputIds) {
-        this.outputSubscriberList =
-                JMStream.buildStream(JMOptional.getOptional(outputIds).orElseGet(() -> new String[]{"Stdout"}))
-                        .map(this.jmMetricConfigManager::getOutputConfig).map(OutputSubscriberBuilder::build)
-                        .collect(Collectors.toList());
+        this.outputSubscriberList = JMStream.buildStream(
+                kr.jm.utils.JMOptional.getOptional(outputIds).orElseGet(() -> new String[]{"Stdout"}))
+                .map(this.jmMetricConfigManager::getOutputConfig).map(OutputSubscriberBuilder::build)
+                .collect(Collectors.toList());
         return this;
     }
 
     private JMMetric withMutatorId(String mutatorConfigId) {
         this.mutatorProcessor = MutatorProcessorBuilder.build(this.jmMetricConfigManager
-                .getMutatorConfig(JMOptional.getOptional(mutatorConfigId).orElse("Raw")));
+                .getMutatorConfig(kr.jm.utils.JMOptional.getOptional(mutatorConfigId).orElse("Raw")));
         return this;
     }
 
@@ -188,15 +190,17 @@ public class JMMetric implements
         mutatorProcessor.onComplete();
     }
 
+    @SafeVarargs
     @Override
-    public JMMetric subscribeWith(
+    public final JMMetric subscribeWith(
             Flow.Subscriber<List<Transfer<Map<String, Object>>>>... subscribers) {
         JMProcessorInterface.super.subscribeWith(subscribers);
         return this;
     }
 
+    @SafeVarargs
     @Override
-    public JMMetric consumeWith(
+    public final JMMetric consumeWith(
             Consumer<List<Transfer<Map<String, Object>>>>... consumers) {
         JMProcessorInterface.super.consumeWith(consumers);
         return this;

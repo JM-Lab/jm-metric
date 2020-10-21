@@ -1,10 +1,10 @@
 package kr.jm.metric.config.input;
 
 import kr.jm.metric.config.AbstractPropertiesConfig;
-import kr.jm.utils.helper.JMLambda;
-import kr.jm.utils.helper.JMThread;
+import kr.jm.utils.JMThread;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.concurrent.Flow;
 
 import static kr.jm.utils.flow.publisher.BulkSubmissionPublisher.DEFAULT_BULK_SIZE;
@@ -43,26 +43,24 @@ public abstract class AbstractInputConfig extends
 
     @Override
     public Integer getBulkSize() {
-        return JMLambda.supplierIfNull(bulkSize,
-                () -> this.bulkSize = DEFAULT_BULK_SIZE);
+        return Objects.requireNonNullElseGet(bulkSize, () -> this.bulkSize = DEFAULT_BULK_SIZE);
     }
 
     @Override
     public Long getFlushIntervalMillis() {
-        return JMLambda.supplierIfNull(this.flushIntervalMillis,
-                () -> this.flushIntervalMillis =
-                        DEFAULT_FLUSH_INTERVAL_Millis);
+        return Objects.requireNonNullElseGet(this.flushIntervalMillis,
+                () -> this.flushIntervalMillis = DEFAULT_FLUSH_INTERVAL_Millis);
     }
 
     @Override
     public Long getWaitingMillis() {
-        return JMLambda.supplierIfNull(waitingMillis,
+        return Objects.requireNonNullElseGet(waitingMillis,
                 () -> this.waitingMillis = JMThread.DEFAULT_WAITING_MILLIS);
     }
 
     @Override
     public Integer getMaxBufferCapacity() {
-        return JMLambda.supplierIfNull(maxBufferCapacity,
+        return Objects.requireNonNullElseGet(maxBufferCapacity,
                 () -> this.maxBufferCapacity = Flow.defaultBufferSize());
     }
 }

@@ -6,9 +6,13 @@ import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.MutatorConfigManager;
 import kr.jm.metric.config.output.OutputConfigInterface;
 import kr.jm.metric.config.output.OutputConfigManager;
-import kr.jm.utils.datastructure.JMArrays;
+import kr.jm.utils.JMArrays;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMResources;
+import kr.jm.utils.JMString;
 import kr.jm.utils.enums.OS;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMJson;
+import kr.jm.utils.helper.JMPath;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,9 +25,8 @@ import java.util.function.Function;
 @Slf4j
 public class JMMetricConfigManager {
 
-    public static final String CONFIG_DIR = Optional.ofNullable(
-            JMResources.getSystemProperty("jm.metric.configDir"))
-            .orElse("config");
+    public static final String CONFIG_DIR =
+            Optional.ofNullable(JMResources.getSystemProperty("jm.metric.configDir")).orElse("config");
 
     private static final String INPUT_CONFIG_FILENAME = "Input.json";
     private static final String MUTATING_CONFIG_FILENAME = "Mutator.json";
@@ -31,15 +34,15 @@ public class JMMetricConfigManager {
     private static final String RUNNING_CONFIG_FILENAME = "JMMetricConfig.json";
 
     @Getter
-    private InputConfigManager inputConfigManager;
+    private final InputConfigManager inputConfigManager;
     @Getter
-    private MutatorConfigManager mutatorConfigManager;
+    private final MutatorConfigManager mutatorConfigManager;
     @Getter
-    private OutputConfigManager outputConfigManager;
+    private final OutputConfigManager outputConfigManager;
     @Getter
-    private RunningConfigManager runningConfigManager;
+    private final RunningConfigManager runningConfigManager;
     @Getter
-    private String runningConfigFilePath;
+    private final String runningConfigFilePath;
 
     public JMMetricConfigManager() {
         this(RUNNING_CONFIG_FILENAME);
@@ -72,7 +75,8 @@ public class JMMetricConfigManager {
     }
 
     protected String buildConfigFilePath(String path, String alternativePath) {
-        return JMOptional.getOptional(path).map(JMPath::getPath).filter(JMPath::exists).map(Path::toAbsolutePath)
+        return JMOptional.getOptional(path).map(JMPath.getInstance()::getPath).filter(JMPath.getInstance()::exists)
+                .map(Path::toAbsolutePath)
                 .map(Object::toString).orElseGet(() -> buildDefaultConfigPath(alternativePath));
     }
 
@@ -95,10 +99,6 @@ public class JMMetricConfigManager {
     public JMMetricConfigManager insertInputConfig(InputConfigInterface inputConfig) {
         inputConfigManager.insertConfig(inputConfig);
         return this;
-    }
-
-    public AbstractListConfigManager insertConfigList(List<InputConfigInterface> configList) {
-        return inputConfigManager.insertConfigList(configList);
     }
 
     public JMMetricConfigManager insertMutatorConfigList(List<MutatorConfigInterface> configList) {
@@ -153,18 +153,16 @@ public class JMMetricConfigManager {
         return this;
     }
 
-    protected void loggingConfigInfo(String title, AbstractListConfigManager configManager) {
+    protected void loggingConfigInfo(String title, AbstractListConfigManager<ConfigInterface> configManager) {
         loggingConfigInfo(title, configManager.getConfigMap());
     }
 
     protected void loggingConfigInfo(String title, Object object) {
-        log.info(buildInfo("==== " + title + " Config ====",
-                JMJson.toPrettyJsonString(object)));
+        log.info(buildInfo("==== " + title + " Config ====", JMJson.getInstance().toPrettyJsonString(object)));
     }
 
     private String buildInfo(String infoHead, String info) {
-        return JMString.LINE_SEPARATOR + infoHead + JMString.LINE_SEPARATOR +
-                info;
+        return kr.jm.utils.JMString.LINE_SEPARATOR + infoHead + kr.jm.utils.JMString.LINE_SEPARATOR + info;
     }
 
     public String getInputConfigId() {

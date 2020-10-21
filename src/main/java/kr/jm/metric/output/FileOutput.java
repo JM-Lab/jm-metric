@@ -2,7 +2,7 @@ package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.FileOutputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.JMFileAppender;
+import kr.jm.utils.helper.JMFileAppender;
 import lombok.ToString;
 
 import java.nio.file.Path;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 @ToString(callSuper = true)
 public class FileOutput extends StdoutLineOutput {
 
-    private JMFileAppender fileAppender;
+    private final JMFileAppender fileAppender;
 
     public FileOutput(FileOutputConfig fileOutputConfig) {
         this(fileOutputConfig, null);

@@ -6,11 +6,11 @@ import kr.jm.metric.config.mutator.MutatorConfigType;
 import kr.jm.metric.config.mutator.field.DataType;
 import kr.jm.metric.config.mutator.field.DateFormatConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.utils.datastructure.JMMap;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMStream;
-import kr.jm.utils.helper.JMString;
+import kr.jm.utils.JMMap;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMStream;
+import kr.jm.utils.JMString;
+import kr.jm.utils.exception.JMException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -20,9 +20,9 @@ import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 @Slf4j
 class FieldConfigHandler {
 
-    private String mutatorId;
-    private Map<String, MutatorConfigInterface> formatMutatorConfigMap;
-    private FieldConfig fieldConfig;
+    private final String mutatorId;
+    private final Map<String, MutatorConfigInterface> formatMutatorConfigMap;
+    private final FieldConfig fieldConfig;
 
     FieldConfigHandler(String mutatorId, FieldConfig fieldConfig) {
         this.mutatorId = mutatorId;
@@ -50,20 +50,17 @@ class FieldConfigHandler {
     }
 
     private void applyAlterFieldName(Map<String, Object> fieldObjectMap) {
-        JMOptional.getOptional(this.fieldConfig.getAlterFieldName())
-                .stream().map(Map::entrySet).flatMap(Set::stream)
+        JMOptional.getOptional(this.fieldConfig.getAlterFieldName()).stream().map(Map::entrySet).flatMap(Set::stream)
                 .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
                 .filter(entry -> JMString.isNotNullOrEmpty(entry.getValue()))
-                .forEach(entry -> fieldObjectMap.put(entry.getValue(),
-                        fieldObjectMap.remove(entry.getKey())));
+                .forEach(entry -> fieldObjectMap.put(entry.getValue(), fieldObjectMap.remove(entry.getKey())));
     }
 
     private void applyDataType(Map<String, Object> fieldObjectMap) {
         JMStream.buildEntryStream(this.fieldConfig.getDataType())
-                .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
-                .forEach(entry -> fieldObjectMap.put(entry.getKey(),
-                        transformToNumber(entry.getValue(), entry.getKey(),
-                                fieldObjectMap.get(entry.getKey()).toString())));
+                .filter(entry -> fieldObjectMap.containsKey(entry.getKey())).forEach(entry -> fieldObjectMap
+                .put(entry.getKey(), transformToNumber(entry.getValue(), entry.getKey(),
+                        fieldObjectMap.get(entry.getKey()).toString())));
     }
 
     private Object transformToNumber(DataType dataType, String key, String data) {
@@ -77,8 +74,7 @@ class FieldConfigHandler {
                     return data;
             }
         } catch (Exception e) {
-            return JMExceptionManager
-                    .handleExceptionAndReturn(log, e, "transformToNumber", () -> 0D, mutatorId, key, data);
+            return JMException.handleExceptionAndReturn(log, e, "transformToNumber", () -> 0D, mutatorId, key, data);
         }
     }
 
@@ -91,17 +87,12 @@ class FieldConfigHandler {
     private void applyDateFormat(Map<String, Object> fieldObjectMap) {
         JMStream.buildEntryStream(this.fieldConfig.getDateFormat())
                 .filter(entry -> fieldObjectMap.containsKey(entry.getKey()))
-                .forEach(entry -> applyDateFormat(entry.getKey(), entry
-                        .getValue(), fieldObjectMap));
+                .forEach(entry -> applyDateFormat(entry.getKey(), entry.getValue(), fieldObjectMap));
     }
 
-    private void applyDateFormat(String field,
-            DateFormatConfig dateFormatConfig,
-            Map<String, Object> fieldObjectMap) {
-        fieldObjectMap
-                .put(Optional.ofNullable(dateFormatConfig.getNewFieldName())
-                                .orElse(field),
-                        dateFormatConfig.change(fieldObjectMap.get(field)));
+    private void applyDateFormat(String field, DateFormatConfig dateFormatConfig, Map<String, Object> fieldObjectMap) {
+        fieldObjectMap.put(Optional.ofNullable(dateFormatConfig.getNewFieldName()).orElse(field),
+                dateFormatConfig.change(fieldObjectMap.get(field)));
     }
 
     private void applyIgnore(Map<String, Object> fieldObjectMap) {
@@ -142,8 +133,7 @@ class FieldConfigHandler {
                 MutatorConfigType.valueOf(fieldConfigMap.get("mutatorConfigType").toString()).getConfigClass());
     }
 
-    private Map<String, Object> buildNestedFieldStringMap(
-            MutatorConfigInterface mutatorConfig, String targetString) {
+    private Map<String, Object> buildNestedFieldStringMap(MutatorConfigInterface mutatorConfig, String targetString) {
         return mutatorConfig.buildMutator().mutate(targetString);
     }
 

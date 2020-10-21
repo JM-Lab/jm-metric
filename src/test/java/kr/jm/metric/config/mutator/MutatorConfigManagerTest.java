@@ -1,6 +1,6 @@
 package kr.jm.metric.config.mutator;
 
-import kr.jm.utils.datastructure.JMArrays;
+import kr.jm.utils.JMArrays;
 import kr.jm.utils.helper.JMJson;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class MutatorConfigManagerTest {
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));
         System.out.println(
-                JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
+                JMJson.getInstance().toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
         assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
@@ -54,7 +54,7 @@ public class MutatorConfigManagerTest {
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));
         System.out.println(
-                JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
+                JMJson.getInstance().toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
         assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
@@ -69,7 +69,7 @@ public class MutatorConfigManagerTest {
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));
         System.out.println(
-                JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
+                JMJson.getInstance().toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
         assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
@@ -86,7 +86,7 @@ public class MutatorConfigManagerTest {
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));
         System.out.println(
-                JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
+                JMJson.getInstance().toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
         assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
@@ -101,13 +101,13 @@ public class MutatorConfigManagerTest {
 
         System.out.println(mutatorConfigManager.getConfig(mutatorId));
         System.out.println(
-                JMJson.toJsonString(mutatorConfigManager.getConfigMap()));
+                JMJson.getInstance().toJsonString(mutatorConfigManager.getConfigMap()));
         assertNotNull(mutatorConfigManager.getConfig(mutatorId));
         assertEquals(10, mutatorConfigManager.getConfigMap().size());
     }
 
     private void insertConfig(AbstractMutatorConfig config) {
-        System.out.println(JMJson.toJsonString(config));
+        System.out.println(JMJson.getInstance().toJsonString(config));
         mutatorConfigManager.insertConfig(config);
     }
 

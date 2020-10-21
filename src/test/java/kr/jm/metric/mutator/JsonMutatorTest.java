@@ -1,6 +1,6 @@
 package kr.jm.metric.mutator;
 
-import kr.jm.utils.datastructure.JMMap;
+import kr.jm.utils.JMMap;
 import org.junit.Test;
 
 import java.util.Map;

@@ -16,10 +16,9 @@ import java.util.stream.Collectors;
 public class StdoutLineOutput extends AbstractOutput {
 
     @Getter
-    private boolean enableJsonString;
-    private Function<List<Transfer<Map<String, Object>>>, List<Object>>
-            transformOutputObjectFunction;
-    private Function<Object, String> toStringFunction;
+    private final boolean enableJsonString;
+    private final Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction;
+    private final Function<Object, String> toStringFunction;
 
     public StdoutLineOutput() {
         this(false);
@@ -31,8 +30,7 @@ public class StdoutLineOutput extends AbstractOutput {
 
     public StdoutLineOutput(boolean enableJsonString,
             Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
-        this(new StdoutLineOutputConfig(enableJsonString),
-                transformOutputObjectFunction);
+        this(new StdoutLineOutputConfig(enableJsonString), transformOutputObjectFunction);
     }
 
     public StdoutLineOutput(StdoutLineOutputConfig outputConfig) {
@@ -40,17 +38,13 @@ public class StdoutLineOutput extends AbstractOutput {
     }
 
     public StdoutLineOutput(StdoutLineOutputConfig outputConfig,
-            Function<List<Transfer<Map<String, Object>>>, List<Object>>
-                    transformOutputObjectFunction) {
+            Function<List<Transfer<Map<String, Object>>>, List<Object>> transformOutputObjectFunction) {
         super(outputConfig);
         this.enableJsonString = outputConfig.isEnableJsonString();
-        this.transformOutputObjectFunction =
-                Optional.ofNullable(transformOutputObjectFunction)
-                        .orElseGet(() -> list -> list.stream()
-                                .map(Transfer::getData)
-                                .collect(Collectors.toList()));
-        this.toStringFunction = outputConfig
-                .isEnableJsonString() ? JMJson::toJsonString : Object::toString;
+        this.transformOutputObjectFunction = Optional.ofNullable(transformOutputObjectFunction)
+                .orElseGet(() -> list -> list.stream().map(Transfer::getData).collect(Collectors.toList()));
+        this.toStringFunction =
+                outputConfig.isEnableJsonString() ? JMJson.getInstance()::toJsonString : Object::toString;
     }
 
     @Override
@@ -64,7 +58,6 @@ public class StdoutLineOutput extends AbstractOutput {
 
     @Override
     public void writeData(List<Transfer<Map<String, Object>>> transferList) {
-        transformOutputObjectFunction.apply(transferList).stream()
-                .map(toStringFunction).forEach(this::writeString);
+        transformOutputObjectFunction.apply(transferList).stream().map(toStringFunction).forEach(this::writeString);
     }
 }

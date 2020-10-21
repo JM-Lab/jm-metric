@@ -2,10 +2,10 @@ package kr.jm.metric.output.subscriber;
 
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.output.OutputInterface;
-import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.exception.JMException;
 import kr.jm.utils.flow.subscriber.JMSubscriber;
 import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMString;
+import kr.jm.utils.JMString;
 import lombok.Getter;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<Map<String, Obj
 
     @Getter
     protected String outputId;
-    private OutputInterface output;
+    private final OutputInterface output;
 
     public OutputSubscriber(OutputInterface output) {
         super();
@@ -31,7 +31,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<Map<String, Obj
         try {
             output.close();
         } catch (Exception e) {
-            JMExceptionManager.handleException(log, e, "close", outputId);
+            JMException.handleException(log, e, "close", outputId);
         }
     }
 
@@ -41,7 +41,7 @@ public class OutputSubscriber extends JMSubscriber<List<Transfer<Map<String, Obj
         try {
             this.output.writeData(dataList);
         } catch (Exception e) {
-            JMExceptionManager.handleException(log, e, "output", outputId, dataList);
+            JMException.handleException(log, e, "output", outputId, dataList);
         }
     }
 

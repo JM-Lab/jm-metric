@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 public abstract class AbstractInput<C extends InputConfigInterface> implements
         InputInterface {
 
-    protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+    protected final Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     @Getter
     protected String inputId;
     @Getter

@@ -3,10 +3,11 @@ package kr.jm.metric.output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.datastructure.JMArrays;
+import kr.jm.utils.*;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
 import kr.jm.utils.elasticsearch.JMEmbeddedElasticsearch;
-import kr.jm.utils.helper.*;
+import kr.jm.utils.helper.JMJson;
+import kr.jm.utils.helper.JMPath;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -35,7 +36,7 @@ public class ElasticsearchOutputTest {
      */
     @Before
     public void setUp() {
-        JMPathOperation.deleteDirOnExist(JMPath.getPath("data"));
+        JMPath.getInstance().deleteDirOnExist(JMPath.getInstance().getPath("data"));
         // Embedded Elasticsearch Node Start
         this.jmEmbeddedElasticsearch = new JMEmbeddedElasticsearch();
         this.jmEmbeddedElasticsearch.start();
@@ -43,13 +44,13 @@ public class ElasticsearchOutputTest {
                 this.jmEmbeddedElasticsearch.getTransportIpPortPair());
 
         // JMElasticsearchClient Init
-        ElasticsearchOutputConfig outputConfig = JMJson.transform(
+        ElasticsearchOutputConfig outputConfig = JMJson.getInstance().transform(
                 Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(), "idField", "@id",
                         "indexField", "requestMethod", "indexSuffixDateFormatMap",
                         Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
                 ElasticsearchOutputConfig.class);
         this.elasticsearchOutput = new ElasticsearchOutput(outputConfig);
-        System.out.println(JMJson.toJsonString(this.elasticsearchOutput.getConfig()));
+        System.out.println(JMJson.getInstance().toJsonString(this.elasticsearchOutput.getConfig()));
     }
 
     /**
@@ -65,7 +66,7 @@ public class ElasticsearchOutputTest {
             JMThread.sleep(1000);
         jmElasticsearchClient.close();
         jmEmbeddedElasticsearch.close();
-        JMPathOperation.deleteDirOnExist(JMPath.getPath("data"));
+        JMPath.getInstance().deleteDirOnExist(JMPath.getInstance().getPath("data"));
     }
 
 
@@ -73,8 +74,10 @@ public class ElasticsearchOutputTest {
     public void writeData() {
 
         List<Transfer<List<Map<String, Object>>>> dataList =
-                JMResources.readLines("testTransferData.txt").stream().map(line -> JMJson.withJsonString(line,
-                        new TypeReference<Transfer<List<Map<String, Object>>>>() {})).collect(Collectors.toList());
+                JMResources.readLines("testTransferData.txt").stream()
+                        .map(line -> JMJson.getInstance().withJsonString(line,
+                                new TypeReference<Transfer<List<Map<String, Object>>>>() {}))
+                        .collect(Collectors.toList());
         String uuid = UUID.randomUUID().toString();
         dataList.get(0).getData().get(10).put("@id", uuid);
         dataList.get(0).getData().get(11).put("@id", "");
@@ -92,7 +95,8 @@ public class ElasticsearchOutputTest {
         SearchHits hits = searchResponse.getHits();
         Assert.assertEquals(200, hits.getTotalHits().value);
         List<SearchHit> uuidList =
-                JMStream.buildStream(hits.getHits()).filter(searchHit -> searchHit.getSourceAsMap().containsKey("@id"))
+                kr.jm.utils.JMStream.buildStream(hits.getHits())
+                        .filter(searchHit -> searchHit.getSourceAsMap().containsKey("@id"))
                         .collect(Collectors.toList());
         Assert.assertEquals(3, uuidList.size());
         uuidList = JMStream.buildStream(hits.getHits()).filter(searchHit -> searchHit.getId().equals(uuid))
@@ -119,12 +123,12 @@ public class ElasticsearchOutputTest {
 
         // JMElasticsearchClient Init
         this.elasticsearchOutput.close();
-        ElasticsearchOutputConfig outputConfig = JMJson.transform(
+        ElasticsearchOutputConfig outputConfig = JMJson.getInstance().transform(
                 Map.of("elasticsearchConnect", this.jmEmbeddedElasticsearch.getTransportIpPortPair(),
                         "indexSuffixDateFormatMap", Map.of("POST", "yyyy.MM", "n_a", "yyyy.ww")),
                 ElasticsearchOutputConfig.class);
         this.elasticsearchOutput = new ElasticsearchOutput(outputConfig);
-        System.out.println(JMJson.toJsonString(this.elasticsearchOutput.getConfig()));
+        System.out.println(JMJson.getInstance().toJsonString(this.elasticsearchOutput.getConfig()));
 
         ZonedDateTime minusOneDay = zonedDateTime.minusDays(1);
         System.out.println(elasticsearchOutput.buildIndex(Map.of(), minusOneDay.toInstant().toEpochMilli()));

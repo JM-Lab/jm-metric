@@ -17,9 +17,9 @@ public class NginxAccessLogMutator extends FormattedMutator {
 
     public NginxAccessLogMutator(
             FormattedMutatorConfig formattedMutatorConfig) {
-        super(formattedMutatorConfig, JMJson.withClasspathOrFilePath
-                ("DefaultNginxAccessLogKeyNameMap.json",
-                        JMJson.getMapOrListTypeReference()));
+        super(formattedMutatorConfig,
+                JMJson.getInstance().withClasspathOrFilePath("DefaultNginxAccessLogKeyNameMap.json",
+                        JMJson.getInstance().getMapOrListTypeReference()));
     }
 
     @Override

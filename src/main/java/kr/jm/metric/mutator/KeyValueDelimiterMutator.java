@@ -1,8 +1,8 @@
 package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.KeyValueDelimiterMutatorConfig;
-import kr.jm.utils.datastructure.JMArrays;
-import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.JMArrays;
+import kr.jm.utils.exception.JMException;
 import lombok.ToString;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 public class KeyValueDelimiterMutator extends DelimiterMutator {
 
-    private Pattern keyValuePattern;
+    private final Pattern keyValuePattern;
 
     public KeyValueDelimiterMutator(
             KeyValueDelimiterMutatorConfig mutatorConfig) {
@@ -35,7 +35,7 @@ public class KeyValueDelimiterMutator extends DelimiterMutator {
                                     array ->
                                             array.length > 1 ? array[1] : "")));
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndThrowRuntimeEx(log, e,
+            return JMException.handleExceptionAndThrowRuntimeEx(log, e,
                     "buildFieldObjectMap", this.keyValuePattern, splitValues);
         }
 

@@ -1,18 +1,17 @@
 package kr.jm.metric.config;
 
-import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMResources;
+import kr.jm.utils.exception.JMException;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMResources;
 
 import java.util.*;
 import java.util.stream.Stream;
 
-public abstract class AbstractListConfigManager<C extends ConfigInterface>
-        extends AbstractConfigManager {
+public abstract class AbstractListConfigManager<C extends ConfigInterface> extends AbstractConfigManager {
 
-    protected Map<String, C> configMap;
+    protected final Map<String, C> configMap;
 
     public AbstractListConfigManager() {
         this.configMap = new HashMap<>();
@@ -28,6 +27,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
         loadConfig(configList.stream());
     }
 
+    @SafeVarargs
     public AbstractListConfigManager(C... configs) {
         this();
         loadConfig(Arrays.stream(configs));
@@ -59,11 +59,11 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
         try {
             return getConfigTypeStringAsOpt(configMap).map(this::extractConfigClass)
                     .map(configClass -> ConfigInterface.transformConfig(configMap, configClass)).orElseGet(
-                            () -> JMExceptionManager.handleExceptionAndReturnNull(log,
-                                    JMExceptionManager.newRunTimeException("Config Error Occur !!!"),
+                            () -> JMException.handleExceptionAndReturnNull(log,
+                                    JMException.newRunTimeException("Config Error Occur !!!"),
                                     "transformToConfig", configMap));
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturnNull(log, e, "mutate", this.configMap);
+            return JMException.handleExceptionAndReturnNull(log, e, "mutate", this.configMap);
         }
     }
 
@@ -87,9 +87,9 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface>
         try {
             return ConfigObjectMapper.readValue(
                     JMOptional.getOptional(JMResources.getStringWithFilePathOrClasspath(jmMetricConfigUrl))
-                            .orElseThrow(NullPointerException::new), JMJson.MAP_LIST_TYPE_REFERENCE);
+                            .orElseThrow(NullPointerException::new), JMJson.getInstance().getMapListTypeReference());
         } catch (Exception e) {
-            return JMExceptionManager
+            return JMException
                     .handleExceptionAndReturn(log, e, "buildConfigMapList", Collections::emptyList, jmMetricConfigUrl);
         }
     }

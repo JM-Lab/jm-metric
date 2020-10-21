@@ -2,7 +2,7 @@ package kr.jm.metric.config.mutator;
 
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.mutator.FormattedMutator;
-import kr.jm.utils.datastructure.JMArrays;
+import kr.jm.utils.JMArrays;
 import lombok.Getter;
 import lombok.ToString;
 

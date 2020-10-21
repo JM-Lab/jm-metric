@@ -3,9 +3,9 @@ package kr.jm.metric.config;
 import kr.jm.metric.config.input.InputConfigManager;
 import kr.jm.metric.config.mutator.MutatorConfigManager;
 import kr.jm.metric.config.output.OutputConfigManager;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMResources;
+import kr.jm.utils.JMResources;
+import kr.jm.utils.exception.JMException;
+import kr.jm.utils.JMOptional;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -59,7 +59,7 @@ public class RunningConfigManager extends AbstractConfigManager {
                             .orElseThrow(NullPointerException::new),
                     RunningConfig.class);
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturnNull(log, e,
+            return JMException.handleExceptionAndReturnNull(log, e,
                     "transformRunningConfig", jmMetricConfigUrl);
         }
     }
@@ -74,7 +74,7 @@ public class RunningConfigManager extends AbstractConfigManager {
                     .map(oldConfigMap -> buildCombinedConfigMap(oldConfigMap,
                             configMap)).orElse(configMap));
         } catch (Exception e) {
-            throw JMExceptionManager.handleExceptionAndReturnRuntimeEx(log, e,
+            throw JMException.handleExceptionAndReturnRuntimeEx(log, e,
                     "buildCombinedConfig", configManager, configMap);
         }
     }

@@ -3,12 +3,12 @@ package kr.jm.metric.input.publisher;
 import kr.jm.metric.config.input.ChunkType;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
-import kr.jm.utils.exception.JMExceptionManager;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMString;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
+import kr.jm.utils.exception.JMException;
 import kr.jm.utils.helper.JMJson;
 import kr.jm.utils.helper.JMLog;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMString;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,24 +21,22 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Slf4j
-public class InputPublisher implements
-        TransferSubmissionPublisherInterface<String>, AutoCloseable {
+public class InputPublisher implements TransferSubmissionPublisherInterface<String>, AutoCloseable {
 
-    private BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher;
+    private final BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher;
 
     @Getter
     protected String inputId;
-    protected InputInterface input;
+    protected final InputInterface input;
 
-    private Consumer<Transfer<String>> chunkConsumer;
+    private final Consumer<Transfer<String>> chunkConsumer;
 
     public InputPublisher(BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input) {
         this(transferBulkSubmissionPublisher, input, ChunkType.NONE);
     }
 
-    public InputPublisher(
-            BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
+    public InputPublisher(BulkSubmissionPublisher<Transfer<String>> transferBulkSubmissionPublisher,
             InputInterface input, ChunkType chunkType) {
         this.transferBulkSubmissionPublisher = transferBulkSubmissionPublisher;
         this.inputId = input.getInputId();
@@ -50,12 +48,10 @@ public class InputPublisher implements
     private Consumer<Transfer<String>> buildChunkConsumer(ChunkType chunkType) {
         switch (chunkType) {
             case LINES:
-                return buildTransferConsumer(data -> Arrays
-                        .stream(data.split(JMString.LINE_SEPARATOR)));
+                return buildTransferConsumer(data -> Arrays.stream(data.split(JMString.LINE_SEPARATOR)));
             case JSON_LIST:
                 return buildTransferConsumer(
-                        data -> JMJson.toList(data).stream()
-                                .map(JMJson::toJsonString));
+                        data -> JMJson.getInstance().toList(data).stream().map(JMJson.getInstance()::toJsonString));
             default:
                 return this.transferBulkSubmissionPublisher::submitSingle;
         }
@@ -80,18 +76,20 @@ public class InputPublisher implements
             input.close();
             this.transferBulkSubmissionPublisher.close();
         } catch (Exception e) {
-            JMExceptionManager.handleException(log, e, "close");
+            JMException.handleException(log, e, "close");
         }
     }
 
+    @SafeVarargs
     @Override
-    public InputPublisher subscribeWith(Flow.Subscriber<List<Transfer<String>>>... subscribers) {
+    public final InputPublisher subscribeWith(Flow.Subscriber<List<Transfer<String>>>... subscribers) {
         this.transferBulkSubmissionPublisher.subscribeWith(subscribers);
         return this;
     }
 
+    @SafeVarargs
     @Override
-    public InputPublisher consumeWith(Consumer<List<Transfer<String>>>... consumers) {
+    public final InputPublisher consumeWith(Consumer<List<Transfer<String>>>... consumers) {
         this.transferBulkSubmissionPublisher.consumeWith(consumers);
         return this;
     }

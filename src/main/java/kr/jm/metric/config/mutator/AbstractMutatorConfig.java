@@ -3,12 +3,13 @@ package kr.jm.metric.config.mutator;
 import kr.jm.metric.config.AbstractConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.metric.mutator.MutatorInterface;
-import kr.jm.utils.datastructure.JMArrays;
-import kr.jm.utils.helper.JMLambda;
+import kr.jm.utils.JMArrays;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.Objects;
 
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,8 +48,7 @@ public abstract class AbstractMutatorConfig extends AbstractConfig implements
 
     @Override
     public String[] getFields() {
-        return JMLambda.supplierIfNull(this.fields,
-                () -> this.fields = JMArrays.EMPTY_STRINGS);
+        return Objects.requireNonNullElseGet(this.fields, () -> this.fields = JMArrays.EMPTY_STRINGS);
     }
 
 }

@@ -2,15 +2,16 @@ package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.ElasticsearchOutputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.collections.JMNestedMap;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMString;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMString;
-import kr.jm.utils.time.JMTimeUtil;
+import kr.jm.utils.helper.JMNestedMap;
+import kr.jm.utils.time.JMTime;
 import lombok.Getter;
 import lombok.ToString;
 import org.elasticsearch.common.settings.Settings;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,16 +22,16 @@ import static java.util.function.Predicate.not;
 @Getter
 public class ElasticsearchOutput extends AbstractOutput {
 
-    private String zoneId;
-    private String indexPrefix;
-    private Optional<String> indexFieldAsOpt;
-    private Optional<String> idFieldAsOpt;
+    private final ZoneId zoneId;
+    private final String indexPrefix;
+    private final Optional<String> indexFieldAsOpt;
+    private final Optional<String> idFieldAsOpt;
     // default suffixDateFormat
-    private String indexSuffixDateFormat;
+    private final String indexSuffixDateFormat;
     // dynamic suffixDateFormat by indexField's value
-    private Map<String, String> indexSuffixDateFormatMap;
+    private final Map<String, String> indexSuffixDateFormatMap;
 
-    private JMNestedMap<Object, String, String> indexCache;
+    private final JMNestedMap<Object, String, String> indexCache;
 
     protected JMElasticsearchClient elasticsearchClient;
 
@@ -40,7 +41,7 @@ public class ElasticsearchOutput extends AbstractOutput {
 
     public ElasticsearchOutput(ElasticsearchOutputConfig outputConfig) {
         super(outputConfig);
-        this.zoneId = outputConfig.getZoneId();
+        this.zoneId = ZoneId.of(outputConfig.getZoneId());
         this.indexPrefix = outputConfig.getIndexPrefix();
         this.indexFieldAsOpt = JMOptional.getOptional(outputConfig.getIndexField());
         this.idFieldAsOpt = JMOptional.getOptional(outputConfig.getIdField());
@@ -86,7 +87,7 @@ public class ElasticsearchOutput extends AbstractOutput {
     }
 
     private String buildIndexSuffixDate(long timestamp, Optional<String> indexFieldValueAsOpt) {
-        return JMTimeUtil.getTime(timestamp, indexFieldValueAsOpt
+        return JMTime.getInstance().getTime(timestamp, indexFieldValueAsOpt
                 .flatMap(indexFieldValue -> JMOptional.getOptional(indexSuffixDateFormatMap, indexFieldValue))
                 .orElse(indexSuffixDateFormat), this.zoneId);
     }

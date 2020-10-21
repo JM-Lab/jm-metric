@@ -1,7 +1,7 @@
 package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.DelimiterMutatorConfig;
-import kr.jm.utils.datastructure.JMArrays;
+import kr.jm.utils.JMArrays;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

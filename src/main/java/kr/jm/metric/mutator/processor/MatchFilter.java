@@ -1,8 +1,8 @@
 package kr.jm.metric.mutator.processor;
 
 import kr.jm.metric.config.mutator.field.FilterConfig;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMStream;
+import kr.jm.utils.JMStream;
+import kr.jm.utils.exception.JMException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class MatchFilter {
-    private String mutateId;
-    private Map<String, Pattern> filterPatternMap;
-    private Map<String, Boolean> negateConfigMap;
+    private final String mutateId;
+    private final Map<String, Pattern> filterPatternMap;
+    private final Map<String, Boolean> negateConfigMap;
 
     public MatchFilter(String mutatorId,
             Map<String, FilterConfig> filterConfigMap) {
@@ -43,7 +43,7 @@ public class MatchFilter {
         try {
             return Pattern.compile(matchRegex);
         } catch (Exception e) {
-            return JMExceptionManager
+            return JMException
                     .handleExceptionAndReturnNull(log, e, "buildMatchRegex",
                             mutateId, field, matchRegex);
         }
@@ -58,10 +58,8 @@ public class MatchFilter {
 
 
     public boolean filter(Object target, Pattern pattern, boolean negate) {
-        return Optional.ofNullable(target).map(Object::toString)
-                .map(pattern::matcher).map(Matcher::find)
-                .filter(bool -> negate ? !bool : bool)
-                .isPresent();
+        return Optional.ofNullable(target).map(Object::toString).map(pattern::matcher).map(Matcher::find)
+                .filter(bool -> negate != bool).isPresent();
     }
 
 }

@@ -1,13 +1,12 @@
 package kr.jm.metric;
 
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.JMWordSplitter;
+import kr.jm.utils.JMThread;
 import kr.jm.utils.flow.processor.JMProcessor;
 import kr.jm.utils.flow.processor.JMProcessorBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
-import kr.jm.utils.helper.JMConsumer;
-import kr.jm.utils.helper.JMThread;
-import kr.jm.utils.stats.generator.WordCountGenerator;
+import kr.jm.utils.helper.JMWordSplitter;
+import kr.jm.utils.stats.generator.JMWordCountGenerator;
 import org.junit.After;
 import org.junit.Test;
 
@@ -37,7 +36,7 @@ public class JMMetricSampleTest {
     @Test
     public void test1() {
         jmMetric = new JMMetric("Json");
-        jmMetric.consumeWith(JMConsumer.getSOPL());
+        jmMetric.consumeWith(System.out::println);
         jmMetric.testInput("{\"Hello\": \"World !!!\"}");
         JMThread.sleep(1000);
     }
@@ -45,7 +44,7 @@ public class JMMetricSampleTest {
     @Test
     public void test2() {
         jmMetric = new JMMetric("Raw");
-        jmMetric.consumeWith(JMConsumer.getSOPL())
+        jmMetric.consumeWith(System.out::println)
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.testInput("Hello JMMetric !!!");
         JMThread.sleep(1000);
@@ -56,11 +55,11 @@ public class JMMetricSampleTest {
                         .build(t -> t.stream().map(Transfer::getData)
                                 .map(fieldMap -> fieldMap.get(RAW_DATA))
                                 .map(Object::toString)
-                                .flatMap(JMWordSplitter::splitAsStream));
+                                .flatMap(JMWordSplitter.getInstance()::splitAsStream));
         jmMetric.subscribeWith(wordStreamProcessor);
         wordStreamProcessor
                 .subscribeAndReturnProcessor(JMProcessorBuilder
-                        .build(WordCountGenerator::buildCountMap))
+                        .build(JMWordCountGenerator.getInstance()::buildCountMap))
                 .subscribe(JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.testInput("Hello JMMetric !!!");
 
@@ -70,7 +69,7 @@ public class JMMetricSampleTest {
     @Test
     public void test3() {
         jmMetric = new JMMetric("CombinedLogFormat");
-        jmMetric.consumeWith(JMConsumer.getSOPL())
+        jmMetric.consumeWith(System.out::println)
                 .subscribeWith(
                         JMSubscriberBuilder.getJsonStringSOPLSubscriber());
         jmMetric.testInput(

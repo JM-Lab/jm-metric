@@ -8,9 +8,9 @@ import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.output.subscriber.OutputSubscriber;
 import kr.jm.metric.output.subscriber.OutputSubscriberBuilder;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
-import kr.jm.utils.helper.JMFiles;
-import kr.jm.utils.helper.JMPathOperation;
-import kr.jm.utils.helper.JMThread;
+import kr.jm.utils.JMThread;
+import kr.jm.utils.helper.JMFile;
+import kr.jm.utils.helper.JMPath;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class MutatorProcessorTest {
         mutatorConfigManager
                 .insertConfig(apacheCommonLogMetricConfig2);
         Optional<Path> pathAsOpt1 =
-                JMPathOperation.createTempFilePathAsOpt(Paths.get("test1.txt"));
+                JMPath.getInstance().createTempFilePathAsOpt(Paths.get("test1.txt"));
         assertTrue(pathAsOpt1.isPresent());
         Path path1 = pathAsOpt1.get();
         OutputSubscriber fileOutputSubscriber1 = OutputSubscriberBuilder
@@ -86,8 +86,8 @@ public class MutatorProcessorTest {
         System.out.println(lineCount);
         assertEquals(1024, lineCount.longValue());
 
-        System.out.println(JMFiles.readString(path1));
-        List<String> readLineList = JMFiles.readLines(path1);
+        System.out.println(JMPath.getInstance().readString(path1));
+        List<String> readLineList = JMPath.getInstance().readLines(path1);
         System.out.println(readLineList.size());
         assertEquals(4, readLineList.size());
 

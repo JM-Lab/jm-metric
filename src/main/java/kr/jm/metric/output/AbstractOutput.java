@@ -8,10 +8,10 @@ import java.util.Map;
 
 public abstract class AbstractOutput implements OutputInterface {
 
-    protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+    protected final Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
     @Getter
     protected String outputId;
-    protected OutputConfigInterface outputConfig;
+    protected final OutputConfigInterface outputConfig;
 
     public AbstractOutput(OutputConfigInterface outputConfig) {
         this.outputConfig = outputConfig;

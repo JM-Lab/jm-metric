@@ -1,9 +1,9 @@
 package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.DelimiterMutatorConfig;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMStream;
+import kr.jm.utils.exception.JMException;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMStream;
 import lombok.ToString;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class DelimiterMutator extends
 
     public static final String DefaultIndexHeader = "Index-";
     protected String[] fields;
-    private Pattern splitPattern;
+    private final Pattern splitPattern;
     private Pattern discardPattern;
 
     public DelimiterMutator() {
@@ -40,7 +40,7 @@ public class DelimiterMutator extends
             return buildFieldObjectMap(
                     applyDiscardRegex(splitPattern.split(targetString)));
         } catch (Exception e) {
-            return JMExceptionManager
+            return JMException
                     .handleExceptionAndReturn(log, e, "buildFieldObjectMap",
                             Collections::emptyMap, Arrays.toString(fields),
                             splitPattern, discardPattern, targetString);

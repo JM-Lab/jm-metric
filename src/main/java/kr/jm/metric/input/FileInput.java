@@ -2,7 +2,7 @@ package kr.jm.metric.input;
 
 import kr.jm.metric.config.input.FileInputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.helper.JMFiles;
+import kr.jm.utils.helper.JMFile;
 import lombok.ToString;
 
 import java.util.function.Consumer;
@@ -16,7 +16,7 @@ public class FileInput extends AbstractInput<FileInputConfig> {
 
     @Override
     protected void startImpl(Consumer<Transfer<String>> inputConsumer) {
-        JMFiles.getLineStream(this.inputConfig.getFilePath())
+        JMFile.getInstance().getLineStream(this.inputConfig.getFilePath())
                 .map(this::newTransfer).forEach(inputConsumer);
     }
 

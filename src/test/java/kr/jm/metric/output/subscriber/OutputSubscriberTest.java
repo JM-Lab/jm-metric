@@ -7,6 +7,8 @@ import kr.jm.metric.input.publisher.InputPublisher;
 import kr.jm.metric.input.publisher.InputPublisherBuilder;
 import kr.jm.metric.mutator.processor.MutatorProcessor;
 import kr.jm.metric.mutator.processor.MutatorProcessorBuilder;
+import kr.jm.utils.JMResources;
+import kr.jm.utils.JMThread;
 import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.helper.*;
 import kr.jm.utils.kafka.JMKafkaServer;
@@ -20,8 +22,6 @@ import org.junit.Test;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
-
-import static kr.jm.utils.helper.JMThread.sleep;
 
 public class OutputSubscriberTest {
 
@@ -45,15 +45,15 @@ public class OutputSubscriberTest {
      */
     @Before
     public void setUp() {
-        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath::exists)
-                .ifPresent(JMPathOperation::deleteDir);
-        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath::exists)
-                .ifPresent(JMPathOperation::deleteDir);
+        Optional.of(JMPath.getInstance().getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath.getInstance()::exists)
+                .ifPresent(JMPath.getInstance()::deleteDir);
+        Optional.of(JMPath.getInstance().getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath.getInstance()::exists)
+                .ifPresent(JMPath.getInstance()::deleteDir);
         this.embeddedZookeeper = new JMZookeeperServer().start();
         String zookeeperConnect = this.embeddedZookeeper.getZookeeperConnect();
         this.kafkaServer = new JMKafkaServer.Builder(zookeeperConnect).build().start();
         this.bootstrapServers = kafkaServer.getKafkaServerConnect();
-        sleep(3000);
+        JMThread.sleep(3000);
         this.kafkaProducer = new JMKafkaProducer(bootstrapServers);
         this.inputTopic = kafkaProducer.getDefaultTopic();
         kafkaProducer.sendStringList(JMResources.readLines(FileName));
@@ -63,14 +63,14 @@ public class OutputSubscriberTest {
                 new KafkaInputConfig("KafkaInput", this.bootstrapServers, false, inputTopic);
         jmMetricConfigManager.insertInputConfig(kafkaInputConfig);
         this.kafkaInputPublisher = InputPublisherBuilder.build(kafkaInputConfig);
-        System.out.println(JMJson.toJsonString(kafkaInputConfig));
+        System.out.println(JMJson.getInstance().toJsonString(kafkaInputConfig));
         this.mutatorProcessor =
                 MutatorProcessorBuilder.build(jmMetricConfigManager.getMutatorConfig("ApacheAccessLog"));
         this.outputTopic = "kafkaOut-test";
         KafkaOutputConfig kafkaOutputConfig =
                 new KafkaOutputConfig("KafkaOutput", bootstrapServers, "remoteHost", outputTopic);
         this.kafkaOutputSubscriber = OutputSubscriberBuilder.build(kafkaOutputConfig);
-        System.out.println(JMJson.toJsonString(kafkaOutputConfig));
+        System.out.println(JMJson.getInstance().toJsonString(kafkaOutputConfig));
     }
 
     /**
@@ -84,10 +84,10 @@ public class OutputSubscriberTest {
         kafkaConsumer.shutdown();
         kafkaServer.stop();
         embeddedZookeeper.stop();
-        Optional.of(JMPath.getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath::exists)
-                .ifPresent(JMPathOperation::deleteDir);
-        Optional.of(JMPath.getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath::exists)
-                .ifPresent(JMPathOperation::deleteDir);
+        Optional.of(JMPath.getInstance().getPath(JMZookeeperServer.DEFAULT_ZOOKEEPER_DIR)).filter(JMPath.getInstance()::exists)
+                .ifPresent(JMPath.getInstance()::deleteDir);
+        Optional.of(JMPath.getInstance().getPath(JMKafkaServer.DEFAULT_KAFKA_LOG)).filter(JMPath.getInstance()::exists)
+                .ifPresent(JMPath.getInstance()::deleteDir);
     }
 
     @Test

@@ -1,9 +1,8 @@
 package kr.jm.metric.config.output;
 
 import kr.jm.metric.output.ElasticsearchOutput;
+import kr.jm.utils.JMString;
 import kr.jm.utils.enums.OS;
-import kr.jm.utils.helper.JMString;
-import kr.jm.utils.time.JMTimeUtil;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -16,29 +15,29 @@ public class ElasticsearchOutputConfig extends AbstractOutputConfig {
     public static final int DEFAULT_BULK_ACTIONS = 128;
     public static final long DEFAULT_BULK_SIZE_KB = 1024;
     public static final int DEFAULT_FLUSH_INTERVAL_SECONDS = 1;
-    public static final String DEFAULT_ZONE_ID = JMTimeUtil.UTC_ZONE_ID;
+    public static final String DEFAULT_ZONE_ID = "UTC";
     public static final String DEFAULT_INDEX_SUFFIX_DATE_FORMAT = "yyyy.MM.dd";
     public static final String DEFAULT_INDEX_PREFIX = "jm-metric";
     private static final String DEFAULT_NODE_NAME = OS.getHostname();
     public static final String DEFAULT_ELASTICSEARCH_CONNECT =
             JMString.buildIpOrHostnamePortPair(DEFAULT_NODE_NAME, 9300);
 
-    private String elasticsearchConnect;
-    private String nodeName;
-    private boolean clientTransportSniff;
-    private String clusterName;
+    private final String elasticsearchConnect;
+    private final String nodeName;
+    private final boolean clientTransportSniff;
+    private final String clusterName;
 
     private String idField;
 
-    private String indexPrefix;
-    private String indexField;
-    private String indexSuffixDateFormat;
+    private final String indexPrefix;
+    private final String indexField;
+    private final String indexSuffixDateFormat;
     private Map<String, String> indexSuffixDateFormatMap;
-    private String zoneId;
+    private final String zoneId;
 
-    private int bulkActions;
-    private long bulkSizeKB;
-    private int flushIntervalSeconds;
+    private final int bulkActions;
+    private final long bulkSizeKB;
+    private final int flushIntervalSeconds;
 
     public ElasticsearchOutputConfig() {
         this(DEFAULT_ELASTICSEARCH_CONNECT);

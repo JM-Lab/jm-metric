@@ -3,7 +3,7 @@ package kr.jm.metric.config;
 import kr.jm.metric.config.mutator.MutatorConfigInterface;
 import kr.jm.metric.config.mutator.field.DateFormatType;
 import kr.jm.metric.config.output.OutputConfigInterface;
-import kr.jm.utils.helper.JMResources;
+import kr.jm.utils.JMResources;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,8 +1,8 @@
 package kr.jm.metric.mutator;
 
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.time.JMTimeUtil;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.time.JMTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ public interface MutatorInterface extends Function<Transfer<String>, Transfer<Ma
         JMOptional.getOptional(inputTransfer.getMeta()).ifPresent(meta::putAll);
         JMOptional.getOptional(getFieldMeta()).ifPresent(fieldMeta -> meta.put("field", fieldMeta));
         meta.put(INPUT_ID, inputTransfer.getInputId());
-        meta.put(PROCESS_TIMESTAMP, JMTimeUtil.getTimeAsDefaultUtcFormat(inputTransfer.getTimestamp()));
+        meta.put(PROCESS_TIMESTAMP, JMTime.getInstance().getTime(inputTransfer.getTimestamp()));
         return meta;
     }
 

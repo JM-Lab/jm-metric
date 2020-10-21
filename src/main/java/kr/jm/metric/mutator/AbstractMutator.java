@@ -2,8 +2,7 @@ package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.AbstractMutatorConfig;
 import kr.jm.metric.config.mutator.field.FieldConfig;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMLambda;
+import kr.jm.utils.exception.JMException;
 import lombok.Getter;
 import org.slf4j.Logger;
 
@@ -16,12 +15,12 @@ import static kr.jm.metric.config.mutator.field.FieldConfig.RAW_DATA;
 
 public abstract class AbstractMutator<C extends AbstractMutatorConfig> implements MutatorInterface {
 
-    protected Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
+    protected final Logger log = org.slf4j.LoggerFactory.getLogger(getClass());
 
     @Getter
     protected String mutatorId;
-    protected C mutatorConfig;
-    protected FieldConfig fieldConfig;
+    protected final C mutatorConfig;
+    protected final FieldConfig fieldConfig;
     @Getter
     protected Map<String, Object> fieldMeta;
 
@@ -45,7 +44,7 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
             return Optional.ofNullable(buildFieldObjectMap(targetString)).filter(not(Map::isEmpty))
                     .map(fieldObjectMap -> buildDataWithRawData(fieldObjectMap, targetString)).orElse(null);
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturnNull(log, e, "mutate", mutatorConfig, targetString);
+            return JMException.handleExceptionAndReturnNull(log, e, "mutate", mutatorConfig, targetString);
         }
     }
 
@@ -53,7 +52,7 @@ public abstract class AbstractMutator<C extends AbstractMutatorConfig> implement
         if (Objects.nonNull(this.fieldConfig)) {
             if (this.fieldConfig.isRawData())
                 fieldObjectMap.put(RAW_DATA, targetString);
-            fieldObjectMap = JMLambda.supplierIfNull(this.fieldConfigHandler,
+            fieldObjectMap = Objects.requireNonNullElseGet(this.fieldConfigHandler,
                     () -> this.fieldConfigHandler = new FieldConfigHandler(this.mutatorId, this.fieldConfig))
                     .applyFieldConfig(fieldObjectMap);
         }

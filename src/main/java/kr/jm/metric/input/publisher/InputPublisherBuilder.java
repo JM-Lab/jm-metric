@@ -5,8 +5,8 @@ import kr.jm.metric.config.input.InputConfigInterface;
 import kr.jm.metric.config.input.StdinLineInputConfig;
 import kr.jm.metric.data.Transfer;
 import kr.jm.metric.input.InputInterface;
+import kr.jm.utils.JMResources;
 import kr.jm.utils.flow.publisher.BulkSubmissionPublisher;
-import kr.jm.utils.helper.JMResources;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,14 +18,12 @@ public class InputPublisherBuilder {
         return build(new FileInputConfig(filePath));
     }
 
-    public static InputPublisher buildFileInput(String inputId,
-            String filePath) {
+    public static InputPublisher buildFileInput(String inputId, String filePath) {
         return build(new FileInputConfig(filePath));
     }
 
-    public static <T> InputPublisher build(String inputId, List<T> dataList) {
-        return build(inputId, dataList,
-                data -> new Transfer(inputId, data));
+    public static <T> InputPublisher buildToString(String inputId, List<T> dataList) {
+        return build(inputId, dataList, data -> new Transfer<>(inputId, data.toString()));
     }
 
     public static InputPublisher buildStdinLineInput(String inputId) {
@@ -33,21 +31,15 @@ public class InputPublisherBuilder {
     }
 
     public static InputPublisher build(InputConfigInterface inputConfig) {
-        return new InputPublisher(
-                new StringTransferBulkSubmissionPublisher(
-                        new TransferSubmissionPublisher<>(1,
-                                inputConfig.getMaxBufferCapacity(),
-                                inputConfig.getWaitingMillis()),
-                        inputConfig.getBulkSize(),
-                        inputConfig.getFlushIntervalMillis()),
-                inputConfig.buildInput(), inputConfig.getChunkType());
+        return new InputPublisher(new StringTransferBulkSubmissionPublisher(
+                new TransferSubmissionPublisher<>(1, inputConfig.getMaxBufferCapacity(),
+                        inputConfig.getWaitingMillis()), inputConfig.getBulkSize(),
+                inputConfig.getFlushIntervalMillis()), inputConfig.buildInput(), inputConfig.getChunkType());
     }
 
 
-    public static InputPublisher buildResourceInput(String inputId,
-            String resourceName) {
-        return InputPublisherBuilder
-                .build(inputId, JMResources.readLines(resourceName));
+    public static InputPublisher buildResourceInput(String inputId, String resourceName) {
+        return InputPublisherBuilder.buildToString(inputId, JMResources.readLines(resourceName));
     }
 
     public static InputPublisher buildResourceInput(String resourceName) {
@@ -86,8 +78,7 @@ public class InputPublisherBuilder {
 
             @Override
             public void start(Consumer<Transfer<String>> inputConsumer) {
-                dataList.stream().map(transformFunction)
-                        .forEach(inputConsumer);
+                dataList.stream().map(transformFunction).forEach(inputConsumer);
             }
 
             @Override

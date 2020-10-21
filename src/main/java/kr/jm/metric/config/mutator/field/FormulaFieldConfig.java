@@ -1,10 +1,9 @@
 package kr.jm.metric.config.mutator.field;
 
-import kr.jm.utils.JavascriptEvaluator;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMLambda;
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMString;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMString;
+import kr.jm.utils.exception.JMException;
+import kr.jm.utils.helper.JMScriptEvaluator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
@@ -24,22 +24,23 @@ public class FormulaFieldConfig extends CombinedFieldConfig {
     private String formula;
     private Number defaultResult;
     private String[] sortedTargetFields;
+    private JMScriptEvaluator jmScriptEvaluator;
 
-    public FormulaFieldConfig(String[] targetFields,
-            String combinedFieldName, String delimiter, String formula,
+    public FormulaFieldConfig(String[] targetFields, String combinedFieldName, String delimiter, String formula,
             Number defaultResult) {
         super(targetFields, combinedFieldName, delimiter);
         this.formula = formula;
         this.defaultResult = defaultResult;
+        this.jmScriptEvaluator = JMScriptEvaluator.getInstance();
     }
 
     @Override
     public Object buildValue(Map<String, Object> fieldObjectMap) {
         try {
-            return JavascriptEvaluator.eval(buildFormula(fieldObjectMap));
+            return JMScriptEvaluator.getInstance().eval(buildFormula(fieldObjectMap));
         } catch (Exception e) {
-            return JMExceptionManager.handleExceptionAndReturn(log, e,
-                    "buildValue", () -> defaultResult, fieldObjectMap, formula);
+            return JMException
+                    .handleExceptionAndReturn(log, e, "buildValue", () -> defaultResult, fieldObjectMap, formula);
         }
     }
 
@@ -50,23 +51,19 @@ public class FormulaFieldConfig extends CombinedFieldConfig {
         return formula;
     }
 
-    private String buildFormula(Map<String, Object> fieldObjectMap,
-            String formula, String field) {
-        return JMOptional.getOptional(fieldObjectMap, field)
-                .map(Object::toString).filter(JMString::isNumber)
+    private String buildFormula(Map<String, Object> fieldObjectMap, String formula, String field) {
+        return JMOptional.getOptional(fieldObjectMap, field).map(Object::toString).filter(JMString::isNumber)
                 .map(number -> formula.replaceAll(field, number))
-                .orElseThrow(() -> new RuntimeException(
-                        "Fail To Build Formula !!!"));
+                .orElseThrow(() -> new RuntimeException("Fail To Build Formula !!!"));
     }
 
     public String[] getSortedTargetFields() {
-        return JMLambda.supplierIfNull(this.sortedTargetFields, () -> this
-                .sortedTargetFields = buildSortedTargetFields());
+        return Objects.requireNonNullElseGet(this.sortedTargetFields,
+                () -> this.sortedTargetFields = buildSortedTargetFields());
     }
 
     private String[] buildSortedTargetFields() {
-        return JMOptional.getOptional(getTargetFields()).stream()
-                .flatMap(Arrays::stream).sorted(Comparator.reverseOrder())
-                .toArray(String[]::new);
+        return JMOptional.getOptional(getTargetFields()).stream().flatMap(Arrays::stream)
+                .sorted(Comparator.reverseOrder()).toArray(String[]::new);
     }
 }

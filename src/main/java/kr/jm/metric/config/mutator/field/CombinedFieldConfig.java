@@ -1,7 +1,7 @@
 package kr.jm.metric.config.mutator.field;
 
-import kr.jm.utils.helper.JMOptional;
-import kr.jm.utils.helper.JMString;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.JMString;
 import lombok.*;
 
 import java.util.Map;
@@ -23,7 +23,7 @@ public class CombinedFieldConfig {
     public String getCombinedFieldName() {
         return JMOptional.getOptional(this.combinedFieldName).orElseGet(
                 () -> this.combinedFieldName =
-                        JMString.joiningWithDelimiter(getDelimiter(),
+                        JMString.joiningWith(getDelimiter(),
                                 this.targetFields));
     }
 

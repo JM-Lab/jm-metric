@@ -18,7 +18,7 @@ public class FieldConfigHandlerTest {
 
     @Before
     public void setUp() {
-        this.fieldConfig = JMJson.withJsonResource("fieldConfigTest.json", FieldConfig.class);
+        this.fieldConfig = JMJson.getInstance().withJsonResource("fieldConfigTest.json", FieldConfig.class);
         this.fieldConfigHandler = new FieldConfigHandler("testMutatorId", this.fieldConfig);
     }
 
@@ -26,7 +26,7 @@ public class FieldConfigHandlerTest {
     public void testApplyFieldConfig() {
         System.out.println(fieldConfig.isRawData());
         Assert.assertFalse(fieldConfig.isRawData());
-        Map<String, Object> fieldObjectMap = JMJson.withJsonString(
+        Map<String, Object> fieldObjectMap = JMJson.getInstance().withJsonString(
                 "{      \"requestTime\":\"167434\",\n" +
                         "         \"request\":\"POST /app/5104 HTTP/1.1\",\n" +
                         "         \"remoteUser\":\"jm\"," + "\n" +
@@ -39,13 +39,14 @@ public class FieldConfigHandlerTest {
                         "         \"requestProtocol\":\"HTTP/1.1\",\n" +
                         "         \"receivedTimestamp\":\"08/Jun/2015:17:00:00 +0900\",\n" +
                         "         \"statusCode\":\"200\"\n" +
-                        "      }", JMJson.getMapOrListTypeReference());
+                        "      }", JMJson.getInstance().getMapOrListTypeReference());
 
         Map<String, Object> stringObjectMap = this.fieldConfigHandler.applyFieldConfig(fieldObjectMap);
         System.out.println(stringObjectMap);
         Assert.assertFalse(stringObjectMap.containsKey("remoteUser"));
         Assert.assertEquals("172.22.206.86|/app/5104", stringObjectMap.get("remoteHost|requestUrl"));
-        Assert.assertEquals("2015-06-08T18:00:00+1000", stringObjectMap.get("receivedTimestamp"));
+        // 포멧의 존정보를 무시하고 주어진 존정보로 계산함
+        Assert.assertEquals("2015-06-08T17:00:00+1000", stringObjectMap.get("receivedTimestamp"));
         Assert.assertEquals(448d, stringObjectMap.get("sizeByte"));
         Assert.assertEquals(167434d, stringObjectMap.get("aa"));
         Assert.assertEquals(167434d / 1000, stringObjectMap.get("requestTimeInMicro"));
@@ -63,7 +64,7 @@ public class FieldConfigHandlerTest {
                                 .setFormat("yyyy-MM-dd'T'HH:mm:ssZ").setZoneOffset("+1000").setNewFieldName(null)
                                 .setChangeDateConfig(null).createDateFormatConfig()).createDateFormatConfig()))
                 .createFieldConfig();
-        System.out.println(JMJson.toJsonString(fieldConfig));
+        System.out.println(JMJson.getInstance().toJsonString(fieldConfig));
 
         stringObjectMap = new FieldConfigHandler("testMutatorId", this.fieldConfig).applyFieldConfig(fieldObjectMap);
         System.out.println(stringObjectMap);

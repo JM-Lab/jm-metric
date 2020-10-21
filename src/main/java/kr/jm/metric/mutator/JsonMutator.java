@@ -20,7 +20,7 @@ public class JsonMutator extends
 
     @Override
     public Map<String, Object> buildFieldObjectMap(String targetString) {
-        return JMJson.toMap(targetString);
+        return JMJson.getInstance().toMap(targetString);
     }
 
 }

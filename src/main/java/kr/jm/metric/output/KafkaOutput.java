@@ -2,7 +2,7 @@ package kr.jm.metric.output;
 
 import kr.jm.metric.config.output.KafkaOutputConfig;
 import kr.jm.metric.data.Transfer;
-import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.JMOptional;
 import kr.jm.utils.kafka.client.JMKafkaProducer;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,11 +14,11 @@ import java.util.Properties;
 @ToString(callSuper = true)
 public class KafkaOutput extends AbstractOutput {
 
-    private JMKafkaProducer kafkaProducer;
+    private final JMKafkaProducer kafkaProducer;
     @Getter
-    private String topic;
+    private final String topic;
     @Getter
-    private String keyField;
+    private final String keyField;
 
     public KafkaOutput(KafkaOutputConfig outputConfig) {
         super(outputConfig);

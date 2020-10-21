@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>kr.jmlab</groupId>
     <artifactId>jm-metric</artifactId>
-    <version>0.2.6.1</version>
+    <version>0.2.7</version>
     <packaging>jar</packaging>
     <name>JM-Metric</name>
     <description>FieldMap Transformer From Various Formatted Data</description>
@@ -34,12 +34,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <junit.version>4.13</junit.version>
-        <jmlab-utils-java9.version>0.1.6.1</jmlab-utils-java9.version>
-        <jmlab-utils-elasticsearch.version>7.7.1</jmlab-utils-elasticsearch.version>
-        <jmlab-utils-kafka.version>2.4.1</jmlab-utils-kafka.version>
+        <junit.version>4.13.1</junit.version>
+        <jmlab-utils-java11.version>0.1.0</jmlab-utils-java11.version>
+        <jmlab-utils-elasticsearch.version>7.9.2</jmlab-utils-elasticsearch.version>
+        <jmlab-utils-kafka.version>2.5.1</jmlab-utils-kafka.version>
         <common-cli.version>1.4</common-cli.version>
-        <lombok.version>1.18.12</lombok.version>
+        <lombok.version>1.18.16</lombok.version>
     </properties>
     <build>
         <plugins>
@@ -143,8 +143,8 @@
     <dependencies>
         <dependency>
             <groupId>kr.jmlab</groupId>
-            <artifactId>jmlab-utils-java9</artifactId>
-            <version>${jmlab-utils-java9.version}</version>
+            <artifactId>jmlab-utils-java11</artifactId>
+            <version>${jmlab-utils-java11.version}</version>
         </dependency>
         <dependency>
             <groupId>kr.jmlab</groupId>

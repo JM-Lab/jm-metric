@@ -1,8 +1,8 @@
 package kr.jm.metric.config.mutator.field;
 
-import kr.jm.utils.datastructure.JMMap;
-import kr.jm.utils.exception.JMExceptionManager;
-import kr.jm.utils.helper.JMOptional;
+import kr.jm.utils.JMMap;
+import kr.jm.utils.JMOptional;
+import kr.jm.utils.exception.JMException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,13 +44,13 @@ public class FieldMeta {
     }
 
     private Map<String, ?> removedNullMap(String field, Map<String, ?> map) {
-        return JMMap.newFilteredChangedValueWithEntryMap(map, entry ->
-                        checkNull(field, entry.getKey(), entry.getValue()),
-                Map.Entry::getValue);
+        return JMMap
+                .newFilteredChangedValueWithEntryMap(map, entry -> checkNull(field, entry.getKey(), entry.getValue()),
+                        Map.Entry::getValue);
     }
 
     private boolean checkNull(String field, String key, Object value) {
-        return Objects.nonNull(value) || JMExceptionManager
+        return Objects.nonNull(value) || JMException
                 .handleExceptionAndReturnFalse(log,
                         new NullPointerException("value"), "checkNull", field,
                         key, null);
