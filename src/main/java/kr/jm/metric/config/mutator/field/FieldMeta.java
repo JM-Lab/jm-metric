@@ -28,8 +28,8 @@ public class FieldMeta {
     }
 
     synchronized public Map<String, Object> extractFieldMetaMap() {
-        return Objects.requireNonNullElseGet(this.fieldMetaMap,
-                () -> this.fieldMetaMap = buildFlatMap(new HashMap<>()));
+        return Objects
+                .requireNonNullElseGet(this.fieldMetaMap, () -> this.fieldMetaMap = buildFlatMap(new HashMap<>()));
     }
 
     private Map<String, Object> buildFlatMap(Map<String, Object> flatMap) {
@@ -37,8 +37,7 @@ public class FieldMeta {
         return flatMap;
     }
 
-    private void buildFlatMap(Map<String, Object> flatMap,
-            String field, Map<String, ?> nestedMap) {
+    private void buildFlatMap(Map<String, Object> flatMap, String field, Map<String, ?> nestedMap) {
         JMOptional.getOptional(nestedMap).map(map -> removedNullMap(field, map))
                 .ifPresent(map -> flatMap.put(field, map));
     }
@@ -51,8 +50,6 @@ public class FieldMeta {
 
     private boolean checkNull(String field, String key, Object value) {
         return Objects.nonNull(value) || JMException
-                .handleExceptionAndReturnFalse(log,
-                        new NullPointerException("value"), "checkNull", field,
-                        key, null);
+                .handleExceptionAndReturnFalse(log, new NullPointerException("value"), "checkNull", field, key, null);
     }
 }

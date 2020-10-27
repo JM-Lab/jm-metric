@@ -5,7 +5,7 @@ import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMOptional;
 import kr.jm.utils.JMString;
 import kr.jm.utils.elasticsearch.JMElasticsearchClient;
-import kr.jm.utils.helper.JMNestedMap;
+import kr.jm.utils.helper.JM2DepthMap;
 import kr.jm.utils.time.JMTime;
 import lombok.Getter;
 import lombok.ToString;
@@ -31,7 +31,7 @@ public class ElasticsearchOutput extends AbstractOutput {
     // dynamic suffixDateFormat by indexField's value
     private final Map<String, String> indexSuffixDateFormatMap;
 
-    private final JMNestedMap<Object, String, String> indexCache;
+    private final JM2DepthMap<Object, String, String> indexCache;
 
     protected JMElasticsearchClient elasticsearchClient;
 
@@ -53,7 +53,7 @@ public class ElasticsearchOutput extends AbstractOutput {
                                 outputConfig.getClusterName()), outputConfig.getProperties()));
         this.elasticsearchClient.setBulkProcessor(outputConfig.getBulkActions(), outputConfig.getBulkSizeKB(),
                 outputConfig.getFlushIntervalSeconds());
-        this.indexCache = new JMNestedMap<>(true);
+        this.indexCache = new JM2DepthMap<>(true);
     }
 
     private static Settings buildSettings(Settings.Builder settingsBuilder, Map<String, Object> esClientConfig) {
