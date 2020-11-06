@@ -27,14 +27,14 @@ public class MutatorProcessor implements
     @Getter
     private final String mutatorId;
     private final int workers;
-    private final Optional<MatchFilter> matchFilterAsOpt;
+    private final Optional<MatchFilter> matchFilterOptional;
     private final JMConcurrentProcessor<List<Transfer<String>>, List<Transfer<Map<String, Object>>>> jmProcessor;
 
     public MutatorProcessor(int workers, MutatorInterface mutator, MatchFilter matchFilter) {
         this.mutatorId = mutator.getMutatorId();
         this.workers = workers;
         this.jmProcessor = JMProcessorBuilder.buildWithThreadPool(workers, list -> process(list, mutator));
-        this.matchFilterAsOpt = Optional.ofNullable(matchFilter);
+        this.matchFilterOptional = Optional.ofNullable(matchFilter);
         JMLog.info(log, "MutatorProcessor", this.mutatorId, this.workers, mutator, matchFilter);
     }
 
@@ -47,7 +47,7 @@ public class MutatorProcessor implements
 
     private boolean isNotNullAndEmptyAndMatched(Transfer<Map<String, Object>> transfer) {
         return JMOptional.getOptional(transfer.getData())
-                .filter(data -> matchFilterAsOpt.filter(matchFilter -> matchFilter.filter(data)).isEmpty()).isPresent();
+                .filter(data -> matchFilterOptional.filter(matchFilter -> matchFilter.filter(data)).isEmpty()).isPresent();
     }
 
     @SafeVarargs

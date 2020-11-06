@@ -55,7 +55,7 @@ public class RunningConfigManager extends AbstractConfigManager {
     private RunningConfig transformRunningConfig(String jmMetricConfigUrl) {
         try {
             return ConfigObjectMapper.readValue(
-                    JMResources.getStringAsOptWithFilePath(jmMetricConfigUrl)
+                    JMResources.getStringOptionalWithFilePath(jmMetricConfigUrl)
                             .orElseThrow(NullPointerException::new),
                     RunningConfig.class);
         } catch (Exception e) {

@@ -170,7 +170,7 @@ public class JMMetricConfigManager {
     }
 
     private String getConfigId(Function<BindingConfig, String> configIdFunction) {
-        return getBindingConfigAsOpt().map(configIdFunction).orElse(JMString.EMPTY);
+        return getBindingConfigOptional().map(configIdFunction).orElse(JMString.EMPTY);
     }
 
     public String getMutatorConfigId() {
@@ -178,10 +178,10 @@ public class JMMetricConfigManager {
     }
 
     public String[] getOutputConfigIds() {
-        return getBindingConfigAsOpt().map(BindingConfig::getOutputIds).orElse(JMArrays.EMPTY_STRINGS);
+        return getBindingConfigOptional().map(BindingConfig::getOutputIds).orElse(JMArrays.EMPTY_STRINGS);
     }
 
-    private Optional<BindingConfig> getBindingConfigAsOpt() {
+    private Optional<BindingConfig> getBindingConfigOptional() {
         return Optional.ofNullable(this.runningConfigManager.getBindingConfig());
     }
 }

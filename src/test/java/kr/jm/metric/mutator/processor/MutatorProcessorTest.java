@@ -56,10 +56,10 @@ public class MutatorProcessorTest {
                         apacheAccessLogSample.getFormat());
         mutatorConfigManager
                 .insertConfig(apacheCommonLogMetricConfig2);
-        Optional<Path> pathAsOpt1 =
-                JMPath.getInstance().createTempFilePathAsOpt(Paths.get("test1.txt"));
-        assertTrue(pathAsOpt1.isPresent());
-        Path path1 = pathAsOpt1.get();
+        Optional<Path> pathOptional1 =
+                JMPath.getInstance().createTempFilePathOptional(Paths.get("test1.txt"));
+        assertTrue(pathOptional1.isPresent());
+        Path path1 = pathOptional1.get();
         OutputSubscriber fileOutputSubscriber1 = OutputSubscriberBuilder
                 .buildFileOutput(path1.toAbsolutePath().toString(),
                         mutatorIdTransfers -> List.of(mutatorIdTransfers));

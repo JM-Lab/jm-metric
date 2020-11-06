@@ -57,7 +57,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface> exten
 
     public C transform(Map<String, Object> configMap) {
         try {
-            return getConfigTypeStringAsOpt(configMap).map(this::extractConfigClass)
+            return getConfigTypeStringOptional(configMap).map(this::extractConfigClass)
                     .map(configClass -> ConfigInterface.transformConfig(configMap, configClass)).orElseGet(
                             () -> JMException.handleExceptionAndReturnNull(log,
                                     JMException.newRunTimeException("Config Error Occur !!!"),
@@ -75,7 +75,7 @@ public abstract class AbstractListConfigManager<C extends ConfigInterface> exten
 
     protected abstract Class<C> extractConfigClass(String configTypeString);
 
-    protected Optional<String> getConfigTypeStringAsOpt(Map<String, Object> configMap) {
+    protected Optional<String> getConfigTypeStringOptional(Map<String, Object> configMap) {
         return JMOptional.getOptional(configMap, getConfigTypeKey()).map(Object::toString);
     }
 

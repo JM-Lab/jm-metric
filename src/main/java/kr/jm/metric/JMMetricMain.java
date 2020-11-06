@@ -81,19 +81,19 @@ public class JMMetricMain {
 
     private void applyCommandLine(CommandLine commandLine) {
         this.commandLine = commandLine;
-        extractConfigValueAsOpt("config").map(config -> this.jmMetricConfigManager = new JMMetricConfigManager(config))
+        extractConfigValueOptional("config").map(config -> this.jmMetricConfigManager = new JMMetricConfigManager(config))
                 .ifPresent(jmMetricConfigManager -> {
                     this.inputId = jmMetricConfigManager.getInputConfigId();
                     this.mutatorId = jmMetricConfigManager.getMutatorConfigId();
                     this.outputIds = jmMetricConfigManager.getOutputConfigIds();
                 });
-        extractConfigValueAsOpt("inputId").ifPresent(inputId -> this.inputId = inputId);
-        extractConfigValueAsOpt("mutatorId").ifPresent(mutatorId -> this.mutatorId = mutatorId);
-        extractConfigValueAsOpt("outputIds").map(JMArrays::buildArrayFromCsv)
+        extractConfigValueOptional("inputId").ifPresent(inputId -> this.inputId = inputId);
+        extractConfigValueOptional("mutatorId").ifPresent(mutatorId -> this.mutatorId = mutatorId);
+        extractConfigValueOptional("outputIds").map(JMArrays::buildArrayFromCsv)
                 .ifPresent(outputIds -> this.outputIds = outputIds);
     }
 
-    public Optional<String> extractConfigValueAsOpt(String opt) {
+    public Optional<String> extractConfigValueOptional(String opt) {
         return Optional.ofNullable(this.commandLine.getOptionValue(opt));
     }
 
