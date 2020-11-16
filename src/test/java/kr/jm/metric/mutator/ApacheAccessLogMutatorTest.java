@@ -12,8 +12,7 @@ public class ApacheAccessLogMutatorTest {
 
     @Before
     public void setUp() {
-        this.apacheAccessLogFieldMapMutator =
-                new ApacheAccessLogMutator();
+        this.apacheAccessLogFieldMapMutator = new ApacheAccessLogMutator();
     }
 
     @Test

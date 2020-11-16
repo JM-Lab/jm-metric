@@ -84,7 +84,6 @@
       "combinedField": ["remoteHost", "requestUrl"],
       "dataType": {
         "statusCode": "WORD",
-        "userAgent": "WORD",
         "sizeByte": "NUMBER",
         "requestTime": "NUMBER"
       },

@@ -20,8 +20,8 @@ public class ApacheAccessLogMutator extends FormattedMutator {
     }
 
     @Override
-    protected String buildPartGroupRegex(String field, String name) {
-        String groupRegex = super.buildPartGroupRegex(field, name);
-        return !field.equals("%t") ? groupRegex : "\\[" + groupRegex + "\\]";
+    protected String buildPartGroupRegex(String fieldKey, String fieldName) {
+        String groupRegex = super.buildPartGroupRegex(fieldKey, fieldName);
+        return !fieldKey.equals("%t") ? groupRegex : "\\[" + groupRegex + "\\]";
     }
 }

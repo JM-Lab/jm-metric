@@ -155,7 +155,6 @@
       ],
       "dataType":      {
         "statusCode": "WORD",
-        "userAgent":  "WORD",
         "sizeByte":   "NUMBER"
       },
       "unit":          {
@@ -215,7 +214,6 @@
       ],
       "dataType":      {
         "statusCode": "WORD",
-        "userAgent":  "WORD",
         "sizeByte":   "NUMBER"
       },
       "unit":          {

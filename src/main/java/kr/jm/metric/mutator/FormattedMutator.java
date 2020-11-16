@@ -1,6 +1,8 @@
 package kr.jm.metric.mutator;
 
 import kr.jm.metric.config.mutator.FormattedMutatorConfig;
+import kr.jm.metric.config.mutator.field.DataType;
+import kr.jm.metric.config.mutator.field.FieldConfig;
 import kr.jm.utils.JMMap;
 import kr.jm.utils.JMOptional;
 import kr.jm.utils.exception.JMException;
@@ -14,7 +16,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
     @Getter
-    private final String valueRegex;
+    private final String defaultValueRegex;
+    private Map<String, String> fieldRegexMap;
     final JMRegex jmRegex;
 
     public FormattedMutator(FormattedMutatorConfig formattedMutatorConfig) {
@@ -23,13 +26,21 @@ public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
 
     public FormattedMutator(FormattedMutatorConfig formattedMutatorConfig, Map<String, String> defaultFieldNameMap) {
         super(formattedMutatorConfig);
-        this.valueRegex = formattedMutatorConfig.isWordValueRegex() ? "\\S+" : ".+";
+        this.defaultValueRegex = extractValueRegex(formattedMutatorConfig.isWordValueRegex());
+        this.fieldRegexMap = Optional.ofNullable(formattedMutatorConfig.getFieldConfig()).map(FieldConfig::getDataType)
+                .map(dataTypeMap -> JMMap.newChangedValueMap(dataTypeMap, dataType -> extractValueRegex(
+                        DataType.WORD.equals(dataType) || DataType.NUMBER.equals(dataType))))
+                .orElseGet(Collections::emptyMap);
         Map<String, String> fieldNameMap = initFieldNameMap(
                 new HashMap<>(JMOptional.getOptional(defaultFieldNameMap).orElseGet(Collections::emptyMap)),
                 formattedMutatorConfig.getFieldNameMap());
         Map<String, String> fieldGroupRegexMap = JMMap.newChangedKeyValueWithEntryMap(fieldNameMap, Map.Entry::getKey,
                 entry -> buildPartGroupRegex(entry.getKey(), entry.getValue()));
         this.jmRegex = new JMRegex(initGroupRegexString(fieldGroupRegexMap, formattedMutatorConfig.getFormat()));
+    }
+
+    public String extractValueRegex(boolean isWordOrNumber) {
+        return isWordOrNumber ? "\\S+" : ".+";
     }
 
     private Map<String, String> initFieldNameMap(Map<String, String> defaultFieldNameMap,
@@ -57,8 +68,8 @@ public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
         return jmRegex.getGroupNameList();
     }
 
-    protected String buildPartGroupRegex(String field, String name) {
-        return "(?<" + name + ">" + this.valueRegex + ")";
+    protected String buildPartGroupRegex(String fieldKey, String fieldName) {
+        return "(?<" + fieldName + ">" + fieldRegexMap.getOrDefault(fieldName, this.defaultValueRegex) + ")";
     }
 
 }

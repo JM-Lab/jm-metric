@@ -42,7 +42,6 @@
   ],
   "dataType": {
     "statusCode": "WORD",
-    "userAgent": "WORD",
     "sizeByte": "NUMBER",
     "requestTime": "NUMBER"
   },
