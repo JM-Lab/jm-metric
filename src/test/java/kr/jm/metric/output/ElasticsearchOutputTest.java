@@ -84,7 +84,7 @@ public class ElasticsearchOutputTest {
         dataList.get(0).getData().get(13).put("@id", "   ");
         elasticsearchOutput.writeData(dataList.stream().flatMap(transfer -> transfer.newStreamWith(transfer.getData()))
                 .collect(Collectors.toList()));
-        JMThread.sleep(3500);
+        JMThread.sleep(10000);
 
         Set<String> allIndices = jmElasticsearchClient.getAllIndices();
         System.out.println(allIndices);

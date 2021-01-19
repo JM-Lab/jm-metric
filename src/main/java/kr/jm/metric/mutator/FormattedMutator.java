@@ -26,10 +26,9 @@ public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
 
     public FormattedMutator(FormattedMutatorConfig formattedMutatorConfig, Map<String, String> defaultFieldNameMap) {
         super(formattedMutatorConfig);
-        this.defaultValueRegex = extractValueRegex(formattedMutatorConfig.isWordValueRegex());
+        this.defaultValueRegex = formattedMutatorConfig.isWordValueRegex() ? "\\S+" : ".+";
         this.fieldRegexMap = Optional.ofNullable(formattedMutatorConfig.getFieldConfig()).map(FieldConfig::getDataType)
-                .map(dataTypeMap -> JMMap.newChangedValueMap(dataTypeMap, dataType -> extractValueRegex(
-                        DataType.WORD.equals(dataType) || DataType.NUMBER.equals(dataType))))
+                .map(dataTypeMap -> JMMap.newChangedValueMap(dataTypeMap, dataType -> extractValueRegex(dataType)))
                 .orElseGet(Collections::emptyMap);
         Map<String, String> fieldNameMap = initFieldNameMap(
                 new HashMap<>(JMOptional.getOptional(defaultFieldNameMap).orElseGet(Collections::emptyMap)),
@@ -39,8 +38,9 @@ public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
         this.jmRegex = new JMRegex(initGroupRegexString(fieldGroupRegexMap, formattedMutatorConfig.getFormat()));
     }
 
-    public String extractValueRegex(boolean isWordOrNumber) {
-        return isWordOrNumber ? "\\S+" : ".+";
+    private String extractValueRegex(DataType dataType) {
+        return DataType.WORD.equals(dataType) || DataType.NUMBER.equals(dataType) ? "\\S+" :
+                DataType.ANYTHING.equals(dataType) ? ".*" : ".+";
     }
 
     private Map<String, String> initFieldNameMap(Map<String, String> defaultFieldNameMap,
@@ -71,5 +71,4 @@ public class FormattedMutator extends AbstractMutator<FormattedMutatorConfig> {
     protected String buildPartGroupRegex(String fieldKey, String fieldName) {
         return "(?<" + fieldName + ">" + fieldRegexMap.getOrDefault(fieldName, this.defaultValueRegex) + ")";
     }
-
 }
