@@ -36,7 +36,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <junit.version>4.13.1</junit.version>
         <jmlab-utils-java11.version>0.1.0</jmlab-utils-java11.version>
-        <jmlab-utils-elasticsearch.version>7.9.2</jmlab-utils-elasticsearch.version>
+        <jmlab-utils-elasticsearch.version>7.9.3</jmlab-utils-elasticsearch.version>
         <jmlab-utils-kafka.version>2.5.1</jmlab-utils-kafka.version>
         <common-cli.version>1.4</common-cli.version>
         <lombok.version>1.18.16</lombok.version>
