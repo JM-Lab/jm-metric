@@ -27,7 +27,7 @@ public class FieldConfigHandlerTest {
         System.out.println(fieldConfig.isRawData());
         Assert.assertFalse(fieldConfig.isRawData());
         Map<String, Object> fieldObjectMap = JMJson.getInstance().withJsonString(
-                "{      \"requestTime\":\"167434\",\n" +
+                "{      \"requestTime\":\"3.0878E7\",\n" +
                         "         \"request\":\"POST /app/5104 HTTP/1.1\",\n" +
                         "         \"remoteUser\":\"jm\"," + "\n" +
                         "         \"referer\":\"-\",\n" +
@@ -48,8 +48,8 @@ public class FieldConfigHandlerTest {
         // 포멧의 존정보를 무시하고 주어진 존정보로 계산함
         Assert.assertEquals("2015-06-08T17:00:00+1000", stringObjectMap.get("receivedTimestamp"));
         Assert.assertEquals(448d, stringObjectMap.get("sizeByte"));
-        Assert.assertEquals(167434d, stringObjectMap.get("aa"));
-        Assert.assertEquals(167434d / 1000, stringObjectMap.get("requestTimeInMicro"));
+        Assert.assertEquals(3.0878E7, stringObjectMap.get("aa"));
+        Assert.assertEquals(3.0878E7 / 1000, stringObjectMap.get("requestTimeInMicro"));
         Assert.assertNull(stringObjectMap.get("requestTime_sizeByte"));
 
         Map<String, Object> fieldMetaMap = fieldConfig.extractFieldMetaMap();
@@ -58,7 +58,7 @@ public class FieldConfigHandlerTest {
 
         this.fieldConfig = new FieldConfigBuilder().setRawData(false)
                 .setDateFormat(Map.of("receivedTimestamp", new DateFormatConfigBuilder().setDateFormatType(
-                        DateFormatType.CUSTOM).setTimeUnit(null).setFormat("dd/MMM/yyyy:HH:mm:ss Z").setZoneOffset("")
+                                DateFormatType.CUSTOM).setTimeUnit(null).setFormat("dd/MMM/yyyy:HH:mm:ss Z").setZoneOffset("")
                         .setNewFieldName("@timestamp").setChangeDateConfig(new DateFormatConfigBuilder()
                                 .setDateFormatType(DateFormatType.ISO).setTimeUnit(null)
                                 .setFormat("yyyy-MM-dd'T'HH:mm:ssZ").setZoneOffset("+1000").setNewFieldName(null)
