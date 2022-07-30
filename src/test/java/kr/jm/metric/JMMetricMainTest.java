@@ -2,8 +2,8 @@ package kr.jm.metric;
 
 import kr.jm.metric.data.Transfer;
 import kr.jm.utils.JMResources;
-import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import kr.jm.utils.JMThread;
+import kr.jm.utils.flow.subscriber.JMSubscriberBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
